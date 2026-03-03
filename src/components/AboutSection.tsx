@@ -7,28 +7,47 @@ const stats = [
   { value: "∞", label: "Curiosity" },
 ];
 
+const timelineItems = [
+  { year: "2022", text: "Began the B.Tech Data Science journey" },
+  { year: "2023", text: "Built first ML models & data pipelines" },
+  { year: "2024", text: "Exploring full-stack & AI architecture" },
+];
+
 const AboutSection = () => {
   return (
     <section id="about" className="relative py-32 bg-gradient-radial">
       <div className="container mx-auto px-6 lg:px-16">
         <ScrollReveal>
-          <p className="text-primary text-sm tracking-[0.3em] uppercase mb-3 font-body">About</p>
-          <h2 className="text-4xl md:text-5xl font-bold font-display mb-16">
-            Welcome to <span className="glow-text">My World</span>
+          <p className="text-primary text-sm tracking-[0.3em] uppercase mb-3 font-body">Origin Story</p>
+          <h2 className="text-4xl md:text-6xl font-bold font-display mb-16">
+            The <span className="glow-text">Beginning</span>
           </h2>
         </ScrollReveal>
 
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <ScrollReveal delay={0.1}>
-            <p className="text-muted-foreground leading-relaxed text-lg mb-6">
-              I'm a 3rd year B.Tech Data Science student with an insatiable curiosity for how data shapes our world. My journey began with a simple question: <em className="text-foreground">"What if machines could truly understand?"</em>
+            <p className="text-muted-foreground leading-relaxed text-lg mb-6 italic">
+              In the quiet hum of a classroom, a curious mind discovered the language of data — and everything changed.
             </p>
             <p className="text-muted-foreground leading-relaxed text-lg mb-6">
-              From building machine learning models to crafting data visualizations that tell stories, I'm constantly pushing myself to learn more — whether it's AI architectures, full-stack development, or the art of turning raw data into actionable intelligence.
+              A 3rd year B.Tech Data Science student with an insatiable hunger for understanding how intelligence can be built, layer by layer, model by model. Inspired by cinema, storytelling, and the poetry hidden inside algorithms.
             </p>
-            <p className="text-muted-foreground leading-relaxed text-lg">
-              I don't just write code. I build systems that think.
+            <p className="text-muted-foreground leading-relaxed text-lg mb-8">
+              I don't just write code. <span className="text-foreground font-medium">I build systems that think.</span>
             </p>
+
+            {/* Timeline */}
+            <div className="space-y-4 border-l border-primary/30 pl-6">
+              {timelineItems.map((item, i) => (
+                <ScrollReveal key={item.year} delay={0.2 + i * 0.1}>
+                  <div className="relative">
+                    <div className="absolute -left-[30px] top-1.5 w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_hsla(0,100%,45%,0.5)]" />
+                    <p className="text-primary text-xs tracking-widest uppercase font-body">{item.year}</p>
+                    <p className="text-secondary-foreground text-sm mt-1">{item.text}</p>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
           </ScrollReveal>
 
           <ScrollReveal delay={0.2}>

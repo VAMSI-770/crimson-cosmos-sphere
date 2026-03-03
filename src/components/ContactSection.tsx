@@ -7,7 +7,6 @@ const ContactSection = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Placeholder
     alert("Thanks for reaching out! I'll get back to you soon.");
     setForm({ name: "", email: "", message: "" });
   };
@@ -16,17 +15,17 @@ const ContactSection = () => {
     <section id="contact" className="relative py-32">
       <div className="container mx-auto px-6 lg:px-16">
         <ScrollReveal>
-          <p className="text-primary text-sm tracking-[0.3em] uppercase mb-3 font-body">Contact</p>
-          <h2 className="text-4xl md:text-5xl font-bold font-display mb-16">
-            Let's Build Something{" "}
-            <span className="glow-text">Powerful</span>
+          <p className="text-primary text-sm tracking-[0.3em] uppercase mb-3 font-body">Final Frame</p>
+          <h2 className="text-4xl md:text-6xl font-bold font-display mb-16">
+            Let's Create Something{" "}
+            <span className="glow-text">Legendary</span>
           </h2>
         </ScrollReveal>
 
         <div className="grid lg:grid-cols-2 gap-16">
           <ScrollReveal delay={0.1}>
-            <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-              Have an idea, a project, or just want to connect? I'm always open to interesting conversations and collaborations.
+            <p className="text-muted-foreground text-lg mb-8 leading-relaxed italic">
+              Every great story needs a collaboration. Have an idea, a project, or a vision? Let's build it together.
             </p>
             <div className="space-y-4">
               <a href="mailto:vamsi@example.com" className="flex items-center gap-3 text-secondary-foreground hover:text-primary transition-colors">
@@ -69,7 +68,7 @@ const ContactSection = () => {
               />
               <button
                 type="submit"
-                className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-semibold transition-all duration-300 hover:shadow-[0_0_30px_hsla(0,100%,45%,0.3)] hover:scale-[1.02]"
+                className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-semibold transition-all duration-300 hover:shadow-[0_0_40px_hsla(0,100%,45%,0.4)] hover:scale-[1.02]"
               >
                 Send Message
               </button>
