@@ -12,23 +12,23 @@ const RotatingCube = () => {
 
   useFrame((_, delta) => {
     if (groupRef.current) {
-      groupRef.current.rotation.x += delta * 0.3;
-      groupRef.current.rotation.y += delta * 0.5;
+      groupRef.current.rotation.x += delta * 0.25;
+      groupRef.current.rotation.y += delta * 0.4;
     }
   });
 
   return (
     <group ref={groupRef}>
       <lineSegments geometry={edges}>
-        <lineBasicMaterial color="#e60000" transparent opacity={0.7} />
+        <lineBasicMaterial color="#cc0000" transparent opacity={0.6} />
       </lineSegments>
       <mesh>
         <boxGeometry args={[2.2, 2.2, 2.2]} />
         <meshStandardMaterial
           color="#1a0000"
           transparent
-          opacity={0.15}
-          roughness={0.5}
+          opacity={0.12}
+          roughness={0.4}
         />
       </mesh>
     </group>
@@ -39,9 +39,10 @@ const FloatingCube = () => {
   return (
     <div className="w-full h-full min-h-[300px]">
       <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-        <ambientLight intensity={0.3} />
-        <pointLight position={[5, 5, 5]} color="#ff1e1e" intensity={1.5} />
-        <pointLight position={[-5, -5, 3]} color="#8b0000" intensity={0.8} />
+        <ambientLight intensity={0.2} />
+        <pointLight position={[5, 5, 5]} color="#cc0000" intensity={1.5} />
+        <pointLight position={[-5, -5, 3]} color="#B8860B" intensity={0.6} />
+        <pointLight position={[0, -3, 4]} color="#8b0000" intensity={0.4} />
         <RotatingCube />
       </Canvas>
     </div>
