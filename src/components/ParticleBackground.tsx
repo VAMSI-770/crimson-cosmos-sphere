@@ -11,7 +11,7 @@ const ParticleBackground = () => {
 
     let animationId: number;
     const particles: { x: number; y: number; vx: number; vy: number; size: number; alpha: number }[] = [];
-    const count = 60;
+    const count = 40;
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -24,10 +24,10 @@ const ParticleBackground = () => {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 0.5,
-        alpha: Math.random() * 0.5 + 0.1,
+        vx: (Math.random() - 0.5) * 0.2,
+        vy: (Math.random() - 0.5) * 0.2,
+        size: Math.random() * 1.5 + 0.3,
+        alpha: Math.random() * 0.3 + 0.05,
       });
     }
 
@@ -40,7 +40,7 @@ const ParticleBackground = () => {
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(0, 100%, 50%, ${p.alpha})`;
+        ctx.fillStyle = `hsla(263, 70%, 58%, ${p.alpha})`;
         ctx.fill();
       });
       animationId = requestAnimationFrame(animate);
