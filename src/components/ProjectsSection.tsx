@@ -18,7 +18,7 @@ const projects = [
   },
   {
     title: "Portfolio Experience",
-    description: "This website — a product-grade portfolio built with React, Three.js, and motion design.",
+    description: "This cinematic portfolio — a product-grade website built with React, Three.js, and motion design.",
     tags: ["React", "Three.js", "Framer Motion"],
   },
 ];
@@ -28,20 +28,20 @@ const ProjectsSection = () => {
     <section id="projects" className="relative py-28 bg-gradient-subtle">
       <div className="container mx-auto px-6 lg:px-16">
         <ScrollReveal>
-          <p className="accent-text text-xs tracking-[0.25em] uppercase mb-3 font-medium">Work</p>
+          <p className="accent-text text-xs tracking-[0.25em] uppercase mb-3 font-medium">Scene IV</p>
           <h2 className="text-3xl md:text-5xl font-bold font-display mb-4">
-            Featured <span className="gradient-text">Work</span>
+            Featured <span className="gradient-text">Projects</span>
           </h2>
-          <div className="w-16 h-px bg-gradient-to-r from-violet to-indigo mb-14" />
+          <div className="w-16 h-px bg-gradient-to-r from-crimson to-violet mb-14" />
         </ScrollReveal>
 
         <div className="grid md:grid-cols-2 gap-5">
           {projects.map((project, i) => (
             <ScrollReveal key={project.title} delay={i * 0.08}>
               <div className="module-card rounded-xl p-7 h-full group cursor-pointer relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-violet/[0.03] via-transparent to-indigo/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-br from-crimson/[0.03] via-transparent to-violet/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative z-10">
-                  <h3 className="text-lg font-display font-semibold mb-2 text-foreground group-hover:text-violet transition-colors duration-300">
+                  <h3 className="text-lg font-display font-semibold mb-2 text-foreground group-hover:text-crimson transition-colors duration-300">
                     {project.title}
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed mb-5">

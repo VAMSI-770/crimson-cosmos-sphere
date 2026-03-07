@@ -1,7 +1,7 @@
 import ScrollReveal from "./ScrollReveal";
 
 const metrics = [
-  { value: "10+", label: "Projects" },
+  { value: "10+", label: "Projects Built" },
   { value: "15+", label: "Technologies" },
   { value: "AI/ML", label: "Current Focus" },
   { value: "∞", label: "Passion" },
@@ -12,25 +12,25 @@ const AboutSection = () => {
     <section id="about" className="relative py-28 bg-gradient-subtle">
       <div className="container mx-auto px-6 lg:px-16">
         <ScrollReveal>
-          <p className="accent-text text-xs tracking-[0.25em] uppercase mb-3 font-medium">Origin</p>
+          <p className="accent-text text-xs tracking-[0.25em] uppercase mb-3 font-medium">Scene II</p>
           <h2 className="text-3xl md:text-5xl font-bold font-display mb-4">
-            The <span className="gradient-text">Journey</span>
+            The <span className="gradient-text">Beginning</span>
           </h2>
-          <div className="w-16 h-px bg-gradient-to-r from-violet to-indigo mb-14" />
+          <div className="w-16 h-px bg-gradient-to-r from-crimson to-violet mb-14" />
         </ScrollReveal>
 
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           <ScrollReveal delay={0.1}>
             <div className="space-y-5">
-               <p className="text-secondary-foreground leading-relaxed text-base">
-                A 3rd year B.Tech Data Science student passionate about AI and machine learning. I believe technology can shape the future — and I'm building the skills to make that happen.
-               </p>
-               <p className="text-muted-foreground leading-relaxed text-base">
-                Exploring full-stack development alongside my data science foundation. Interested in building intelligent products that combine data, design, and engineering.
-               </p>
-               <p className="text-muted-foreground leading-relaxed text-base">
-                Driven by curiosity, inspired by the potential of AI, and focused on creating systems that solve real-world problems at scale.
-               </p>
+              <p className="text-secondary-foreground leading-relaxed text-base">
+                A curious mind drawn to the intersection of data and intelligence. As a 3rd year B.Tech Data Science student, I don't just study algorithms — I see patterns in the world waiting to be decoded.
+              </p>
+              <p className="text-muted-foreground leading-relaxed text-base">
+                Passionate about AI and machine learning, I'm building the foundation to create intelligent products that think, adapt, and evolve. Currently exploring full-stack development to bring ideas to life end-to-end.
+              </p>
+              <p className="text-muted-foreground leading-relaxed text-base">
+                I believe technology can shape the future — and I'm building the skills to be part of that transformation.
+              </p>
             </div>
           </ScrollReveal>
 

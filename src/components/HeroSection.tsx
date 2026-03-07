@@ -8,7 +8,12 @@ const HeroSection = () => {
     <section id="hero" className="relative min-h-screen flex items-center overflow-hidden">
       {/* Gradient mesh background */}
       <div className="absolute inset-0 bg-gradient-mesh" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-violet/[0.04] blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-crimson/[0.03] blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-violet/[0.04] blur-[100px] pointer-events-none" />
+
+      {/* Cinematic light streaks */}
+      <div className="absolute top-0 left-1/3 w-px h-full bg-gradient-to-b from-transparent via-crimson/10 to-transparent pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-px h-full bg-gradient-to-b from-transparent via-violet/5 to-transparent pointer-events-none" />
 
       <div className="container mx-auto px-6 lg:px-16 relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -24,7 +29,7 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
             >
-              <span className="w-2 h-2 rounded-full bg-violet animate-glow-pulse" />
+              <span className="w-2 h-2 rounded-full bg-crimson animate-glow-pulse" />
               <span className="text-xs text-muted-foreground font-medium tracking-wide">Available for opportunities</span>
             </motion.div>
 
@@ -40,7 +45,7 @@ const HeroSection = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.8 }}
             >
-              Building Intelligent Systems with Data &amp; Code
+              Future AI Engineer • Data Science Explorer
             </motion.p>
 
             <motion.p
@@ -49,7 +54,7 @@ const HeroSection = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7, duration: 0.8 }}
             >
-              Data Science Student • Future AI Engineer • Creative Technologist
+              Building intelligent systems with data and code.
             </motion.p>
 
             <motion.div
@@ -60,15 +65,15 @@ const HeroSection = () => {
             >
               <a
                 href="#projects"
-                className="px-7 py-3 rounded-lg bg-gradient-to-r from-violet to-indigo text-primary-foreground font-medium text-sm transition-all duration-400 hover:shadow-[0_0_30px_hsla(263,70%,58%,0.3)] hover:scale-[1.03]"
+                className="px-7 py-3 rounded-lg bg-gradient-to-r from-crimson to-violet text-primary-foreground font-medium text-sm transition-all duration-400 hover:shadow-[0_0_30px_hsla(1,95%,48%,0.3)] hover:scale-[1.03]"
               >
-                Explore My Work
+                Start the Journey
               </a>
               <a
                 href="#contact"
-                className="px-7 py-3 rounded-lg border border-border text-foreground font-medium text-sm transition-all duration-400 hover:border-violet/40 hover:bg-secondary/50"
+                className="px-7 py-3 rounded-lg border border-border text-foreground font-medium text-sm transition-all duration-400 hover:border-crimson/40 hover:bg-secondary/50"
               >
-                Connect With Me
+                View My Work
               </a>
             </motion.div>
           </motion.div>
@@ -96,7 +101,7 @@ const HeroSection = () => {
         whileInView={{ opacity: 0.5 }}
       >
         <div className="w-5 h-8 rounded-full border border-border flex justify-center pt-2">
-          <div className="w-0.5 h-1.5 rounded-full bg-violet" />
+          <div className="w-0.5 h-1.5 rounded-full bg-crimson" />
         </div>
       </motion.div>
     </section>
