@@ -40,7 +40,7 @@ const HeroSection = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.8 }}
             >
-              Building Intelligent Systems
+              Building Intelligent Systems with Data &amp; Code
             </motion.p>
 
             <motion.p
@@ -49,7 +49,7 @@ const HeroSection = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7, duration: 0.8 }}
             >
-              Data Science Student · Full Stack Explorer · Future AI Engineer
+              Data Science Student • Future AI Engineer • Creative Technologist
             </motion.p>
 
             <motion.div
@@ -62,13 +62,13 @@ const HeroSection = () => {
                 href="#projects"
                 className="px-7 py-3 rounded-lg bg-gradient-to-r from-violet to-indigo text-primary-foreground font-medium text-sm transition-all duration-400 hover:shadow-[0_0_30px_hsla(263,70%,58%,0.3)] hover:scale-[1.03]"
               >
-                Explore Work
+                Explore My Work
               </a>
               <a
                 href="#contact"
                 className="px-7 py-3 rounded-lg border border-border text-foreground font-medium text-sm transition-all duration-400 hover:border-violet/40 hover:bg-secondary/50"
               >
-                Contact
+                Connect With Me
               </a>
             </motion.div>
           </motion.div>
