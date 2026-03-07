@@ -51,6 +51,7 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        crimson: "hsl(var(--crimson))",
         violet: "hsl(var(--violet))",
         indigo: "hsl(var(--indigo))",
         cyan: "hsl(var(--cyan))",
