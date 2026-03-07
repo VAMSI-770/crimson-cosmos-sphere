@@ -21,7 +21,7 @@ const CinematicLoader = ({ onComplete }: { onComplete: () => void }) => {
           transition={{ duration: 0.6, ease: "easeInOut" }}
         >
           <motion.div
-            className="absolute w-[400px] h-[400px] rounded-full bg-violet/[0.06] blur-[120px]"
+            className="absolute w-[400px] h-[400px] rounded-full bg-crimson/[0.06] blur-[120px]"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ duration: 1.2, ease: "easeOut" }}

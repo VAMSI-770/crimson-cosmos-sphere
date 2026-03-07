@@ -10,8 +10,8 @@ const ParticleBackground = () => {
     if (!ctx) return;
 
     let animationId: number;
-    const particles: { x: number; y: number; vx: number; vy: number; size: number; alpha: number }[] = [];
-    const count = 40;
+    const particles: { x: number; y: number; vx: number; vy: number; size: number; alpha: number; color: string }[] = [];
+    const count = 45;
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -21,13 +21,15 @@ const ParticleBackground = () => {
     window.addEventListener("resize", resize);
 
     for (let i = 0; i < count; i++) {
+      const isCrimson = Math.random() > 0.5;
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         vx: (Math.random() - 0.5) * 0.2,
         vy: (Math.random() - 0.5) * 0.2,
         size: Math.random() * 1.5 + 0.3,
-        alpha: Math.random() * 0.3 + 0.05,
+        alpha: Math.random() * 0.25 + 0.05,
+        color: isCrimson ? "1, 95%, 48%" : "263, 70%, 58%",
       });
     }
 
@@ -40,7 +42,7 @@ const ParticleBackground = () => {
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(263, 70%, 58%, ${p.alpha})`;
+        ctx.fillStyle = `hsla(${p.color}, ${p.alpha})`;
         ctx.fill();
       });
       animationId = requestAnimationFrame(animate);
