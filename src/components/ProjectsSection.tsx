@@ -30,7 +30,7 @@ const ProjectsSection = () => {
         <ScrollReveal>
           <p className="accent-text text-xs tracking-[0.25em] uppercase mb-3 font-medium">Work</p>
           <h2 className="text-3xl md:text-5xl font-bold font-display mb-4">
-            Selected <span className="gradient-text">Work</span>
+            Featured <span className="gradient-text">Work</span>
           </h2>
           <div className="w-16 h-px bg-gradient-to-r from-violet to-indigo mb-14" />
         </ScrollReveal>

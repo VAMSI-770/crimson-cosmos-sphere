@@ -18,7 +18,7 @@ const ContactSection = () => {
           <p className="accent-text text-xs tracking-[0.25em] uppercase mb-3 font-medium">Contact</p>
           <h2 className="text-3xl md:text-5xl font-bold font-display mb-4">
             Let's Build Something{" "}
-            <span className="gradient-text">Meaningful</span>
+            <span className="gradient-text">Amazing</span>
           </h2>
           <div className="w-16 h-px bg-gradient-to-r from-violet to-indigo mb-14" />
         </ScrollReveal>

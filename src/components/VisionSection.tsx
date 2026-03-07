@@ -9,13 +9,13 @@ const VisionSection = () => {
         <ScrollReveal>
           <p className="accent-text text-xs tracking-[0.25em] uppercase mb-6 font-medium">Vision</p>
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold font-display mb-10 leading-tight">
-            Building Beyond{" "}
-            <span className="gradient-text">Today</span>
+            The Future I'm{" "}
+            <span className="gradient-text">Building</span>
           </h2>
         </ScrollReveal>
         <ScrollReveal delay={0.15}>
           <p className="text-lg md:text-xl text-secondary-foreground max-w-2xl mx-auto leading-relaxed">
-            I'm focused on building intelligent systems that combine data, design, and engineering — creating technology that thinks, adapts, and scales.
+            I want to build intelligent systems that combine data, design, and engineering to solve real problems.
           </p>
         </ScrollReveal>
         <ScrollReveal delay={0.3}>
