@@ -112,7 +112,7 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.6, duration: 0.8 }}
           >
-            Data Science Student | AI &amp; Computer Vision Enthusiast
+            AI &amp; Data Science Developer
           </motion.p>
 
           <motion.p
