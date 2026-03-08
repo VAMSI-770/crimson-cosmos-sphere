@@ -2,9 +2,9 @@ import ScrollReveal from "./ScrollReveal";
 import { motion } from "framer-motion";
 
 const metrics = [
-  { value: "10+", label: "Projects Built" },
-  { value: "15+", label: "Technologies Mastered" },
-  { value: "3+", label: "Years Learning" },
+  { value: "4+", label: "Projects Built" },
+  { value: "10+", label: "Technologies" },
+  { value: "2+", label: "Hackathons" },
   { value: "∞", label: "Ambition" },
 ];
 
