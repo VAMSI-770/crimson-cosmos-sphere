@@ -23,6 +23,7 @@ const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [isArrowHighlighted, setIsArrowHighlighted] = useState(false);
+  const [isArrowUnlocked, setIsArrowUnlocked] = useState(false);
   const handleComplete = useCallback(() => setLoaded(true), []);
   const arrowRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -55,6 +56,7 @@ const Index = () => {
       // Highlight arrow if that command was used
       if (command === "open the arrow") {
         setIsArrowHighlighted(true);
+        setIsArrowUnlocked(true);
         setTimeout(() => setIsArrowHighlighted(false), 5000);
       }
     }
@@ -92,6 +94,7 @@ const Index = () => {
           ref={arrowRef}
           onDoubleClick={handleArrowDoubleClick}
           isHighlighted={isArrowHighlighted}
+          isUnlocked={isArrowUnlocked}
         />
         <ContactSection />
         <FooterSection />
