@@ -9,10 +9,30 @@ const fallbackProjects = [
 
 const ProjectsSection = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
   const { data: dbProjects } = useProjects();
   const projects = dbProjects && dbProjects.length > 0 ? dbProjects : fallbackProjects;
 
   const toggleExpand = (index: number) => setExpandedIndex(expandedIndex === index ? null : index);
+
+  const handleMouseEnter = useCallback((index: number) => {
+    setHoveredIndex(index);
+    const video = videoRefs.current[index];
+    if (video) {
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback((index: number) => {
+    setHoveredIndex(null);
+    const video = videoRefs.current[index];
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+  }, []);
 
   return (
     <section id="projects" className="relative py-24 md:py-32 bg-cinema-subtle">
