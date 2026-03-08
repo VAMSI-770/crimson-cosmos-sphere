@@ -3,22 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
-type TabType = "about" | "skills" | "projects" | "certifications" | "internships" | "ideas" | "achievements" | "goals";
-
-const tabs: { id: TabType; label: string }[] = [
-  { id: "about", label: "About" },
-  { id: "skills", label: "Skills" },
-  { id: "projects", label: "Projects" },
-  { id: "certifications", label: "Certifications" },
-  { id: "internships", label: "Internships" },
-  { id: "ideas", label: "Ideas" },
-  { id: "achievements", label: "Achievements" },
-  { id: "goals", label: "Goals" },
-];
+import AdminHeader from "@/components/admin/AdminHeader";
+import AdminSidebar, { type AdminTab } from "@/components/admin/AdminSidebar";
+import SiteContentEditor from "@/components/admin/SiteContentEditor";
+import GenericCrudManager from "@/components/admin/GenericCrudManager";
+import MessagesInbox from "@/components/admin/MessagesInbox";
+import MediaLibrary from "@/components/admin/MediaLibrary";
+import {
+  useEducation, useSkillCategories, useProjects, useCertifications,
+  useInternships, useAchievements, useIdeas, useGoals, useContactMessages,
+} from "@/hooks/usePortfolioData";
 
 const AdminPortal = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("about");
+  const [activeTab, setActiveTab] = useState<AdminTab>("about");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -42,15 +39,21 @@ const AdminPortal = () => {
     });
 
     checkAuth();
-
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    toast.success("Logged out successfully");
-    navigate("/");
-  };
+  // Data hooks
+  const education = useEducation();
+  const skillCategories = useSkillCategories();
+  const projects = useProjects();
+  const certifications = useCertifications();
+  const internships = useInternships();
+  const achievements = useAchievements();
+  const ideas = useIdeas();
+  const goals = useGoals();
+  const messages = useContactMessages();
+
+  const unreadCount = (messages.data || []).filter((m: any) => !m.is_read).length;
 
   if (isLoading) {
     return (
@@ -67,70 +70,194 @@ const AdminPortal = () => {
     );
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
+  if (!isAuthenticated) return null;
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "about":
+        return (
+          <div className="space-y-6">
+            <SiteContentEditor section="hero" />
+            <SiteContentEditor section="about" />
+          </div>
+        );
+      case "education":
+        return (
+          <GenericCrudManager
+            title="Education"
+            description="Manage your education timeline."
+            tableName="education"
+            queryKey="education"
+            items={education.data || []}
+            isLoading={education.isLoading}
+            fields={[
+              { key: "year", label: "Year/Period", type: "text", placeholder: "e.g. 2023 – Present" },
+              { key: "title", label: "Title", type: "text", placeholder: "e.g. B.Tech – Data Science" },
+              { key: "description", label: "Description", type: "textarea" },
+            ]}
+          />
+        );
+      case "skills":
+        return (
+          <GenericCrudManager
+            title="Skill Categories"
+            description="Manage skill groups and individual skills."
+            tableName="skill_categories"
+            queryKey="skill_categories"
+            items={(skillCategories.data || []).map((cat: any) => ({
+              ...cat,
+              description: `${cat.proficiency} — ${(cat.skills || []).map((s: any) => s.name).join(", ")}`,
+            }))}
+            isLoading={skillCategories.isLoading}
+            fields={[
+              { key: "title", label: "Category Name", type: "text", placeholder: "e.g. AI & ML" },
+              { key: "description", label: "Description", type: "textarea" },
+              { key: "proficiency", label: "Proficiency Level", type: "text", placeholder: "e.g. Advanced" },
+            ]}
+          />
+        );
+      case "projects":
+        return (
+          <GenericCrudManager
+            title="Projects"
+            description="Manage your portfolio projects."
+            tableName="projects"
+            queryKey="projects"
+            items={projects.data || []}
+            isLoading={projects.isLoading}
+            fields={[
+              { key: "title", label: "Title", type: "text" },
+              { key: "description", label: "Short Description", type: "textarea" },
+              { key: "full_description", label: "Full Description", type: "textarea" },
+              { key: "tags", label: "Tags", type: "array" },
+              { key: "team", label: "Team", type: "text" },
+              { key: "challenges", label: "Challenges", type: "textarea" },
+              { key: "outcome", label: "Outcome", type: "textarea" },
+              { key: "github_link", label: "GitHub Link", type: "text" },
+              { key: "demo_link", label: "Demo Link", type: "text" },
+              { key: "image_url", label: "Image", type: "file" },
+            ]}
+          />
+        );
+      case "certifications":
+        return (
+          <GenericCrudManager
+            title="Certifications"
+            description="Manage your professional certifications."
+            tableName="certifications"
+            queryKey="certifications"
+            items={certifications.data || []}
+            isLoading={certifications.isLoading}
+            fields={[
+              { key: "title", label: "Title", type: "text" },
+              { key: "issuer", label: "Issuer", type: "text" },
+              { key: "year", label: "Year", type: "text" },
+              { key: "description", label: "Description", type: "textarea" },
+              { key: "skills", label: "Skills Covered", type: "array" },
+              { key: "file_url", label: "Certificate File", type: "file" },
+              { key: "file_type", label: "File Type (pdf/image)", type: "text", placeholder: "pdf or image" },
+              { key: "preview_image_url", label: "Preview Image", type: "file" },
+            ]}
+          />
+        );
+      case "internships":
+        return (
+          <GenericCrudManager
+            title="Internships"
+            description="Manage your work experience."
+            tableName="internships"
+            queryKey="internships"
+            items={internships.data || []}
+            isLoading={internships.isLoading}
+            fields={[
+              { key: "company", label: "Company", type: "text" },
+              { key: "role", label: "Role", type: "text" },
+              { key: "duration", label: "Duration", type: "text" },
+              { key: "description", label: "Short Description", type: "textarea" },
+              { key: "full_description", label: "Full Description", type: "textarea" },
+              { key: "technologies", label: "Technologies", type: "array" },
+              { key: "highlights", label: "Key Highlights", type: "array" },
+              { key: "file_url", label: "Certificate File", type: "file" },
+              { key: "file_type", label: "File Type (pdf/image)", type: "text" },
+              { key: "preview_image_url", label: "Preview Image", type: "file" },
+            ]}
+          />
+        );
+      case "ideas":
+        return (
+          <GenericCrudManager
+            title="Innovation Ideas"
+            description="Manage your creative project ideas."
+            tableName="ideas"
+            queryKey="ideas"
+            items={ideas.data || []}
+            isLoading={ideas.isLoading}
+            fields={[
+              { key: "title", label: "Title", type: "text" },
+              { key: "category", label: "Category", type: "text", placeholder: "e.g. EdTech" },
+              { key: "description", label: "Short Description", type: "textarea" },
+              { key: "full_description", label: "Full Description", type: "textarea" },
+              { key: "potential_impact", label: "Potential Impact", type: "textarea" },
+              { key: "technologies", label: "Tech Stack", type: "array" },
+            ]}
+          />
+        );
+      case "achievements":
+        return (
+          <GenericCrudManager
+            title="Achievements"
+            description="Manage your accomplishments."
+            tableName="achievements"
+            queryKey="achievements"
+            items={achievements.data || []}
+            isLoading={achievements.isLoading}
+            fields={[
+              { key: "title", label: "Title", type: "text" },
+              { key: "label", label: "Label/Type", type: "text", placeholder: "e.g. Hackathon" },
+              { key: "description", label: "Short Description", type: "textarea" },
+              { key: "details", label: "Full Details", type: "textarea" },
+              { key: "team", label: "Team", type: "text" },
+              { key: "file_url", label: "Certificate File", type: "file" },
+              { key: "file_type", label: "File Type (pdf/image)", type: "text" },
+              { key: "preview_image_url", label: "Preview Image", type: "file" },
+            ]}
+          />
+        );
+      case "goals":
+        return (
+          <GenericCrudManager
+            title="Future Goals"
+            description="Manage your vision and objectives."
+            tableName="goals"
+            queryKey="goals"
+            items={goals.data || []}
+            isLoading={goals.isLoading}
+            fields={[
+              { key: "title", label: "Title", type: "text" },
+              { key: "description", label: "Short Description", type: "textarea" },
+              { key: "full_description", label: "Full Description", type: "textarea" },
+              { key: "timeline", label: "Timeline", type: "text", placeholder: "e.g. 2025-2027" },
+              { key: "milestones", label: "Key Milestones", type: "array" },
+            ]}
+          />
+        );
+      case "contact":
+        return <SiteContentEditor section="contact" />;
+      case "messages":
+        return <MessagesInbox />;
+      case "media":
+        return <MediaLibrary />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-16 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <motion.div
-              className="text-2xl font-display font-bold gradient-text"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-            >
-              A
-            </motion.div>
-            <div>
-              <h1 className="font-display font-semibold text-foreground">Admin Portal</h1>
-              <p className="text-xs text-muted-foreground">Content Management</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate("/")}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              View Site
-            </button>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 text-sm bg-secondary/50 hover:bg-secondary border border-border/50 rounded-lg text-foreground transition-colors"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
-
+      <AdminHeader />
       <div className="container mx-auto px-4 sm:px-6 lg:px-16 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
-          <aside className="lg:w-64 flex-shrink-0">
-            <nav className="sticky top-24 space-y-1">
-              {tabs.map((tab) => (
-                <motion.button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                    activeTab === tab.id
-                      ? "bg-blue-primary/10 text-blue-bright border border-blue-primary/20"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-                  }`}
-                  whileHover={{ x: 4 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {tab.label}
-                </motion.button>
-              ))}
-            </nav>
-          </aside>
-
-          {/* Main Content */}
+          <AdminSidebar activeTab={activeTab} onTabChange={setActiveTab} unreadCount={unreadCount} />
           <main className="flex-1 min-w-0">
             <AnimatePresence mode="wait">
               <motion.div
@@ -140,7 +267,7 @@ const AdminPortal = () => {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                <AdminContent tab={activeTab} />
+                {renderContent()}
               </motion.div>
             </AnimatePresence>
           </main>
@@ -148,78 +275,6 @@ const AdminPortal = () => {
       </div>
     </div>
   );
-};
-
-interface AdminContentProps {
-  tab: TabType;
-}
-
-const AdminContent = ({ tab }: AdminContentProps) => {
-  const renderPlaceholder = (title: string, description: string) => (
-    <div className="cinema-card rounded-2xl p-8">
-      <h2 className="text-2xl font-display font-bold text-foreground mb-2">{title}</h2>
-      <p className="text-muted-foreground mb-8">{description}</p>
-      
-      <div className="space-y-6">
-        <div className="bg-secondary/30 rounded-xl p-6 border border-border/30">
-          <p className="text-sm text-muted-foreground mb-4">
-            Content editing will be available once database tables are set up.
-          </p>
-          <p className="text-xs text-muted-foreground/60">
-            Run the database migration to enable full editing capabilities.
-          </p>
-        </div>
-
-        {/* Demo form fields */}
-        <div className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
-              Title
-            </label>
-            <input
-              type="text"
-              placeholder={`Enter ${title.toLowerCase()} title...`}
-              className="w-full bg-secondary/50 border border-border/50 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-primary/50 transition-colors"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
-              Description
-            </label>
-            <textarea
-              rows={4}
-              placeholder="Enter description..."
-              className="w-full bg-secondary/50 border border-border/50 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-primary/50 transition-colors resize-none"
-            />
-          </div>
-
-          <div className="flex gap-3 pt-2">
-            <button className="px-6 py-2.5 bg-gradient-to-r from-blue-primary to-blue-bright text-white rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-blue-primary/30 transition-all">
-              Save Changes
-            </button>
-            <button className="px-6 py-2.5 bg-secondary/50 border border-border/50 text-foreground rounded-xl font-medium text-sm hover:bg-secondary transition-colors">
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const contentMap: Record<TabType, { title: string; description: string }> = {
-    about: { title: "About Section", description: "Edit your personal introduction and bio." },
-    skills: { title: "Skills Section", description: "Manage your technical skills and proficiency levels." },
-    projects: { title: "Projects Section", description: "Add, edit, or remove your portfolio projects." },
-    certifications: { title: "Certifications", description: "Manage your professional certifications." },
-    internships: { title: "Internships", description: "Edit your work experience and internships." },
-    ideas: { title: "Ideas Section", description: "Manage your innovative project ideas." },
-    achievements: { title: "Achievements", description: "Update your accomplishments and milestones." },
-    goals: { title: "Future Goals", description: "Edit your vision and future objectives." },
-  };
-
-  const { title, description } = contentMap[tab];
-  return renderPlaceholder(title, description);
 };
 
 export default AdminPortal;

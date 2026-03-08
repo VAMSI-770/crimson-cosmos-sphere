@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface AdminLoginModalProps {
@@ -9,23 +10,31 @@ interface AdminLoginModalProps {
 }
 
 const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) => {
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Check for hardcoded credentials
-    if (name === "Vamsi" && password === "Vamsichowdary25@") {
-      toast.success("Welcome to Admin Portal");
-      setIsLoading(false);
-      onSuccess();
-    } else {
-      toast.error("Invalid credentials");
-      setIsLoading(false);
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        toast.success("Account created! You can now log in.");
+        setIsSignUp(false);
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        toast.success("Welcome to Admin Portal");
+        onSuccess();
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Authentication failed");
     }
+    setIsLoading(false);
   };
 
   return (
@@ -37,7 +46,6 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          {/* Backdrop */}
           <motion.div
             className="absolute inset-0 bg-black/80 backdrop-blur-md"
             onClick={onClose}
@@ -46,7 +54,6 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
             exit={{ opacity: 0 }}
           />
 
-          {/* Modal */}
           <motion.div
             className="relative z-10 w-full max-w-md mx-4 bg-background/95 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden"
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -54,12 +61,10 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
           >
-            {/* Glow effect */}
             <div className="absolute -top-20 -left-20 w-40 h-40 bg-blue-primary/20 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-blue-bright/20 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative p-8">
-              {/* Close button */}
               <button
                 onClick={onClose}
                 className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors text-xl font-light"
@@ -67,7 +72,6 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
                 ×
               </button>
 
-              {/* Header */}
               <div className="text-center mb-8">
                 <motion.div
                   className="text-4xl font-display font-bold gradient-text mb-2"
@@ -78,24 +82,23 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
                   A
                 </motion.div>
                 <h2 className="text-xl font-display font-semibold text-foreground mb-1">
-                  Admin Portal
+                  {isSignUp ? "Create Admin Account" : "Admin Portal"}
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Secure access to content management
+                  {isSignUp ? "Set up your admin credentials" : "Secure access to content management"}
                 </p>
               </div>
 
-              {/* Form */}
-              <form onSubmit={handleLogin} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <label className="block text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
-                    Name
+                    Email
                   </label>
                   <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your name"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@example.com"
                     className="w-full bg-secondary/50 border border-border/50 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-primary/50 transition-colors"
                     required
                   />
@@ -112,6 +115,7 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
                     placeholder="••••••••"
                     className="w-full bg-secondary/50 border border-border/50 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-primary/50 transition-colors"
                     required
+                    minLength={6}
                   />
                 </div>
 
@@ -122,11 +126,18 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
                 >
-                  {isLoading ? "Authenticating..." : "Access Portal"}
+                  {isLoading ? "Authenticating..." : isSignUp ? "Create Account" : "Access Portal"}
                 </motion.button>
               </form>
 
-              <p className="text-center text-xs text-muted-foreground/60 mt-6">
+              <button
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="w-full text-center text-xs text-blue-bright/70 hover:text-blue-bright mt-4 transition-colors"
+              >
+                {isSignUp ? "Already have an account? Log in" : "First time? Create admin account"}
+              </button>
+
+              <p className="text-center text-xs text-muted-foreground/60 mt-4">
                 Protected by secure authentication
               </p>
             </div>
