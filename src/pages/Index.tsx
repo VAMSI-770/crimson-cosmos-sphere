@@ -9,6 +9,12 @@ import ExperienceTimeline from "../components/ExperienceTimeline";
 import VisionSection from "../components/VisionSection";
 import ContactSection from "../components/ContactSection";
 import FooterSection from "../components/FooterSection";
+import FeaturedWorkSection from "../components/FeaturedWorkSection";
+import CertificationsSection from "../components/CertificationsSection";
+import InternshipsSection from "../components/InternshipsSection";
+import IdeasSection from "../components/IdeasSection";
+import AchievementsSection from "../components/AchievementsSection";
+import GoalsSection from "../components/GoalsSection";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
@@ -27,7 +33,13 @@ const Index = () => {
         <AboutSection />
         <ExperienceTimeline />
         <SkillsSection />
+        <FeaturedWorkSection />
         <ProjectsSection />
+        <CertificationsSection />
+        <InternshipsSection />
+        <IdeasSection />
+        <AchievementsSection />
+        <GoalsSection />
         <VisionSection />
         <ContactSection />
         <FooterSection />
