@@ -1,44 +1,13 @@
 import { useState } from "react";
 import ScrollReveal from "./ScrollReveal";
 import { motion, AnimatePresence } from "framer-motion";
-
-const goals = [
-  {
-    title: "Master Advanced AI & ML",
-    description: "Deepen expertise in advanced artificial intelligence and machine learning technologies.",
-    fullDescription: "Focus on mastering deep learning architectures, reinforcement learning, and cutting-edge AI research. Build production-grade ML systems and contribute to the AI research community.",
-    timeline: "2025-2027",
-    milestones: ["Complete advanced ML certifications", "Publish AI research papers", "Build production ML systems"],
-  },
-  {
-    title: "Innovate in Space Technology",
-    description: "Develop innovative solutions for space technology and robotics applications.",
-    fullDescription: "Continue research and development in space debris cleanup, satellite systems, and AI-powered robotics for space exploration. Collaborate with space technology organizations.",
-    timeline: "2025-2028",
-    milestones: ["Advance space debris cleanup project", "Collaborate with space organizations", "Develop autonomous robotics"],
-  },
-  {
-    title: "Build Scalable Intelligent Systems",
-    description: "Create scalable intelligent software systems that solve real-world problems.",
-    fullDescription: "Design and build end-to-end AI-powered applications that can scale to serve millions of users. Focus on computer vision, NLP, and predictive analytics platforms.",
-    timeline: "2025-2029",
-    milestones: ["Launch 3 AI-powered applications", "Achieve production scale", "Impact real-world problems"],
-  },
-  {
-    title: "Contribute to Research & Innovation",
-    description: "Contribute to impactful research and technological innovation in AI and data science.",
-    fullDescription: "Publish research papers, participate in international conferences, and contribute to open-source AI projects. Bridge the gap between academic research and practical applications.",
-    timeline: "Ongoing",
-    milestones: ["Publish research papers", "Present at conferences", "Open-source contributions"],
-  },
-];
+import { useGoals } from "@/hooks/usePortfolioData";
 
 const GoalsSection = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const { data: goals = [] } = useGoals();
 
-  const toggleExpand = (index: number) => {
-    setExpandedIndex(expandedIndex === index ? null : index);
-  };
+  const toggleExpand = (index: number) => setExpandedIndex(expandedIndex === index ? null : index);
 
   return (
     <section id="goals" className="relative py-24 md:py-32">
@@ -52,8 +21,8 @@ const GoalsSection = () => {
         </ScrollReveal>
 
         <div className="grid sm:grid-cols-2 gap-4 md:gap-6 max-w-4xl mx-auto">
-          {goals.map((goal, i) => (
-            <ScrollReveal key={goal.title} delay={i * 0.1}>
+          {goals.map((goal: any, i: number) => (
+            <ScrollReveal key={goal.id} delay={i * 0.1}>
               <motion.div
                 className="cinema-card rounded-2xl p-5 md:p-7 h-full group cursor-pointer glow-ring"
                 layout
@@ -65,52 +34,26 @@ const GoalsSection = () => {
                 whileHover={{ y: expandedIndex === i ? 0 : -6 }}
               >
                 <div className="flex items-start justify-between mb-4">
-                  <span className="text-2xl md:text-3xl font-display font-bold gradient-text">
-                    {goal.title.charAt(0)}
-                  </span>
-                  <motion.span 
-                    className="text-xs text-muted-foreground"
-                    animate={{ rotate: expandedIndex === i ? 180 : 0 }}
-                  >
-                    ↓
-                  </motion.span>
+                  <span className="text-2xl md:text-3xl font-display font-bold gradient-text">{goal.title.charAt(0)}</span>
+                  <motion.span className="text-xs text-muted-foreground" animate={{ rotate: expandedIndex === i ? 180 : 0 }}>↓</motion.span>
                 </div>
-                
-                <h3 className="text-base md:text-lg font-display font-semibold text-foreground mb-2 group-hover:text-blue-bright transition-colors">
-                  {goal.title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {goal.description}
-                </p>
+                <h3 className="text-base md:text-lg font-display font-semibold text-foreground mb-2 group-hover:text-blue-bright transition-colors">{goal.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{goal.description}</p>
 
                 <AnimatePresence>
                   {expandedIndex === i && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                      className="overflow-hidden"
-                    >
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }} className="overflow-hidden">
                       <div className="pt-5 mt-5 border-t border-border/30">
-                        <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                          {goal.fullDescription}
-                        </p>
-                        
+                        <p className="text-sm text-muted-foreground leading-relaxed mb-4">{goal.full_description}</p>
                         <div className="flex items-center gap-2 mb-4">
                           <span className="text-xs font-semibold text-foreground uppercase tracking-wider">Timeline:</span>
-                          <span className="text-xs px-3 py-1 rounded-full bg-blue-primary/10 text-blue-bright border border-blue-primary/20">
-                            {goal.timeline}
-                          </span>
+                          <span className="text-xs px-3 py-1 rounded-full bg-blue-primary/10 text-blue-bright border border-blue-primary/20">{goal.timeline}</span>
                         </div>
-                        
                         <div>
                           <p className="text-xs font-semibold text-foreground mb-2 uppercase tracking-wider">Key Milestones</p>
                           <ul className="space-y-1">
-                            {goal.milestones.map((milestone, idx) => (
-                              <li key={idx} className="text-sm text-muted-foreground">
-                                • {milestone}
-                              </li>
+                            {(goal.milestones || []).map((milestone: string, idx: number) => (
+                              <li key={idx} className="text-sm text-muted-foreground">• {milestone}</li>
                             ))}
                           </ul>
                         </div>
@@ -119,12 +62,7 @@ const GoalsSection = () => {
                   )}
                 </AnimatePresence>
 
-                {/* Subtle glow on hover */}
-                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{
-                    boxShadow: "0 0 50px hsla(221, 83%, 53%, 0.08)"
-                  }}
-                />
+                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ boxShadow: "0 0 50px hsla(221, 83%, 53%, 0.08)" }} />
               </motion.div>
             </ScrollReveal>
           ))}

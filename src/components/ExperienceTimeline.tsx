@@ -1,25 +1,17 @@
 import ScrollReveal from "./ScrollReveal";
 import { motion } from "framer-motion";
+import { useEducation } from "@/hooks/usePortfolioData";
 
-const timeline = [
-  {
-    year: "2023 – Present",
-    title: "B.Tech – Data Science",
-    description: "Currently studying at NRI Institute of Technology, Visadala, Guntur. Current CGPA: 8.61.",
-  },
-  {
-    year: "2021 – 2023",
-    title: "Intermediate – Sri Danalakshmi Junior College",
-    description: "Completed Intermediate from Sri Danalakshmi Junior College, Muppalla with 83.6%.",
-  },
-  {
-    year: "2020 – 2021",
-    title: "SSC – A.P. Residential School",
-    description: "Completed SSC from A.P. Residential School, Tadikonda, Guntur with a perfect 10 GPA.",
-  },
+const fallbackTimeline = [
+  { year: "2023 – Present", title: "B.Tech – Data Science", description: "Currently studying at NRI Institute of Technology, Visadala, Guntur. Current CGPA: 8.61." },
+  { year: "2021 – 2023", title: "Intermediate – Sri Danalakshmi Junior College", description: "Completed Intermediate from Sri Danalakshmi Junior College, Muppalla with 83.6%." },
+  { year: "2020 – 2021", title: "SSC – A.P. Residential School", description: "Completed SSC from A.P. Residential School, Tadikonda, Guntur with a perfect 10 GPA." },
 ];
 
 const ExperienceTimeline = () => {
+  const { data: educationData } = useEducation();
+  const timeline = educationData && educationData.length > 0 ? educationData : fallbackTimeline;
+
   return (
     <section id="education" className="relative py-32">
       <div className="container mx-auto px-6 lg:px-16">
@@ -30,25 +22,18 @@ const ExperienceTimeline = () => {
           </h2>
           <div className="w-20 h-[2px] rounded-full bg-gradient-to-r from-blue-primary to-blue-bright mb-16" />
         </ScrollReveal>
-
         <div className="relative max-w-2xl mx-auto">
           <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px md:-translate-x-px">
             <div className="w-full h-full bg-gradient-to-b from-blue-primary/30 via-blue-bright/20 to-blue-glow/10" />
           </div>
-
-          {timeline.map((item, i) => (
-            <ScrollReveal key={item.year} delay={i * 0.12}>
+          {timeline.map((item: any, i: number) => (
+            <ScrollReveal key={item.id || item.year} delay={i * 0.12}>
               <div className={`relative flex items-start gap-8 mb-14 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}>
                 <div className="absolute left-6 md:left-1/2 -translate-x-1.5 mt-2 z-10">
                   <div className="w-3 h-3 rounded-full bg-blue-bright border-4 border-background shadow-[0_0_12px_hsla(217,91%,60%,0.5)]" />
                 </div>
-
                 <div className={`ml-14 md:ml-0 md:w-[calc(50%-2rem)] ${i % 2 === 0 ? "md:pr-8 md:text-right" : "md:pl-8"}`}>
-                  <motion.div
-                    className="cinema-card rounded-2xl p-6 glow-ring"
-                    whileHover={{ y: -4 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
+                  <motion.div className="cinema-card rounded-2xl p-6 glow-ring" whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 300 }}>
                     <span className="text-xs font-bold text-blue-bright tracking-[0.3em] uppercase font-display">{item.year}</span>
                     <h3 className="text-base font-display font-semibold text-foreground mt-2 mb-2">{item.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
