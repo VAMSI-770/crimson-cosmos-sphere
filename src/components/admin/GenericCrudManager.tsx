@@ -140,6 +140,27 @@ const GenericCrudManager = ({ title, description, tableName, queryKey, items, fi
       );
     }
 
+    if (field.type === "video") {
+      return (
+        <div key={field.key}>
+          <label className="block text-xs font-semibold text-foreground uppercase tracking-wider mb-2">{field.label}</label>
+          {value && (
+            <div className="mb-2">
+              <video src={value} controls className="w-full max-w-md rounded-lg border border-border/30" />
+            </div>
+          )}
+          <label className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/50 border border-border/50 rounded-lg text-sm cursor-pointer hover:bg-secondary transition-colors">
+            <Upload className="w-4 h-4" />
+            Upload Video
+            <input type="file" accept="video/*" className="hidden" onChange={(e) => {
+              if (e.target.files?.[0]) handleFileUpload(field.key, e.target.files[0]);
+            }} />
+          </label>
+          <p className="text-xs text-muted-foreground mt-1">Supports MP4, WebM, etc.</p>
+        </div>
+      );
+    }
+
     if (field.type === "file") {
       return (
         <div key={field.key}>
