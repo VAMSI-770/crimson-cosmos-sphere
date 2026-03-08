@@ -8,7 +8,7 @@ interface CinematicArrowProps {
 }
 
 const CinematicArrow = forwardRef<HTMLDivElement, CinematicArrowProps>(
-  ({ onDoubleClick, isHighlighted }, ref) => {
+  ({ onDoubleClick, isHighlighted, isUnlocked }, ref) => {
     const localRef = useRef<HTMLDivElement>(null);
     const isInView = useInView(localRef, { once: true, margin: "-100px" });
     const [isClicked, setIsClicked] = useState(false);
