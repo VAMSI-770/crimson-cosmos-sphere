@@ -4,7 +4,6 @@ import ParticleBackground from "../components/ParticleBackground";
 import CinematicLoader from "../components/CinematicLoader";
 import HeroSection from "../components/HeroSection";
 import AboutSection from "../components/AboutSection";
-import ShowcaseSkillsSection from "../components/ShowcaseSkillsSection";
 import SkillsSection from "../components/SkillsSection";
 import ProjectsSection from "../components/ProjectsSection";
 import ExperienceTimeline from "../components/ExperienceTimeline";
@@ -80,7 +79,7 @@ const Index = () => {
         <HeroSection />
         <AboutSection />
         <ExperienceTimeline />
-        <ShowcaseSkillsSection />
+        
         <SkillsSection />
         <ProjectsSection />
         <CertificationsSection />
