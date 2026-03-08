@@ -76,10 +76,10 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
                   A
                 </motion.div>
                 <h2 className="text-xl font-display font-semibold text-foreground mb-1">
-                  {isSignUp ? "Create Admin Account" : "Admin Portal"}
+                  Admin Portal
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  {isSignUp ? "Set up your admin credentials" : "Secure access to content management"}
+                  Secure access to content management
                 </p>
               </div>
 
