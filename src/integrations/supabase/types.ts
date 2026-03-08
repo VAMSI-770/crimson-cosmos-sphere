@@ -308,6 +308,7 @@ export type Database = {
           tags: string[]
           team: string | null
           title: string
+          video_url: string | null
         }
         Insert: {
           challenges?: string
@@ -323,6 +324,7 @@ export type Database = {
           tags?: string[]
           team?: string | null
           title: string
+          video_url?: string | null
         }
         Update: {
           challenges?: string
@@ -338,6 +340,7 @@ export type Database = {
           tags?: string[]
           team?: string | null
           title?: string
+          video_url?: string | null
         }
         Relationships: []
       }
