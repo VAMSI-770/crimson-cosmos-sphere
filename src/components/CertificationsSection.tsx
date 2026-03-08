@@ -45,6 +45,14 @@ const certifications = [
     skills: ["SQL", "Database Management", "Data Querying"],
     file: { url: "/certificates/SQL_Certificate.pdf", type: "pdf" as const },
   },
+  {
+    title: "SQL (Basic) – HackerRank",
+    issuer: "HackerRank",
+    year: "2025",
+    description: "Passed the HackerRank SQL (Basic) skill certification test, demonstrating proficiency in SQL fundamentals.",
+    skills: ["SQL", "Database Querying", "HackerRank"],
+    file: { url: "/certificates/HackerRank_SQL_Certificate.png", type: "image" as const },
+  },
 ];
 
 const CertificationsSection = () => {
