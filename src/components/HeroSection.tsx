@@ -62,18 +62,32 @@ const HeroSection = () => {
           </motion.div>
 
           {/* Name */}
-          <h1 className="text-4xl md:text-6xl lg:text-[5.5rem] font-bold font-display leading-[1.1] mb-3 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-[5.5rem] font-bold font-display leading-[1.1] mb-3 tracking-tight whitespace-nowrap">
             <AnimatedWord
               text="BOLLEPALLI"
-              className="text-foreground tracking-[0.12em] mr-3 md:mr-5"
+              className="text-foreground tracking-[0.08em] md:tracking-[0.12em] mr-2 md:mr-5"
               startIndex={0}
             />
             <AnimatedWord
               text="VAMSI"
-              className="text-blue-bright tracking-[0.12em]"
+              className="text-blue-bright tracking-[0.08em] md:tracking-[0.12em]"
               startIndex={10}
             />
           </h1>
+
+          {/* Subtle moving shimmer under the name */}
+          <motion.div
+            className="h-[2px] max-w-[280px] md:max-w-md mx-auto mb-6 rounded-full overflow-hidden"
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+          >
+            <motion.div
+              className="h-full w-full bg-gradient-to-r from-transparent via-blue-bright to-transparent"
+              animate={{ x: ["-100%", "100%"] }}
+              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+            />
+          </motion.div>
 
           {/* Decorative line */}
           <motion.div
