@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useProjects } from "@/hooks/usePortfolioData";
 
 const fallbackProjects = [
-  { id: "1", title: "AI Swarm Robotics for Space Debris Cleanup", description: "AI-powered swarm robotics system.", full_description: "", tags: ["AI", "Robotics"], team: "The Space Savants", challenges: "", outcome: "", github_link: null },
+  { id: "1", title: "AI Swarm Robotics for Space Debris Cleanup", description: "AI-powered swarm robotics system.", full_description: "", tags: ["AI", "Robotics"], team: "The Space Savants", challenges: "", outcome: "", github_link: null, video_url: null },
 ];
 
 const ProjectsSection = () => {
@@ -52,10 +52,26 @@ const ProjectsSection = () => {
                 className="cinema-card rounded-2xl overflow-hidden h-full group cursor-pointer glow-ring"
                 layout
                 onClick={() => toggleExpand(i)}
+                onMouseEnter={() => project.video_url && handleMouseEnter(i)}
+                onMouseLeave={() => project.video_url && handleMouseLeave(i)}
                 whileHover={{ y: expandedIndex === i ? 0 : -8, scale: expandedIndex === i ? 1 : 1.01 }}
                 transition={{ type: "spring", stiffness: 250 }}
               >
                 <div className="relative h-36 sm:h-44 bg-gradient-to-br from-secondary via-muted to-secondary flex items-center justify-center overflow-hidden">
+                  {/* Hover video preview - muted autoplay */}
+                  {project.video_url && (
+                    <video
+                      ref={(el) => { videoRefs.current[i] = el; }}
+                      src={project.video_url}
+                      muted
+                      loop
+                      playsInline
+                      preload="metadata"
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 z-10 ${
+                        hoveredIndex === i ? "opacity-100" : "opacity-0"
+                      }`}
+                    />
+                  )}
                   {project.image_url ? (
                     <img src={project.image_url} alt={project.title} className="w-full h-full object-cover" />
                   ) : (
@@ -65,6 +81,14 @@ const ProjectsSection = () => {
                         {project.title.charAt(0)}
                       </motion.span>
                     </>
+                  )}
+                  {/* Play icon indicator for videos */}
+                  {project.video_url && hoveredIndex !== i && (
+                    <div className="absolute bottom-2 right-2 z-20 bg-background/70 backdrop-blur-sm rounded-full p-1.5">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-blue-bright">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
                   )}
                 </div>
 
