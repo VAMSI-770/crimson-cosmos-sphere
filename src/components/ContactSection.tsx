@@ -12,7 +12,7 @@ const ContactSection = () => {
 
   const email = contact?.email || "vamsibollepalli770@gmail.com";
   const linkedin = contact?.linkedin || "https://www.linkedin.com/in/vamsi-bollepalli-28a6b231a";
-  const github = contact?.github || "https://github.com";
+  const github = contact?.github || "https://github.com/VAMSI-770";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
