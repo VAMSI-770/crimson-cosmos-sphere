@@ -121,6 +121,15 @@ const ProjectsSection = () => {
                       </svg>
                     </div>
                   )}
+                  {/* Video progress bar */}
+                  {project.video_url && hoveredIndex === i && (
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-background/30 z-30">
+                      <div
+                        className="h-full bg-gradient-to-r from-blue-primary to-blue-bright transition-[width] duration-100 ease-linear"
+                        style={{ width: `${videoProgress[i] || 0}%` }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-5 md:p-7">
