@@ -69,7 +69,7 @@ const HeroSection = () => {
             />
             <AnimatedWord
               text="VAMSI"
-              className="gradient-text tracking-[0.12em]"
+              className="text-blueberry-glow tracking-[0.12em]"
               startIndex={10}
             />
           </h1>
