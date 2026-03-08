@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,54 +6,54 @@
 
 @layer base {
   :root {
-    --background: 240 25% 4%;
-    --foreground: 240 10% 92%;
+    --background: 240 20% 4%;
+    --foreground: 40 10% 96%;
 
-    --card: 240 20% 7%;
-    --card-foreground: 240 10% 92%;
+    --card: 240 15% 6%;
+    --card-foreground: 40 10% 96%;
 
-    --popover: 240 20% 7%;
-    --popover-foreground: 240 10% 92%;
+    --popover: 240 15% 6%;
+    --popover-foreground: 40 10% 96%;
 
-    --primary: 245 100% 71%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 43 76% 52%;
+    --primary-foreground: 240 20% 4%;
 
-    --secondary: 240 18% 12%;
-    --secondary-foreground: 240 10% 70%;
+    --secondary: 230 20% 10%;
+    --secondary-foreground: 40 5% 70%;
 
-    --muted: 240 15% 14%;
-    --muted-foreground: 240 10% 45%;
+    --muted: 230 15% 12%;
+    --muted-foreground: 230 10% 45%;
 
-    --accent: 325 100% 68%;
+    --accent: 18 100% 62%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 15% 15%;
-    --input: 240 15% 15%;
-    --ring: 245 100% 71%;
+    --border: 230 15% 14%;
+    --input: 230 15% 14%;
+    --ring: 43 76% 52%;
 
     --radius: 0.875rem;
 
-    /* Cinematic dessert tokens */
-    --blueberry-glow: 245 100% 71%;
-    --berry-pink: 325 100% 68%;
-    --cream-frost: 340 100% 95%;
-    --lavender-frost: 264 100% 82%;
-    --electric-violet: 258 100% 74%;
-    --midnight: 240 25% 10%;
-    --deep-cinema: 240 25% 4%;
+    /* Royal cinematic tokens */
+    --royal-gold: 43 76% 52%;
+    --royal-gold-light: 43 80% 65%;
+    --royal-silver: 0 0% 78%;
+    --cinematic-fire: 18 100% 62%;
+    --midnight-blue: 220 33% 11%;
+    --royal-black: 240 24% 4%;
+    --deep-shadow: 240 30% 3%;
 
-    --font-display: 'Sora', 'Space Grotesk', sans-serif;
+    --font-display: 'Cinzel', 'Playfair Display', serif;
     --font-body: 'DM Sans', sans-serif;
 
-    --glass-bg: hsla(240, 20%, 8%, 0.6);
-    --glass-border: hsla(245, 100%, 71%, 0.1);
-    --glass-border-hover: hsla(245, 100%, 71%, 0.25);
-    --glow-shadow: 0 0 40px hsla(245, 100%, 71%, 0.15);
-    --glow-shadow-strong: 0 0 80px hsla(245, 100%, 71%, 0.25);
-    --glow-pink: 0 0 40px hsla(325, 100%, 68%, 0.12);
+    --glass-bg: hsla(230, 20%, 6%, 0.7);
+    --glass-border: hsla(43, 76%, 52%, 0.1);
+    --glass-border-hover: hsla(43, 76%, 52%, 0.3);
+    --glow-shadow: 0 0 40px hsla(43, 76%, 52%, 0.15);
+    --glow-shadow-strong: 0 0 80px hsla(43, 76%, 52%, 0.25);
+    --glow-fire: 0 0 40px hsla(18, 100%, 62%, 0.12);
   }
 }
 
@@ -93,7 +93,7 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, hsl(var(--blueberry-glow)), hsl(var(--berry-pink)), hsl(var(--lavender-frost)));
+    background: linear-gradient(135deg, hsl(var(--royal-gold)), hsl(var(--royal-gold-light)), hsl(var(--cinematic-fire)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -101,8 +101,12 @@
     animation: gradient-shift 6s ease infinite;
   }
 
+  .gold-text {
+    color: hsl(var(--royal-gold));
+  }
+
   .accent-text {
-    background: linear-gradient(135deg, hsl(var(--blueberry-glow)), hsl(var(--berry-pink)));
+    background: linear-gradient(135deg, hsl(var(--royal-gold)), hsl(var(--cinematic-fire)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -110,35 +114,38 @@
 
   .accent-line {
     height: 1px;
-    background: linear-gradient(90deg, transparent, hsl(var(--blueberry-glow)), hsl(var(--berry-pink)), transparent);
+    background: linear-gradient(90deg, transparent, hsl(var(--royal-gold)), hsl(var(--cinematic-fire)), transparent);
   }
 
   .cinema-card {
-    background: hsla(240, 20%, 7%, 0.7);
-    border: 1px solid hsla(245, 100%, 71%, 0.08);
+    background: hsla(230, 15%, 6%, 0.8);
+    border: 1px solid hsla(43, 76%, 52%, 0.08);
     backdrop-filter: blur(20px);
     border-radius: 1.25rem;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .cinema-card:hover {
-    border-color: hsla(245, 100%, 71%, 0.2);
+    border-color: hsla(43, 76%, 52%, 0.25);
     box-shadow:
-      0 0 30px hsla(245, 100%, 71%, 0.08),
-      0 0 60px hsla(325, 100%, 68%, 0.05),
+      0 0 30px hsla(43, 76%, 52%, 0.1),
+      0 0 60px hsla(18, 100%, 62%, 0.05),
       0 20px 50px hsla(240, 25%, 4%, 0.5);
     transform: translateY(-6px);
   }
 
   .glow-btn {
-    background: linear-gradient(135deg, hsl(var(--blueberry-glow)), hsl(var(--berry-pink)));
-    color: white;
+    background: linear-gradient(135deg, hsl(var(--royal-gold)), hsl(var(--cinematic-fire)));
+    color: hsl(var(--royal-black));
     border-radius: 9999px;
     padding: 0.85rem 2.2rem;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.875rem;
+    font-family: var(--font-display);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     transition: all 0.4s ease;
-    box-shadow: 0 4px 25px hsla(245, 100%, 71%, 0.3);
+    box-shadow: 0 4px 25px hsla(43, 76%, 52%, 0.3);
     position: relative;
     overflow: hidden;
   }
@@ -148,7 +155,7 @@
     position: absolute;
     inset: -2px;
     border-radius: inherit;
-    background: linear-gradient(135deg, hsl(var(--blueberry-glow)), hsl(var(--berry-pink)), hsl(var(--lavender-frost)));
+    background: linear-gradient(135deg, hsl(var(--royal-gold)), hsl(var(--cinematic-fire)), hsl(var(--royal-gold-light)));
     z-index: -1;
     filter: blur(12px);
     opacity: 0;
@@ -157,7 +164,7 @@
 
   .glow-btn:hover {
     transform: translateY(-2px) scale(1.04);
-    box-shadow: 0 8px 40px hsla(245, 100%, 71%, 0.4);
+    box-shadow: 0 8px 40px hsla(43, 76%, 52%, 0.45);
   }
 
   .glow-btn:hover::before {
@@ -166,13 +173,13 @@
 
   .bg-cinema-gradient {
     background:
-      radial-gradient(ellipse at 20% 50%, hsla(245, 100%, 71%, 0.06) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 20%, hsla(325, 100%, 68%, 0.04) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 80%, hsla(264, 100%, 82%, 0.03) 0%, transparent 50%);
+      radial-gradient(ellipse at 20% 50%, hsla(43, 76%, 52%, 0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, hsla(18, 100%, 62%, 0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, hsla(43, 80%, 65%, 0.02) 0%, transparent 50%);
   }
 
   .bg-cinema-subtle {
-    background: radial-gradient(ellipse at 50% 0%, hsla(245, 100%, 71%, 0.05) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 50% 0%, hsla(43, 76%, 52%, 0.04) 0%, transparent 60%);
   }
 
   .particle-bg {
@@ -192,7 +199,7 @@
     inset: -2px;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, hsl(var(--blueberry-glow)), transparent, hsl(var(--berry-pink)));
+    background: linear-gradient(135deg, hsl(var(--royal-gold)), transparent, hsl(var(--cinematic-fire)));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -211,10 +218,10 @@
   width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: hsl(240, 25%, 4%);
+  background: hsl(240, 20%, 4%);
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, hsl(245, 100%, 71%), hsl(325, 100%, 68%));
+  background: linear-gradient(180deg, hsl(43, 76%, 52%), hsl(18, 100%, 62%));
   border-radius: 2px;
 }
 
@@ -230,7 +237,7 @@ section::before {
   left: 10%;
   right: 10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, hsla(245, 100%, 71%, 0.1), hsla(325, 100%, 68%, 0.06), transparent);
+  background: linear-gradient(90deg, transparent, hsla(43, 76%, 52%, 0.15), hsla(18, 100%, 62%, 0.08), transparent);
 }
 
 section:first-child::before {
