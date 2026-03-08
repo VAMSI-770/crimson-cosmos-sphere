@@ -89,13 +89,13 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
               <form onSubmit={handleLogin} className="space-y-5">
                 <div>
                   <label className="block text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
-                    Email
+                    Name
                   </label>
                   <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@example.com"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter your name"
                     className="w-full bg-secondary/50 border border-border/50 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-primary/50 transition-colors"
                     required
                   />
