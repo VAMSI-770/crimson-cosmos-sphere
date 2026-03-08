@@ -35,11 +35,11 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <span className="text-foreground">Crafting</span>
+            <span className="text-foreground tracking-[0.15em] uppercase text-3xl md:text-5xl lg:text-6xl font-medium">Bollepalli</span>
             <br />
-            <span className="gradient-text">Cinematic Digital</span>
+            <span className="gradient-text tracking-[0.2em] uppercase">Vamsi</span>
             <br />
-            <span className="text-foreground">Experiences</span>
+            <span className="text-secondary-foreground text-lg md:text-2xl lg:text-3xl font-light tracking-[0.25em] uppercase mt-2 inline-block">Portfolio</span>
           </motion.h1>
 
           {/* Subtitle */}
