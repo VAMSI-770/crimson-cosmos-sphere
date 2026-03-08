@@ -124,13 +124,6 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
                 </motion.button>
               </form>
 
-              <button
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="w-full text-center text-xs text-blue-bright/70 hover:text-blue-bright mt-4 transition-colors"
-              >
-                {isSignUp ? "Already have an account? Log in" : "First time? Create admin account"}
-              </button>
-
               <p className="text-center text-xs text-muted-foreground/60 mt-4">
                 Protected by secure authentication
               </p>
