@@ -12,6 +12,7 @@ const certifications = [
     description: "Completed a 3-day workshop covering resume building, LinkedIn profile optimization, and interview preparation.",
     skills: ["Resume Building", "LinkedIn Optimization", "Interview Prep"],
     file: { url: "/certificates/brainic_workshop.pdf", type: "pdf" as const },
+    previewImage: "/certificates/brainic_workshop_img.png",
   },
   {
     title: "Getting Started with Artificial Intelligence",
@@ -36,6 +37,7 @@ const certifications = [
     description: "Completed Python programming internship with hands-on development experience and real-world project exposure.",
     skills: ["Python", "Programming", "Software Development"],
     file: { url: "/certificates/Micro_IT_certificate_1.pdf", type: "pdf" as const },
+    previewImage: "/certificates/Micro_IT_certificate_img.png",
   },
   {
     title: "SQL Certificate",
@@ -66,7 +68,9 @@ const CertificationsSection = () => {
   const handlePreview = (e: React.MouseEvent, cert: typeof certifications[0]) => {
     e.stopPropagation();
     if (cert.file) {
-      setViewerFile({ url: cert.file.url, title: cert.title, type: cert.file.type });
+      const previewUrl = (cert as any).previewImage || cert.file.url;
+      const previewType = (cert as any).previewImage ? "image" as const : cert.file.type;
+      setViewerFile({ url: previewUrl, title: cert.title, type: previewType });
     }
   };
 
