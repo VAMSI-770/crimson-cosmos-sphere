@@ -16,7 +16,7 @@ const VisionSection = () => {
         </ScrollReveal>
         <ScrollReveal delay={0.15}>
           <p className="text-lg md:text-xl text-secondary-foreground max-w-2xl mx-auto leading-relaxed font-medium italic">
-            "I want to create intelligent systems that combine data, design, and engineering to solve real world problems."
+            "I want to build intelligent systems powered by AI and Computer Vision that solve real-world challenges — from cleaning up space debris to detecting diseases early."
           </p>
         </ScrollReveal>
         <ScrollReveal delay={0.3}>
