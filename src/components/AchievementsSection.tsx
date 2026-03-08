@@ -3,56 +3,29 @@ import ScrollReveal from "./ScrollReveal";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, Download, FileText, Image } from "lucide-react";
 import CertificateViewer from "./CertificateViewer";
-
-const achievements = [
-  {
-    title: "MindSprint 2K25 National Hackathon",
-    label: "Hackathon",
-    description: "National-level hackathon participation",
-    details: "Competed as Team 'The Space Savants' with members Bollepalli Vamsi, Iragala Susmitha, and Bora Pavan from NRI Institute of Technology. Mission: Develop intelligent solutions for sustainable space technology.",
-    team: "The Space Savants",
-    file: { url: "/certificates/MindSprint_2K25_Certificate.pdf", type: "pdf" as const },
-    previewImage: "/certificates/MindSprint_2K25_img.png",
-  },
-  {
-    title: "Smart India Hackathon",
-    label: "Hackathon",
-    description: "Qualified for Level 2",
-    details: "Top team at college level, qualified for Level 2 of the Smart India Hackathon. Built the AI Swarm Robotics Space Debris Cleanup project. Applied AI and robotics knowledge, improved teamwork and problem solving, and worked on real-world space challenges.",
-    team: "Space Savants",
-    file: null,
-  },
-  {
-    title: "Vignan Nirula Chess Competition",
-    label: "Competition",
-    description: "2nd Prize Winner",
-    details: "Won 2nd Prize at the Vignan Nirula Chess Competition, demonstrating strategic thinking and competitive excellence.",
-    file: { url: "/certificates/Chess_Competition_Certificate.jpeg", type: "image" as const },
-  },
-];
+import { useAchievements } from "@/hooks/usePortfolioData";
 
 const AchievementsSection = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [viewerFile, setViewerFile] = useState<{ url: string; title: string; type: "pdf" | "image" } | null>(null);
+  const { data: achievements = [] } = useAchievements();
 
-  const toggleExpand = (index: number) => {
-    setExpandedIndex(expandedIndex === index ? null : index);
-  };
+  const toggleExpand = (index: number) => setExpandedIndex(expandedIndex === index ? null : index);
 
-  const handlePreview = (e: React.MouseEvent, item: typeof achievements[0]) => {
+  const handlePreview = (e: React.MouseEvent, item: any) => {
     e.stopPropagation();
-    if (item.file) {
-      const previewUrl = (item as any).previewImage || item.file.url;
-      const previewType = (item as any).previewImage ? "image" as const : item.file.type;
+    if (item.file_url) {
+      const previewUrl = item.preview_image_url || item.file_url;
+      const previewType = item.preview_image_url ? "image" as const : (item.file_type === "pdf" ? "pdf" as const : "image" as const);
       setViewerFile({ url: previewUrl, title: item.title, type: previewType });
     }
   };
 
-  const handleDownload = (e: React.MouseEvent, item: typeof achievements[0]) => {
+  const handleDownload = (e: React.MouseEvent, item: any) => {
     e.stopPropagation();
-    if (item.file) {
+    if (item.file_url) {
       const a = document.createElement("a");
-      a.href = item.file.url;
+      a.href = item.file_url;
       a.download = item.title;
       document.body.appendChild(a);
       a.click();
@@ -73,8 +46,8 @@ const AchievementsSection = () => {
           </ScrollReveal>
 
           <div className="grid sm:grid-cols-2 gap-4 md:gap-6 max-w-4xl mx-auto">
-            {achievements.map((achievement, i) => (
-              <ScrollReveal key={achievement.title} delay={i * 0.1}>
+            {achievements.map((achievement: any, i: number) => (
+              <ScrollReveal key={achievement.id} delay={i * 0.1}>
                 <motion.div
                   className="cinema-card rounded-2xl p-5 md:p-7 h-full group cursor-pointer glow-ring flex flex-col"
                   layout
@@ -84,66 +57,36 @@ const AchievementsSection = () => {
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      {achievement.file && (
+                      {achievement.file_url && (
                         <div className="w-8 h-8 rounded-lg bg-secondary/60 border border-border/50 flex items-center justify-center">
-                          {achievement.file.type === "pdf" ? (
-                            <FileText className="w-4 h-4 text-blue-bright" />
-                          ) : (
-                            <Image className="w-4 h-4 text-blue-bright" />
-                          )}
+                          {achievement.file_type === "pdf" ? <FileText className="w-4 h-4 text-blue-bright" /> : <Image className="w-4 h-4 text-blue-bright" />}
                         </div>
                       )}
-                      <span className="text-xs px-3 py-1.5 rounded-full bg-secondary/60 text-blue-bright border border-blue-primary/20 font-medium">
-                        {achievement.label}
-                      </span>
+                      <span className="text-xs px-3 py-1.5 rounded-full bg-secondary/60 text-blue-bright border border-blue-primary/20 font-medium">{achievement.label}</span>
                     </div>
-                    <motion.span
-                      className="text-xs text-muted-foreground"
-                      animate={{ rotate: expandedIndex === i ? 180 : 0 }}
-                    >
-                      ↓
-                    </motion.span>
+                    <motion.span className="text-xs text-muted-foreground" animate={{ rotate: expandedIndex === i ? 180 : 0 }}>↓</motion.span>
                   </div>
 
-                  <h3 className="text-base md:text-lg font-display font-semibold text-foreground mb-2 group-hover:text-blue-bright transition-colors">
-                    {achievement.title}
-                  </h3>
+                  <h3 className="text-base md:text-lg font-display font-semibold text-foreground mb-2 group-hover:text-blue-bright transition-colors">{achievement.title}</h3>
                   <p className="text-sm text-muted-foreground">{achievement.description}</p>
                   {achievement.team && <p className="text-xs text-blue-bright/70 mt-2">Team: {achievement.team}</p>}
 
-                  {/* Action Buttons */}
-                  {achievement.file && (
+                  {achievement.file_url && (
                     <div className="flex gap-2 mt-auto pt-3 border-t border-border/20">
-                      <button
-                        onClick={(e) => handlePreview(e, achievement)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-primary/10 text-blue-bright hover:bg-blue-primary/20 border border-blue-primary/20 transition-all duration-200 hover:scale-105"
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                        Preview
+                      <button onClick={(e) => handlePreview(e, achievement)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-primary/10 text-blue-bright hover:bg-blue-primary/20 border border-blue-primary/20 transition-all duration-200 hover:scale-105">
+                        <Eye className="w-3.5 h-3.5" /> Preview
                       </button>
-                      <button
-                        onClick={(e) => handleDownload(e, achievement)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-secondary/60 text-muted-foreground hover:text-foreground hover:bg-secondary border border-border/50 transition-all duration-200 hover:scale-105"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        Download
+                      <button onClick={(e) => handleDownload(e, achievement)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-secondary/60 text-muted-foreground hover:text-foreground hover:bg-secondary border border-border/50 transition-all duration-200 hover:scale-105">
+                        <Download className="w-3.5 h-3.5" /> Download
                       </button>
                     </div>
                   )}
 
                   <AnimatePresence>
                     {expandedIndex === i && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                        className="overflow-hidden"
-                      >
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }} className="overflow-hidden">
                         <div className="pt-4 mt-3 border-t border-border/30">
-                          <p className="text-sm text-muted-foreground leading-relaxed">
-                            {achievement.details}
-                          </p>
+                          <p className="text-sm text-muted-foreground leading-relaxed">{achievement.details}</p>
                         </div>
                       </motion.div>
                     )}
@@ -155,11 +98,7 @@ const AchievementsSection = () => {
         </div>
       </section>
 
-      <CertificateViewer
-        isOpen={!!viewerFile}
-        onClose={() => setViewerFile(null)}
-        file={viewerFile}
-      />
+      <CertificateViewer isOpen={!!viewerFile} onClose={() => setViewerFile(null)} file={viewerFile} />
     </>
   );
 };

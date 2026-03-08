@@ -1,14 +1,35 @@
 import { useState } from "react";
 import ScrollReveal from "./ScrollReveal";
 import { Mail, Linkedin, Github } from "lucide-react";
+import { useSiteContent } from "@/hooks/usePortfolioData";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const ContactSection = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [sending, setSending] = useState(false);
+  const { data: contact } = useSiteContent("contact");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const email = contact?.email || "vamsibollepalli770@gmail.com";
+  const linkedin = contact?.linkedin || "https://www.linkedin.com/in/vamsi-bollepalli-28a6b231a";
+  const github = contact?.github || "https://github.com";
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Thanks for reaching out! I'll get back to you soon.");
-    setForm({ name: "", email: "", message: "" });
+    setSending(true);
+    try {
+      const { error } = await supabase.from("contact_messages").insert({
+        name: form.name,
+        email: form.email,
+        message: form.message,
+      });
+      if (error) throw error;
+      toast.success("Thanks for reaching out! I'll get back to you soon.");
+      setForm({ name: "", email: "", message: "" });
+    } catch (err: any) {
+      toast.error("Failed to send message. Please try again.");
+    }
+    setSending(false);
   };
 
   return (
@@ -17,8 +38,7 @@ const ContactSection = () => {
         <ScrollReveal>
           <p className="accent-text text-xs tracking-[0.4em] uppercase mb-4 font-semibold font-display">Get In Touch</p>
           <h2 className="text-3xl md:text-5xl font-bold font-display mb-5">
-            Begin a New{" "}
-            <span className="gradient-text">Collaboration</span>
+            Begin a New <span className="gradient-text">Collaboration</span>
           </h2>
           <div className="w-20 h-[2px] rounded-full bg-gradient-to-r from-blue-primary to-blue-bright mb-16" />
         </ScrollReveal>
@@ -30,9 +50,9 @@ const ContactSection = () => {
             </p>
             <div className="space-y-5">
               {[
-                { icon: Mail, label: "vamsibollepalli770@gmail.com", href: "mailto:vamsibollepalli770@gmail.com" },
-                { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/vamsi-bollepalli-28a6b231a" },
-                { icon: Github, label: "GitHub", href: "https://github.com" },
+                { icon: Mail, label: email, href: `mailto:${email}` },
+                { icon: Linkedin, label: "LinkedIn", href: linkedin },
+                { icon: Github, label: "GitHub", href: github },
               ].map(({ icon: Icon, label, href }) => (
                 <a
                   key={label}
@@ -63,7 +83,7 @@ const ContactSection = () => {
                   required
                   value={form[key]}
                   onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  className="w-full px-5 py-3.5 rounded-xl bg-secondary/40 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-primary/40 focus:ring-2 focus:ring-blue-primary/10 focus:shadow-[0_0_20px_hsla(221,83%,53%,0.08)] transition-all duration-400 text-sm backdrop-blur-sm"
+                  className="w-full px-5 py-3.5 rounded-xl bg-secondary/40 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-primary/40 focus:ring-2 focus:ring-blue-primary/10 transition-all duration-400 text-sm backdrop-blur-sm"
                 />
               ))}
               <textarea
@@ -72,10 +92,10 @@ const ContactSection = () => {
                 rows={4}
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
-                className="w-full px-5 py-3.5 rounded-xl bg-secondary/40 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-primary/40 focus:ring-2 focus:ring-blue-primary/10 focus:shadow-[0_0_20px_hsla(221,83%,53%,0.08)] transition-all duration-400 resize-none text-sm backdrop-blur-sm"
+                className="w-full px-5 py-3.5 rounded-xl bg-secondary/40 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-primary/40 focus:ring-2 focus:ring-blue-primary/10 transition-all duration-400 resize-none text-sm backdrop-blur-sm"
               />
-              <button type="submit" className="glow-btn w-full">
-                Send Message
+              <button type="submit" disabled={sending} className="glow-btn w-full disabled:opacity-50">
+                {sending ? "Sending..." : "Send Message"}
               </button>
             </form>
           </ScrollReveal>
