@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 const timeline = [
   {
-    year: "2022",
+    year: "2023",
     title: "Started B.Tech – Data Science",
     description: "Joined NRI Institute of Technology, Visadala, Guntur. Began learning Python, statistics, and data science fundamentals.",
   },
