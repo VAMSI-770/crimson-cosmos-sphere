@@ -19,6 +19,7 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
     setIsLoading(true);
 
     if (name === "Vamsi" && password === "Vamsichowdary25@") {
+      sessionStorage.setItem("admin_authenticated", "true");
       toast.success("Welcome to Admin Portal");
       // Send login notification email (fire and forget)
       supabase.functions.invoke("admin-login-notify", {
