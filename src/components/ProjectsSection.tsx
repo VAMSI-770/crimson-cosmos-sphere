@@ -22,7 +22,7 @@ const projects = [
   },
   {
     title: "Portfolio Experience",
-    description: "This cinematic portfolio — a premium dark-themed experience built with React and motion design.",
+    description: "This royal cinematic portfolio — a premium dark-themed experience built with React and motion design.",
     tags: ["React", "Tailwind", "Framer Motion"],
     emoji: "🎬",
   },
@@ -33,11 +33,11 @@ const ProjectsSection = () => {
     <section id="projects" className="relative py-32 bg-cinema-subtle">
       <div className="container mx-auto px-6 lg:px-16">
         <ScrollReveal>
-          <p className="accent-text text-xs tracking-[0.3em] uppercase mb-4 font-semibold">Act III</p>
+          <p className="accent-text text-xs tracking-[0.4em] uppercase mb-4 font-semibold font-display">Chapter III</p>
           <h2 className="text-3xl md:text-5xl font-bold font-display mb-5">
-            Featured <span className="gradient-text">Work</span>
+            Epic <span className="gradient-text">Showcase</span>
           </h2>
-          <div className="w-20 h-[2px] rounded-full bg-gradient-to-r from-blueberry-glow to-berry-pink mb-16" />
+          <div className="w-20 h-[2px] rounded-full bg-gradient-to-r from-royal-gold to-cinematic-fire mb-16" />
         </ScrollReveal>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -48,14 +48,20 @@ const ProjectsSection = () => {
                 whileHover={{ y: -8, scale: 1.01 }}
                 transition={{ type: "spring", stiffness: 250 }}
               >
-                {/* Preview area with atmospheric glow */}
-                <div className="relative h-40 bg-gradient-to-br from-secondary via-muted to-secondary flex items-center justify-center overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blueberry-glow/[0.05] to-berry-pink/[0.03] group-hover:from-blueberry-glow/[0.1] group-hover:to-berry-pink/[0.06] transition-all duration-700" />
-                  <span className="text-4xl relative z-10">{project.emoji}</span>
+                {/* Preview area */}
+                <div className="relative h-44 bg-gradient-to-br from-secondary via-muted to-secondary flex items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-royal-gold/[0.04] to-cinematic-fire/[0.02] group-hover:from-royal-gold/[0.1] group-hover:to-cinematic-fire/[0.06] transition-all duration-700" />
+                  <motion.span
+                    className="text-5xl relative z-10"
+                    whileHover={{ scale: 1.2, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    {project.emoji}
+                  </motion.span>
                 </div>
 
                 <div className="p-7">
-                  <h3 className="text-lg font-display font-semibold mb-2 text-foreground group-hover:text-blueberry-glow transition-colors duration-400">
+                  <h3 className="text-lg font-display font-semibold mb-2 text-foreground group-hover:text-royal-gold transition-colors duration-400 tracking-wide">
                     {project.title}
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed mb-5">
@@ -68,7 +74,7 @@ const ProjectsSection = () => {
                       </span>
                     ))}
                   </div>
-                  <p className="accent-text text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-400">
+                  <p className="accent-text text-sm font-semibold font-display tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-400">
                     View Project →
                   </p>
                 </div>

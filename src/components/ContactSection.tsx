@@ -15,12 +15,12 @@ const ContactSection = () => {
     <section id="contact" className="relative py-32 bg-cinema-subtle">
       <div className="container mx-auto px-6 lg:px-16">
         <ScrollReveal>
-          <p className="accent-text text-xs tracking-[0.3em] uppercase mb-4 font-semibold">Final Scene</p>
+          <p className="accent-text text-xs tracking-[0.4em] uppercase mb-4 font-semibold font-display">Final Chapter</p>
           <h2 className="text-3xl md:text-5xl font-bold font-display mb-5">
-            Let's Build Something{" "}
-            <span className="gradient-text">Incredible</span>
+            Begin a New{" "}
+            <span className="gradient-text">Collaboration</span>
           </h2>
-          <div className="w-20 h-[2px] rounded-full bg-gradient-to-r from-blueberry-glow to-berry-pink mb-16" />
+          <div className="w-20 h-[2px] rounded-full bg-gradient-to-r from-royal-gold to-cinematic-fire mb-16" />
         </ScrollReveal>
 
         <div className="grid lg:grid-cols-2 gap-16">
@@ -39,10 +39,10 @@ const ContactSection = () => {
                   href={href}
                   target={href.startsWith("http") ? "_blank" : undefined}
                   rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="flex items-center gap-4 text-muted-foreground hover:text-blueberry-glow transition-all duration-400 text-sm font-medium group"
+                  className="flex items-center gap-4 text-muted-foreground hover:text-royal-gold transition-all duration-400 text-sm font-medium group"
                 >
-                  <div className="w-11 h-11 rounded-xl bg-blueberry-glow/[0.06] border border-blueberry-glow/10 flex items-center justify-center group-hover:bg-blueberry-glow/10 group-hover:border-blueberry-glow/25 group-hover:shadow-[0_0_20px_hsla(245,100%,71%,0.1)] transition-all duration-400">
-                    <Icon className="w-4 h-4 text-blueberry-glow" />
+                  <div className="w-11 h-11 rounded-xl bg-royal-gold/[0.06] border border-royal-gold/10 flex items-center justify-center group-hover:bg-royal-gold/10 group-hover:border-royal-gold/30 group-hover:shadow-[0_0_20px_hsla(43,76%,52%,0.12)] transition-all duration-400">
+                    <Icon className="w-4 h-4 text-royal-gold" />
                   </div>
                   {label}
                 </a>
@@ -63,7 +63,7 @@ const ContactSection = () => {
                   required
                   value={form[key]}
                   onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  className="w-full px-5 py-3.5 rounded-xl bg-secondary/40 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blueberry-glow/40 focus:ring-2 focus:ring-blueberry-glow/10 focus:shadow-[0_0_20px_hsla(245,100%,71%,0.06)] transition-all duration-400 text-sm backdrop-blur-sm"
+                  className="w-full px-5 py-3.5 rounded-xl bg-secondary/40 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-royal-gold/40 focus:ring-2 focus:ring-royal-gold/10 focus:shadow-[0_0_20px_hsla(43,76%,52%,0.08)] transition-all duration-400 text-sm backdrop-blur-sm"
                 />
               ))}
               <textarea
@@ -72,7 +72,7 @@ const ContactSection = () => {
                 rows={4}
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
-                className="w-full px-5 py-3.5 rounded-xl bg-secondary/40 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blueberry-glow/40 focus:ring-2 focus:ring-blueberry-glow/10 focus:shadow-[0_0_20px_hsla(245,100%,71%,0.06)] transition-all duration-400 resize-none text-sm backdrop-blur-sm"
+                className="w-full px-5 py-3.5 rounded-xl bg-secondary/40 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-royal-gold/40 focus:ring-2 focus:ring-royal-gold/10 focus:shadow-[0_0_20px_hsla(43,76%,52%,0.08)] transition-all duration-400 resize-none text-sm backdrop-blur-sm"
               />
               <button type="submit" className="glow-btn w-full">
                 Send Message

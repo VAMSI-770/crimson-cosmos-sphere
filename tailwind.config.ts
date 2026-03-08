@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Sora", "Space Grotesk", "sans-serif"],
+        display: ["Cinzel", "Playfair Display", "serif"],
         body: ["DM Sans", "sans-serif"],
       },
       colors: {
@@ -51,12 +51,12 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        "blueberry-glow": "hsl(var(--blueberry-glow))",
-        "berry-pink": "hsl(var(--berry-pink))",
-        "cream-frost": "hsl(var(--cream-frost))",
-        "lavender-frost": "hsl(var(--lavender-frost))",
-        "electric-violet": "hsl(var(--electric-violet))",
-        midnight: "hsl(var(--midnight))",
+        "royal-gold": "hsl(var(--royal-gold))",
+        "royal-gold-light": "hsl(var(--royal-gold-light))",
+        "royal-silver": "hsl(var(--royal-silver))",
+        "cinematic-fire": "hsl(var(--cinematic-fire))",
+        "midnight-blue": "hsl(var(--midnight-blue))",
+        "royal-black": "hsl(var(--royal-black))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -100,11 +100,11 @@ export default {
         },
         "glow-pulse": {
           "0%, 100%": { opacity: "0.3" },
-          "50%": { opacity: "0.7" },
+          "50%": { opacity: "0.8" },
         },
-        "cinema-beam": {
-          "0%": { transform: "translateX(-100%) rotate(15deg)" },
-          "100%": { transform: "translateX(200%) rotate(15deg)" },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
         },
       },
       animation: {
@@ -116,7 +116,7 @@ export default {
         "gradient-shift": "gradient-shift 6s ease infinite",
         blob: "blob 14s ease-in-out infinite",
         "glow-pulse": "glow-pulse 4s ease-in-out infinite",
-        "cinema-beam": "cinema-beam 8s linear infinite",
+        shimmer: "shimmer 3s linear infinite",
       },
     },
   },

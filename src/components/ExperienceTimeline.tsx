@@ -29,17 +29,17 @@ const ExperienceTimeline = () => {
     <section id="experience" className="relative py-32">
       <div className="container mx-auto px-6 lg:px-16">
         <ScrollReveal>
-          <p className="accent-text text-xs tracking-[0.3em] uppercase mb-4 font-semibold">Act IV</p>
+          <p className="accent-text text-xs tracking-[0.4em] uppercase mb-4 font-semibold font-display">Chapter IV</p>
           <h2 className="text-3xl md:text-5xl font-bold font-display mb-5">
             The <span className="gradient-text">Timeline</span>
           </h2>
-          <div className="w-20 h-[2px] rounded-full bg-gradient-to-r from-blueberry-glow to-berry-pink mb-16" />
+          <div className="w-20 h-[2px] rounded-full bg-gradient-to-r from-royal-gold to-cinematic-fire mb-16" />
         </ScrollReveal>
 
         <div className="relative max-w-2xl mx-auto">
-          {/* Glowing timeline line */}
+          {/* Glowing timeline line - gold */}
           <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px md:-translate-x-px">
-            <div className="w-full h-full bg-gradient-to-b from-blueberry-glow/30 via-berry-pink/20 to-blueberry-glow/10" />
+            <div className="w-full h-full bg-gradient-to-b from-royal-gold/30 via-cinematic-fire/20 to-royal-gold/10" />
           </div>
 
           {timeline.map((item, i) => (
@@ -47,7 +47,7 @@ const ExperienceTimeline = () => {
               <div className={`relative flex items-start gap-8 mb-14 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}>
                 {/* Glowing dot */}
                 <div className="absolute left-6 md:left-1/2 -translate-x-1.5 mt-2 z-10">
-                  <div className="w-3 h-3 rounded-full bg-blueberry-glow border-4 border-background shadow-[0_0_12px_hsla(245,100%,71%,0.4)]" />
+                  <div className="w-3 h-3 rounded-full bg-royal-gold border-4 border-background shadow-[0_0_12px_hsla(43,76%,52%,0.5)]" />
                 </div>
 
                 <div className={`ml-14 md:ml-0 md:w-[calc(50%-2rem)] ${i % 2 === 0 ? "md:pr-8 md:text-right" : "md:pl-8"}`}>
@@ -56,7 +56,7 @@ const ExperienceTimeline = () => {
                     whileHover={{ y: -4 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                    <span className="text-xs font-bold text-blueberry-glow tracking-widest uppercase">{item.year}</span>
+                    <span className="text-xs font-bold text-royal-gold tracking-[0.3em] uppercase font-display">{item.year}</span>
                     <h3 className="text-base font-display font-semibold text-foreground mt-2 mb-2">{item.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
                   </motion.div>
