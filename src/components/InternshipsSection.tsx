@@ -25,6 +25,7 @@ const internships = [
     technologies: ["Python", "Programming", "Software Development"],
     highlights: ["Python programming proficiency", "Real-world coding projects", "Software development practices"],
     file: { url: "/certificates/Micro_IT_certificate_1.pdf", type: "pdf" as const },
+    previewImage: "/certificates/Micro_IT_certificate_img.png",
   },
 ];
 
