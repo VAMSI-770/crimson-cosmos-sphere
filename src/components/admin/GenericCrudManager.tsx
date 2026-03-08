@@ -8,7 +8,7 @@ import { Plus, Pencil, Trash2, Save, X, Upload } from "lucide-react";
 interface FieldDef {
   key: string;
   label: string;
-  type: "text" | "textarea" | "array" | "file";
+  type: "text" | "textarea" | "array" | "file" | "video";
   placeholder?: string;
 }
 
