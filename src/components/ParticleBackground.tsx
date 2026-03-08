@@ -11,7 +11,7 @@ const ParticleBackground = () => {
 
     let animationId: number;
     const particles: { x: number; y: number; vx: number; vy: number; size: number; alpha: number; color: string }[] = [];
-    const count = 45;
+    const count = 30;
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -20,16 +20,22 @@ const ParticleBackground = () => {
     resize();
     window.addEventListener("resize", resize);
 
+    const colors = [
+      "261, 78%, 64%",  // blueberry
+      "330, 100%, 71%", // strawberry
+      "270, 100%, 92%", // lavender
+      "48, 100%, 71%",  // lemon
+    ];
+
     for (let i = 0; i < count; i++) {
-      const isCrimson = Math.random() > 0.5;
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.2,
-        vy: (Math.random() - 0.5) * 0.2,
-        size: Math.random() * 1.5 + 0.3,
-        alpha: Math.random() * 0.25 + 0.05,
-        color: isCrimson ? "1, 95%, 48%" : "263, 70%, 58%",
+        vx: (Math.random() - 0.5) * 0.15,
+        vy: (Math.random() - 0.5) * 0.15,
+        size: Math.random() * 3 + 1,
+        alpha: Math.random() * 0.12 + 0.03,
+        color: colors[Math.floor(Math.random() * colors.length)],
       });
     }
 

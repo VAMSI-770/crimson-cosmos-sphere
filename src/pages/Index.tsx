@@ -5,6 +5,7 @@ import HeroSection from "../components/HeroSection";
 import AboutSection from "../components/AboutSection";
 import SkillsSection from "../components/SkillsSection";
 import ProjectsSection from "../components/ProjectsSection";
+import ExperienceTimeline from "../components/ExperienceTimeline";
 import VisionSection from "../components/VisionSection";
 import ContactSection from "../components/ContactSection";
 import FooterSection from "../components/FooterSection";
@@ -14,7 +15,7 @@ const Index = () => {
   const handleComplete = useCallback(() => setLoaded(true), []);
 
   return (
-    <div className="relative min-h-screen bg-background overflow-x-hidden">
+    <div className="relative min-h-screen bg-gradient-cream overflow-x-hidden">
       <CinematicLoader onComplete={handleComplete} />
 
       <ParticleBackground />
@@ -23,12 +24,12 @@ const Index = () => {
       <nav className="fixed top-0 left-0 right-0 z-40 backdrop-blur-xl bg-background/70 border-b border-border/50">
         <div className="container mx-auto px-6 lg:px-16 flex items-center justify-between h-14">
           <a href="#hero" className="font-display font-bold text-lg gradient-text">VB</a>
-          <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground font-body">
-            {["About", "Skills", "Projects", "Vision", "Contact"].map((item) => (
+          <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground font-body font-medium">
+            {["About", "Skills", "Projects", "Experience", "Vision", "Contact"].map((item) => (
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="hover:text-foreground transition-colors duration-300 tracking-wide"
+                className="hover:text-blueberry transition-colors duration-300 tracking-wide"
               >
                 {item}
               </a>
@@ -42,6 +43,7 @@ const Index = () => {
         <AboutSection />
         <SkillsSection />
         <ProjectsSection />
+        <ExperienceTimeline />
         <VisionSection />
         <ContactSection />
         <FooterSection />
