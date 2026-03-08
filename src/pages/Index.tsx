@@ -56,6 +56,7 @@ const Index = () => {
       // Highlight arrow if that command was used
       if (command === "open the arrow") {
         setIsArrowHighlighted(true);
+        setIsArrowUnlocked(true);
         setTimeout(() => setIsArrowHighlighted(false), 5000);
       }
     }
