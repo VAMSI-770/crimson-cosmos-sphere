@@ -10,6 +10,7 @@ const fallbackProjects = [
 const ProjectsSection = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [bufferingIndex, setBufferingIndex] = useState<number | null>(null);
   const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
   const { data: dbProjects } = useProjects();
   const projects = dbProjects && dbProjects.length > 0 ? dbProjects : fallbackProjects;
