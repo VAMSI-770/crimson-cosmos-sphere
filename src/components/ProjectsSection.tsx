@@ -11,30 +11,46 @@ const ProjectsSection = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [bufferingIndex, setBufferingIndex] = useState<number | null>(null);
+  const [videoProgress, setVideoProgress] = useState<Record<number, number>>({});
   const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
+  const rafRef = useRef<Record<number, number>>({});
   const { data: dbProjects } = useProjects();
   const projects = dbProjects && dbProjects.length > 0 ? dbProjects : fallbackProjects;
 
   const toggleExpand = (index: number) => setExpandedIndex(expandedIndex === index ? null : index);
 
+  const updateProgress = useCallback((index: number) => {
+    const video = videoRefs.current[index];
+    if (video && video.duration) {
+      setVideoProgress(prev => ({ ...prev, [index]: (video.currentTime / video.duration) * 100 }));
+    }
+    rafRef.current[index] = requestAnimationFrame(() => updateProgress(index));
+  }, []);
+
   const handleMouseEnter = useCallback((index: number) => {
     setHoveredIndex(index);
     setBufferingIndex(index);
+    setVideoProgress(prev => ({ ...prev, [index]: 0 }));
     const video = videoRefs.current[index];
     if (video) {
       video.currentTime = 0;
       video.play().catch(() => {});
     }
-  }, []);
+    rafRef.current[index] = requestAnimationFrame(() => updateProgress(index));
+  }, [updateProgress]);
 
   const handleMouseLeave = useCallback((index: number) => {
     setHoveredIndex(null);
     setBufferingIndex(null);
+    if (rafRef.current[index]) {
+      cancelAnimationFrame(rafRef.current[index]);
+    }
     const video = videoRefs.current[index];
     if (video) {
       video.pause();
       video.currentTime = 0;
     }
+    setVideoProgress(prev => ({ ...prev, [index]: 0 }));
   }, []);
 
   return (
@@ -103,6 +119,15 @@ const ProjectsSection = () => {
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-blue-bright">
                         <path d="M8 5v14l11-7z" />
                       </svg>
+                    </div>
+                  )}
+                  {/* Video progress bar */}
+                  {project.video_url && hoveredIndex === i && (
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-background/30 z-30">
+                      <div
+                        className="h-full bg-gradient-to-r from-blue-primary to-blue-bright transition-[width] duration-100 ease-linear"
+                        style={{ width: `${videoProgress[i] || 0}%` }}
+                      />
                     </div>
                   )}
                 </div>
