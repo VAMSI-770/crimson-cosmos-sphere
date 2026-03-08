@@ -49,7 +49,7 @@ const HeroSection = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 0.8 }}
           >
-            A developer who designs immersive digital worlds.
+            Full Stack Developer · Creative Technologist
           </motion.p>
 
           <motion.p
