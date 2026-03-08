@@ -4,23 +4,23 @@ import { motion } from "framer-motion";
 const timeline = [
   {
     year: "2022",
-    title: "Started B.Tech in Data Science",
-    description: "Began the journey into data science — learning Python, statistics, and foundational machine learning.",
+    title: "Started B.Tech – Data Science",
+    description: "Joined NRI Institute of Technology, Visadala, Guntur. Began learning Python, statistics, and data science fundamentals.",
   },
   {
     year: "2023",
-    title: "First ML Projects",
-    description: "Built prediction models and data dashboards. Discovered the thrill of turning raw data into insights.",
+    title: "First AI & ML Projects",
+    description: "Built computer vision models using YOLOv8, explored machine learning, and started working with Roboflow and OpenCV.",
   },
   {
     year: "2024",
-    title: "Full Stack Exploration",
-    description: "Expanded into frontend and backend development with React, Node.js, and modern web technologies.",
+    title: "Hackathons & Internships",
+    description: "Competed in MindSprint 2K25 and Smart India Hackathon. Completed internships at AIMERS Society and Micro IT Services.",
   },
   {
     year: "2025",
-    title: "Building the Future",
-    description: "Combining AI, data science, and full-stack skills to build intelligent, production-grade systems.",
+    title: "AI & Space Tech Innovation",
+    description: "Developing AI Swarm Robotics for space debris cleanup. Building intelligent systems combining AI, robotics, and computer vision.",
   },
 ];
 

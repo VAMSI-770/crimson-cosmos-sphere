@@ -30,8 +30,8 @@ const ContactSection = () => {
             </p>
             <div className="space-y-5">
               {[
-                { icon: Mail, label: "vamsi@example.com", href: "mailto:vamsi@example.com" },
-                { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com" },
+                { icon: Mail, label: "vamsibollepalli770@gmail.com", href: "mailto:vamsibollepalli770@gmail.com" },
+                { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/vamsi-bollepalli-28a6b231a" },
                 { icon: Github, label: "GitHub", href: "https://github.com" },
               ].map(({ icon: Icon, label, href }) => (
                 <a

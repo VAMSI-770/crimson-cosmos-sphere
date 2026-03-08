@@ -4,27 +4,27 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const skillGroups = [
   {
-    title: "Frontend",
-    skills: ["React", "Next.js", "JavaScript", "TypeScript", "Tailwind CSS"],
-    description: "Building responsive, performant user interfaces with modern frameworks and best practices.",
+    title: "AI & ML",
+    skills: ["Python", "TensorFlow", "YOLOv8", "Scikit-learn", "OpenCV"],
+    description: "Building intelligent models for object detection, image classification, and predictive analytics.",
     proficiency: "Advanced",
   },
   {
-    title: "Backend",
-    skills: ["Node.js", "Express", "REST APIs", "Python", "Databases"],
-    description: "Designing scalable server architectures, APIs, and database systems for production applications.",
+    title: "Computer Vision",
+    skills: ["YOLOv8", "Roboflow", "OpenCV", "Image Processing", "CNNs"],
+    description: "Real-time object detection and image analysis for healthcare, sports, and space applications.",
     proficiency: "Advanced",
   },
   {
-    title: "Tools",
-    skills: ["Git", "GitHub", "Docker", "Figma", "VS Code"],
-    description: "Leveraging development tools for efficient workflows, collaboration, and deployment.",
+    title: "Data Science",
+    skills: ["Pandas", "NumPy", "Matplotlib", "SQL", "Data Visualization"],
+    description: "Extracting insights from data through analysis, visualization, and statistical modeling.",
     proficiency: "Proficient",
   },
   {
-    title: "Creative",
-    skills: ["UI Design", "Motion", "Framer Motion", "Prototyping"],
-    description: "Crafting visually compelling interfaces with smooth animations and thoughtful user experiences.",
+    title: "Development",
+    skills: ["React", "HTML/CSS", "JavaScript", "Git", "GitHub"],
+    description: "Building web applications and managing code with modern development tools and frameworks.",
     proficiency: "Intermediate",
   },
 ];

@@ -21,7 +21,7 @@ const VisionSection = () => {
         </ScrollReveal>
         <ScrollReveal delay={0.3}>
           <div className="mt-16 flex flex-wrap justify-center gap-3">
-            {["AI Systems", "Intelligent Products", "Scalable Software", "Creative Technology"].map((item) => (
+            {["AI & Computer Vision", "Space Technology", "Swarm Robotics", "Intelligent Systems"].map((item) => (
               <span key={item} className="px-6 py-3 rounded-full bg-blue-primary/[0.06] border border-blue-primary/15 text-secondary-foreground font-display font-medium text-xs tracking-[0.2em] uppercase hover:bg-blue-primary/10 hover:border-blue-primary/30 hover:shadow-[0_0_20px_hsla(221,83%,53%,0.1)] transition-all duration-400 cursor-default">
                 {item}
               </span>

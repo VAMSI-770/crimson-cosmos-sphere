@@ -4,32 +4,32 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const goals = [
   {
-    title: "Build Impactful Products",
-    description: "Create solutions that solve real-world problems and make a positive difference in people's lives.",
-    fullDescription: "Focus on developing products that address genuine pain points in healthcare, education, and sustainability. Aim to reach 1 million users with meaningful software solutions within the next 5 years.",
-    timeline: "2024-2029",
-    milestones: ["Launch 3 production apps", "Reach 100K active users", "Positive social impact metrics"],
+    title: "Master Advanced AI & ML",
+    description: "Deepen expertise in advanced artificial intelligence and machine learning technologies.",
+    fullDescription: "Focus on mastering deep learning architectures, reinforcement learning, and cutting-edge AI research. Build production-grade ML systems and contribute to the AI research community.",
+    timeline: "2025-2027",
+    milestones: ["Complete advanced ML certifications", "Publish AI research papers", "Build production ML systems"],
   },
   {
-    title: "Master Advanced Technologies",
-    description: "Continuously learn and master cutting-edge AI, ML, and full-stack technologies.",
-    fullDescription: "Stay at the forefront of technological advancement by mastering emerging technologies. Focus areas include advanced ML architectures, cloud-native development, and system design at scale.",
+    title: "Innovate in Space Technology",
+    description: "Develop innovative solutions for space technology and robotics applications.",
+    fullDescription: "Continue research and development in space debris cleanup, satellite systems, and AI-powered robotics for space exploration. Collaborate with space technology organizations.",
+    timeline: "2025-2028",
+    milestones: ["Advance space debris cleanup project", "Collaborate with space organizations", "Develop autonomous robotics"],
+  },
+  {
+    title: "Build Scalable Intelligent Systems",
+    description: "Create scalable intelligent software systems that solve real-world problems.",
+    fullDescription: "Design and build end-to-end AI-powered applications that can scale to serve millions of users. Focus on computer vision, NLP, and predictive analytics platforms.",
+    timeline: "2025-2029",
+    milestones: ["Launch 3 AI-powered applications", "Achieve production scale", "Impact real-world problems"],
+  },
+  {
+    title: "Contribute to Research & Innovation",
+    description: "Contribute to impactful research and technological innovation in AI and data science.",
+    fullDescription: "Publish research papers, participate in international conferences, and contribute to open-source AI projects. Bridge the gap between academic research and practical applications.",
     timeline: "Ongoing",
-    milestones: ["Complete 5 advanced certifications", "Contribute to major open-source ML projects", "Publish technical research"],
-  },
-  {
-    title: "Contribute to Open Source",
-    description: "Give back to the developer community through meaningful open-source contributions.",
-    fullDescription: "Create and maintain open-source tools that help developers be more productive. Focus on developer experience, documentation, and building inclusive communities.",
-    timeline: "2024-2026",
-    milestones: ["Maintain 3 popular repositories", "Reach 5K GitHub stars", "Mentor new contributors"],
-  },
-  {
-    title: "Inspire Future Developers",
-    description: "Share knowledge and mentor aspiring developers on their journey.",
-    fullDescription: "Create educational content, speak at conferences, and mentor junior developers. Help bridge the gap for underrepresented groups in technology.",
-    timeline: "Ongoing",
-    milestones: ["Create technical blog with 50+ articles", "Mentor 20+ developers", "Speak at 5+ conferences"],
+    milestones: ["Publish research papers", "Present at conferences", "Open-source contributions"],
   },
 ];
 
