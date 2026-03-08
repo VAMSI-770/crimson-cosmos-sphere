@@ -10,33 +10,23 @@ interface AdminLoginModalProps {
 }
 
 const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) => {
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    try {
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        toast.success("Account created! You can now log in.");
-        setIsSignUp(false);
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        toast.success("Welcome to Admin Portal");
-        // Send login notification email (fire and forget)
-        supabase.functions.invoke("admin-login-notify", {
-          body: { email },
-        }).catch(console.error);
-        onSuccess();
-      }
-    } catch (err: any) {
-      toast.error(err.message || "Authentication failed");
+    if (name === "Vamsi" && password === "Vamsichowdary25@") {
+      toast.success("Welcome to Admin Portal");
+      // Send login notification email (fire and forget)
+      supabase.functions.invoke("admin-login-notify", {
+        body: { email: "Vamsi (Admin)" },
+      }).catch(console.error);
+      onSuccess();
+    } else {
+      toast.error("Invalid credentials");
     }
     setIsLoading(false);
   };
@@ -86,10 +76,10 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
                   A
                 </motion.div>
                 <h2 className="text-xl font-display font-semibold text-foreground mb-1">
-                  {isSignUp ? "Create Admin Account" : "Admin Portal"}
+                  Admin Portal
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  {isSignUp ? "Set up your admin credentials" : "Secure access to content management"}
+                  Secure access to content management
                 </p>
               </div>
 
@@ -99,10 +89,10 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
                     Name
                   </label>
                   <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@example.com"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter your name"
                     className="w-full bg-secondary/50 border border-border/50 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-primary/50 transition-colors"
                     required
                   />
@@ -130,16 +120,9 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
                 >
-                  {isLoading ? "Authenticating..." : isSignUp ? "Create Account" : "Access Portal"}
+                  {isLoading ? "Authenticating..." : "Access Portal"}
                 </motion.button>
               </form>
-
-              <button
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="w-full text-center text-xs text-blue-bright/70 hover:text-blue-bright mt-4 transition-colors"
-              >
-                {isSignUp ? "Already have an account? Log in" : "First time? Create admin account"}
-              </button>
 
               <p className="text-center text-xs text-muted-foreground/60 mt-4">
                 Protected by secure authentication
