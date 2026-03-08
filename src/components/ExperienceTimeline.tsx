@@ -26,7 +26,7 @@ const timeline = [
 
 const ExperienceTimeline = () => {
   return (
-    <section id="experience" className="relative py-32">
+    <section id="education" className="relative py-32">
       <div className="container mx-auto px-6 lg:px-16">
         <ScrollReveal>
           <p className="accent-text text-xs tracking-[0.4em] uppercase mb-4 font-semibold font-display">Education</p>
