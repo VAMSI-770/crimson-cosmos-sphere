@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { 
   User, Code, FolderOpen, Award, Briefcase, Lightbulb, Trophy, Target, 
-  Mail, Image, GraduationCap 
+  Mail, Image, GraduationCap, FileText 
 } from "lucide-react";
 
 export type AdminTab = 
   | "about" | "education" | "skills" | "projects" | "certifications" 
-  | "internships" | "ideas" | "achievements" | "goals" | "contact" | "messages" | "media";
+  | "internships" | "ideas" | "achievements" | "goals" | "contact" | "messages" | "media" | "resume";
 
 const tabs: { id: AdminTab; label: string; icon: React.ElementType }[] = [
   { id: "about", label: "About / Hero", icon: User },
