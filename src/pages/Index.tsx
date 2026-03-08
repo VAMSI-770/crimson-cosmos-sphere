@@ -94,6 +94,7 @@ const Index = () => {
           ref={arrowRef}
           onDoubleClick={handleArrowDoubleClick}
           isHighlighted={isArrowHighlighted}
+          isUnlocked={isArrowUnlocked}
         />
         <ContactSection />
         <FooterSection />

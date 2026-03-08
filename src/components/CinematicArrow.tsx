@@ -372,15 +372,17 @@ const CinematicArrow = forwardRef<HTMLDivElement, CinematicArrowProps>(
             ))}
           </motion.div>
 
-          {/* Hint text */}
-          <motion.p
-            className="text-muted-foreground/50 text-[10px] sm:text-xs tracking-[0.2em] mt-10 md:mt-14 font-display uppercase"
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ delay: 2.5, duration: 1 }}
-          >
-            Double-tap to unlock
-          </motion.p>
+          {/* Hint text - only show when unlocked */}
+          {isUnlocked && (
+            <motion.p
+              className="text-muted-foreground/50 text-[10px] sm:text-xs tracking-[0.2em] mt-10 md:mt-14 font-display uppercase"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
+              Double-tap to unlock
+            </motion.p>
+          )}
         </div>
       </section>
     );
