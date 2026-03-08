@@ -7,8 +7,8 @@ const CinematicLoader = ({ onComplete }: { onComplete: () => void }) => {
   useEffect(() => {
     const t = setTimeout(() => {
       setVisible(false);
-      setTimeout(onComplete, 600);
-    }, 2000);
+      setTimeout(onComplete, 700);
+    }, 2200);
     return () => clearTimeout(t);
   }, [onComplete]);
 
@@ -16,39 +16,52 @@ const CinematicLoader = ({ onComplete }: { onComplete: () => void }) => {
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed inset-0 z-[100] bg-cream flex items-center justify-center overflow-hidden"
+          className="fixed inset-0 z-[100] bg-background flex items-center justify-center overflow-hidden"
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
+          transition={{ duration: 0.7, ease: "easeInOut" }}
         >
-          {/* Floating blobs */}
+          {/* Cinema beams */}
+          <div className="absolute inset-0 overflow-hidden">
+            <motion.div
+              className="absolute w-[200px] h-[600px] bg-gradient-to-r from-transparent via-blueberry-glow/[0.04] to-transparent rotate-[15deg]"
+              initial={{ x: "-200px" }}
+              animate={{ x: "120vw" }}
+              transition={{ duration: 4, ease: "linear", repeat: Infinity }}
+            />
+            <motion.div
+              className="absolute w-[150px] h-[600px] bg-gradient-to-r from-transparent via-berry-pink/[0.03] to-transparent rotate-[-20deg]"
+              initial={{ x: "120vw" }}
+              animate={{ x: "-200px" }}
+              transition={{ duration: 5, ease: "linear", repeat: Infinity, delay: 1 }}
+            />
+          </div>
+
           <motion.div
-            className="absolute w-[300px] h-[300px] rounded-full bg-blueberry/10 blur-[80px]"
-            initial={{ scale: 0, x: -100 }}
-            animate={{ scale: 1.2, x: 0 }}
+            className="absolute w-[350px] h-[350px] rounded-full bg-blueberry-glow/[0.08] blur-[100px]"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1.3 }}
             transition={{ duration: 1.5, ease: "easeOut" }}
           />
           <motion.div
-            className="absolute w-[200px] h-[200px] rounded-full bg-strawberry/10 blur-[60px]"
-            initial={{ scale: 0, x: 100, y: 50 }}
-            animate={{ scale: 1, x: 50, y: -20 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+            className="absolute w-[200px] h-[200px] rounded-full bg-berry-pink/[0.06] blur-[80px]"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
           />
 
           <motion.div
             className="relative text-center z-10"
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            initial={{ opacity: 0, y: 15, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <h1 className="text-4xl md:text-5xl font-display font-bold gradient-text">VB</h1>
-            <motion.p
-              className="text-sm text-muted-foreground mt-3 font-body"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-            >
-              Loading something sweet...
-            </motion.p>
+            <h1 className="text-4xl md:text-5xl font-display font-bold gradient-text tracking-tight">VB</h1>
+            <motion.div
+              className="w-12 h-[2px] mx-auto mt-4 rounded-full bg-gradient-to-r from-blueberry-glow to-berry-pink"
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+            />
           </motion.div>
         </motion.div>
       )}
