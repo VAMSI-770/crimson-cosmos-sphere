@@ -69,7 +69,7 @@ const AchievementsSection = () => {
                   {achievement.title}
                 </h3>
                 <p className="text-sm text-muted-foreground">{achievement.description}</p>
-                <p className="text-xs text-blue-bright/70 mt-2">Team: {achievement.team}</p>
+                {achievement.team && <p className="text-xs text-blue-bright/70 mt-2">Team: {achievement.team}</p>}
 
                 <AnimatePresence>
                   {expandedIndex === i && (
