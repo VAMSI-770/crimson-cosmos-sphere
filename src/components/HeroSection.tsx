@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { useSiteContent } from "@/hooks/usePortfolioData";
+import { toast } from "sonner";
 
 const letterVariants = {
   hidden: { opacity: 0, y: 60, rotateX: -90 },
@@ -36,13 +36,20 @@ const AnimatedWord = ({ text, className, startIndex = 0 }: { text: string; class
 
 const HeroSection = () => {
   const { data: content } = useSiteContent("hero");
+
+  const nameFirst = content?.name_first || "BOLLEPALLI";
+  const nameLast = content?.name_last || "VAMSI";
+  const subtitle = content?.subtitle || "AI & Data Science Developer";
+  const tagline = content?.tagline || "Building intelligent systems with AI, Computer Vision, and emerging technologies — from Hyderabad, India.";
+  const badgeText = content?.badge_text || "Available for opportunities";
+  const resumeUrl = content?.resume_url || "";
+
   const handleResumeDownload = () => {
-    const url = resumeUrl && resumeUrl !== "/resume.pdf" ? resumeUrl : null;
-    if (!url) {
+    if (!resumeUrl) {
       toast.error("Resume currently unavailable.");
       return;
     }
-    window.open(url, "_blank", "noopener,noreferrer");
+    window.open(resumeUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -131,19 +138,15 @@ const HeroSection = () => {
             <button
               type="button"
               onClick={handleResumeDownload}
-              disabled={isDownloadingResume}
-              className="px-8 py-3.5 rounded-full border border-blue-bright/30 text-blue-bright font-display font-semibold text-sm tracking-wider uppercase transition-all duration-400 hover:border-blue-bright/60 hover:bg-blue-bright/5 hover:shadow-[0_0_25px_hsla(217,91%,60%,0.15)] flex items-center gap-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+              className="px-8 py-3.5 rounded-full border border-blue-bright/30 text-blue-bright font-display font-semibold text-sm tracking-wider uppercase transition-all duration-400 hover:border-blue-bright/60 hover:bg-blue-bright/5 hover:shadow-[0_0_25px_hsla(217,91%,60%,0.15)] flex items-center gap-2 cursor-pointer"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-              {isDownloadingResume ? "Downloading..." : "Resume"}
+              Resume
             </button>
             <a href="#contact" className="px-8 py-3.5 rounded-full border border-blue-primary/25 text-foreground font-display font-semibold text-sm tracking-wider uppercase transition-all duration-400 hover:border-blue-primary/50 hover:bg-blue-primary/5 hover:shadow-[0_0_25px_hsla(221,83%,53%,0.15)]">
               Contact Me
             </a>
           </motion.div>
-          {resumeError ? (
-            <p className="mt-4 text-sm text-muted-foreground">{resumeError}</p>
-          ) : null}
         </div>
       </div>
 
