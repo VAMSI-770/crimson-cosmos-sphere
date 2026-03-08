@@ -68,7 +68,9 @@ const CertificationsSection = () => {
   const handlePreview = (e: React.MouseEvent, cert: typeof certifications[0]) => {
     e.stopPropagation();
     if (cert.file) {
-      setViewerFile({ url: cert.file.url, title: cert.title, type: cert.file.type });
+      const previewUrl = (cert as any).previewImage || cert.file.url;
+      const previewType = (cert as any).previewImage ? "image" as const : cert.file.type;
+      setViewerFile({ url: previewUrl, title: cert.title, type: previewType });
     }
   };
 

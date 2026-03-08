@@ -40,7 +40,9 @@ const InternshipsSection = () => {
   const handlePreview = (e: React.MouseEvent, item: typeof internships[0]) => {
     e.stopPropagation();
     if (item.file) {
-      setViewerFile({ url: item.file.url, title: `${item.role} - ${item.company}`, type: item.file.type });
+      const previewUrl = (item as any).previewImage || item.file.url;
+      const previewType = (item as any).previewImage ? "image" as const : item.file.type;
+      setViewerFile({ url: previewUrl, title: `${item.role} - ${item.company}`, type: previewType });
     }
   };
 

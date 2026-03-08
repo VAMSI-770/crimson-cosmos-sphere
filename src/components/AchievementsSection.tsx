@@ -42,7 +42,9 @@ const AchievementsSection = () => {
   const handlePreview = (e: React.MouseEvent, item: typeof achievements[0]) => {
     e.stopPropagation();
     if (item.file) {
-      setViewerFile({ url: item.file.url, title: item.title, type: item.file.type });
+      const previewUrl = (item as any).previewImage || item.file.url;
+      const previewType = (item as any).previewImage ? "image" as const : item.file.type;
+      setViewerFile({ url: previewUrl, title: item.title, type: previewType });
     }
   };
 
