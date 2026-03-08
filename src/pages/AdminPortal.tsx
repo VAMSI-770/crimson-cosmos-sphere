@@ -10,6 +10,7 @@ import GenericCrudManager from "@/components/admin/GenericCrudManager";
 import MessagesInbox from "@/components/admin/MessagesInbox";
 import SkillsManager from "@/components/admin/SkillsManager";
 import MediaLibrary from "@/components/admin/MediaLibrary";
+import ResumeManager from "@/components/admin/ResumeManager";
 import {
   useEducation, useSkillCategories, useProjects, useCertifications,
   useInternships, useAchievements, useIdeas, useGoals, useContactMessages,
@@ -222,6 +223,8 @@ const AdminPortal = () => {
         return <MessagesInbox />;
       case "media":
         return <MediaLibrary />;
+      case "resume":
+        return <ResumeManager />;
       default:
         return null;
     }
