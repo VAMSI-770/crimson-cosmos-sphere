@@ -4,31 +4,22 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const internships = [
   {
-    company: "Tech Startup XYZ",
+    company: "AIMERS Society",
     role: "Data Science Intern",
-    duration: "Summer 2024",
-    description: "Built predictive models and automated data pipelines for business analytics.",
-    fullDescription: "Developed end-to-end machine learning pipelines for customer behavior prediction. Implemented automated data preprocessing workflows using Python and Pandas. Collaborated with cross-functional teams to deploy models to production, achieving 15% improvement in forecast accuracy.",
-    technologies: ["Python", "Pandas", "Scikit-learn", "SQL", "Airflow"],
-    highlights: ["Improved prediction accuracy by 15%", "Automated 5 data pipelines", "Deployed 3 ML models to production"],
+    duration: "2024",
+    description: "Hands-on training and project development experience in Data Science and Technology.",
+    fullDescription: "Gained practical experience in data science methodologies, working on real datasets and developing analytical solutions. Participated in collaborative projects focusing on data analysis, visualization, and machine learning applications.",
+    technologies: ["Python", "Pandas", "Data Analysis", "Machine Learning"],
+    highlights: ["Hands-on data science training", "Real-world project development", "Collaborative team experience"],
   },
   {
-    company: "Innovation Labs",
-    role: "ML Research Intern",
-    duration: "Winter 2024",
-    description: "Researched NLP techniques and implemented text classification systems.",
-    fullDescription: "Conducted research on transformer-based models for sentiment analysis and text classification. Published internal paper on efficient fine-tuning techniques. Built a production-ready classification system handling 10K+ daily requests.",
-    technologies: ["PyTorch", "Transformers", "NLP", "FastAPI", "Docker"],
-    highlights: ["Published internal research paper", "Built system handling 10K+ daily requests", "Reduced inference time by 40%"],
-  },
-  {
-    company: "Digital Solutions Inc",
-    role: "Full Stack Intern",
-    duration: "Spring 2025",
-    description: "Developed React applications and integrated RESTful APIs.",
-    fullDescription: "Led frontend development for client dashboard application serving 500+ users. Implemented responsive UI components with React and Tailwind CSS. Integrated multiple third-party APIs and optimized application performance.",
-    technologies: ["React", "TypeScript", "Node.js", "PostgreSQL", "Tailwind CSS"],
-    highlights: ["Built dashboard for 500+ users", "Integrated 8 third-party APIs", "Improved load time by 60%"],
+    company: "Micro Information Technology Services",
+    role: "Python Programming Intern",
+    duration: "Batch 26",
+    description: "Python programming and real-world development exposure with hands-on coding experience.",
+    fullDescription: "Completed an intensive internship focused on Python programming fundamentals and advanced concepts. Worked on real-world development projects gaining practical coding experience and software development methodologies.",
+    technologies: ["Python", "Programming", "Software Development"],
+    highlights: ["Python programming proficiency", "Real-world coding projects", "Software development practices"],
   },
 ];
 
@@ -50,7 +41,7 @@ const InternshipsSection = () => {
           <div className="w-20 h-[2px] rounded-full bg-gradient-to-r from-blue-primary to-blue-bright mb-12 md:mb-16" />
         </ScrollReveal>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid sm:grid-cols-2 gap-4 md:gap-6 max-w-4xl mx-auto">
           {internships.map((item, i) => (
             <ScrollReveal key={item.company} delay={i * 0.1}>
               <motion.div

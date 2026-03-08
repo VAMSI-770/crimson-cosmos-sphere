@@ -4,36 +4,39 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const projects = [
   {
-    title: "AI Prediction Engine",
-    description: "End-to-end ML pipeline for predictive analytics with data preprocessing, feature engineering, and model evaluation.",
-    tags: ["Python", "Scikit-learn", "ML"],
-    fullDescription: "A comprehensive machine learning pipeline that handles the complete workflow from data ingestion to model deployment. Features automated data cleaning, intelligent feature selection, and ensemble model training with cross-validation.",
-    challenges: "Handling imbalanced datasets and optimizing for both precision and recall.",
-    outcome: "Achieved 94% accuracy on production data with 3x faster inference than baseline.",
+    title: "AI Swarm Robotics for Space Debris Cleanup",
+    description: "AI-powered swarm robotics system designed to track, capture, and recycle space debris for sustainable space operations.",
+    tags: ["AI", "Robotics", "Space Engineering"],
+    team: "The Space Savants — NRI Institute of Technology",
+    fullDescription: "An innovative AI-powered swarm robotics system designed to address the growing threat of space debris to satellites and future missions. The system uses AI detection models, robotic capture arms and magnetic systems, on-orbit debris processing, and space-based 3D printing of satellite components from recycled debris.",
+    challenges: "Designing AI models that can detect and classify fast-moving space debris in real-time with limited computing resources.",
+    outcome: "Presented at MindSprint 2K25 National Hackathon and qualified in Smart India Hackathon.",
   },
   {
-    title: "Data Dashboard",
-    description: "Interactive visualization platform transforming raw datasets into actionable insights and narratives.",
-    tags: ["Python", "Pandas", "Visualization"],
-    fullDescription: "A dynamic dashboard application that connects to multiple data sources and provides real-time analytics. Features include custom chart builders, automated report generation, and collaborative annotation tools.",
-    challenges: "Real-time data synchronization and maintaining performance with large datasets.",
-    outcome: "Reduced data analysis time by 70% for the analytics team.",
+    title: "Space Debris Collection System",
+    description: "End-to-end workflow for AI-driven debris detection, robotic capture, on-orbit processing, and 3D printing of satellite parts.",
+    tags: ["AI", "Robotics", "3D Printing"],
+    team: "The Space Savants",
+    fullDescription: "A comprehensive system covering AI model development for debris detection, robotic capture design using nets, arms, and magnetic tools, an on-orbit processing unit for melting and refining debris, and a 3D printing mechanism for producing satellite components.",
+    challenges: "Integrating multiple subsystems — detection, capture, processing, and manufacturing — into a unified autonomous workflow.",
+    outcome: "Prototype developed through team collaboration and iterative testing.",
+    link: "https://lnkd.in/g2f_6rBK",
   },
   {
-    title: "ML Classification System",
-    description: "Intelligent classification engine with optimized hyperparameters delivering precision at scale.",
-    tags: ["Python", "NumPy", "ML"],
-    fullDescription: "A production-grade classification system capable of handling multi-class problems with high accuracy. Includes automated hyperparameter tuning, feature importance analysis, and model interpretability tools.",
-    challenges: "Balancing model complexity with interpretability for stakeholder presentations.",
-    outcome: "Deployed to production handling 50K+ daily classification requests.",
+    title: "Skin Diseases Detection using YOLO",
+    description: "Computer vision model to detect human skin diseases in real-time using YOLOv8 with custom dataset preparation.",
+    tags: ["Python", "YOLOv8", "Roboflow", "Computer Vision"],
+    fullDescription: "Developed a computer vision model to detect human skin diseases using YOLOv8. Features include custom dataset preparation with annotated medical images, real-time object detection for skin conditions, and high accuracy predictions for early diagnosis support.",
+    challenges: "Curating and annotating a diverse medical image dataset for reliable detection across skin types.",
+    outcome: "Achieved high accuracy predictions suitable for early diagnosis assistance.",
   },
   {
-    title: "Portfolio Experience",
-    description: "This cinematic portfolio — a premium dark-themed experience built with React and motion design.",
-    tags: ["React", "Tailwind", "Framer Motion"],
-    fullDescription: "A modern, performant portfolio website showcasing professional work and skills. Built with attention to design details, smooth animations, and optimal user experience across all devices.",
-    challenges: "Achieving 60fps animations while maintaining accessibility and SEO.",
-    outcome: "Lighthouse score of 95+ across all metrics.",
+    title: "Football Player Detection using YOLO",
+    description: "Real-time detection system to identify football players on the field using YOLO object detection for sports analytics.",
+    tags: ["Python", "YOLOv8", "Roboflow", "Sports Analytics"],
+    fullDescription: "Built a real-time detection system to identify and track football players on the field using YOLO object detection. The system processes video feeds to detect player positions, movements, and formations for sports analytics applications.",
+    challenges: "Handling occlusion, varying player sizes, and fast motion in live match footage.",
+    outcome: "Successfully detects and tracks players in real-time video feeds.",
   },
 ];
 
@@ -82,7 +85,7 @@ const ProjectsSection = () => {
                       {project.title}
                     </h3>
                     <motion.span 
-                      className="text-xs text-muted-foreground"
+                      className="text-xs text-muted-foreground flex-shrink-0 ml-2"
                       animate={{ rotate: expandedIndex === i ? 180 : 0 }}
                     >
                       ↓
@@ -109,6 +112,9 @@ const ProjectsSection = () => {
                         className="overflow-hidden"
                       >
                         <div className="pt-5 mt-5 border-t border-border/30">
+                          {"team" in project && project.team && (
+                            <p className="text-xs text-blue-bright/70 mb-3 font-medium">Team: {project.team}</p>
+                          )}
                           <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                             {project.fullDescription}
                           </p>
@@ -122,6 +128,18 @@ const ProjectsSection = () => {
                             <p className="text-xs font-semibold text-blue-bright mb-1">Outcome</p>
                             <p className="text-sm text-muted-foreground">{project.outcome}</p>
                           </div>
+
+                          {"link" in project && project.link && (
+                            <a
+                              href={project.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block mt-4 text-xs text-blue-bright hover:underline font-medium"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              View on GitHub →
+                            </a>
+                          )}
                         </div>
                       </motion.div>
                     )}

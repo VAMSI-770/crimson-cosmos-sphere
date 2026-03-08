@@ -4,36 +4,32 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const certifications = [
   {
-    title: "Machine Learning Specialization",
-    issuer: "Stanford Online / Coursera",
+    title: "Workshop Certificate – Brainic Academy",
+    issuer: "Brainic Academy",
     year: "2024",
-    description: "Comprehensive ML course covering supervised learning, neural networks, and practical implementation.",
-    skills: ["Supervised Learning", "Neural Networks", "Decision Trees", "Recommender Systems"],
-    credentialId: "ML-STANFORD-2024",
+    description: "Completed a 3-day workshop covering resume building, LinkedIn profile optimization, and interview preparation.",
+    skills: ["Resume Building", "LinkedIn Optimization", "Interview Prep"],
   },
   {
-    title: "Python for Data Science",
-    issuer: "IBM",
-    year: "2023",
-    description: "Professional certification in Python programming for data analysis and visualization.",
-    skills: ["Python", "Pandas", "NumPy", "Data Visualization"],
-    credentialId: "IBM-PY-DS-2023",
+    title: "Say Yes to Life, No to Drugs Pledge",
+    issuer: "Narcotics Control Bureau, Ministry of Home Affairs, Govt. of India",
+    year: "2024",
+    description: "Commitment to promoting a drug-free and healthy society, organized by the Narcotics Control Bureau under the Ministry of Home Affairs.",
+    skills: ["Social Responsibility", "Health Awareness"],
   },
   {
-    title: "Deep Learning Fundamentals",
-    issuer: "DeepLearning.AI",
+    title: "Getting Started with Artificial Intelligence",
+    issuer: "IBM SkillsBuild",
     year: "2024",
-    description: "Advanced deep learning techniques including CNNs, RNNs, and transformer architectures.",
-    skills: ["TensorFlow", "CNNs", "RNNs", "Transformers"],
-    credentialId: "DL-AI-2024",
+    description: "Completed IBM's foundational course on Artificial Intelligence concepts, applications, and ethical considerations.",
+    skills: ["AI Fundamentals", "Machine Learning Basics", "IBM Cloud"],
   },
   {
-    title: "Full Stack Development",
-    issuer: "Meta",
+    title: "Python Programming Internship Certificate",
+    issuer: "Micro Information Technology Services, Haryana",
     year: "2024",
-    description: "End-to-end web development covering frontend, backend, and deployment strategies.",
-    skills: ["React", "Node.js", "Databases", "API Design"],
-    credentialId: "META-FS-2024",
+    description: "Completed Python programming internship with hands-on development experience and real-world project exposure.",
+    skills: ["Python", "Programming", "Software Development"],
   },
 ];
 
@@ -103,7 +99,7 @@ const CertificationsSection = () => {
                           {cert.description}
                         </p>
                         
-                        <div className="mb-3">
+                        <div>
                           <p className="text-xs font-semibold text-foreground mb-2 uppercase tracking-wider">Skills Covered</p>
                           <div className="flex flex-wrap gap-1">
                             {cert.skills.map((skill) => (
@@ -113,10 +109,6 @@ const CertificationsSection = () => {
                             ))}
                           </div>
                         </div>
-                        
-                        <p className="text-xs text-muted-foreground">
-                          ID: {cert.credentialId}
-                        </p>
                       </div>
                     </motion.div>
                   )}

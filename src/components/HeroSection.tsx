@@ -112,7 +112,7 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.6, duration: 0.8 }}
           >
-            Full Stack Developer
+            Data Science Student | AI &amp; Computer Vision Enthusiast
           </motion.p>
 
           <motion.p
@@ -121,7 +121,7 @@ const HeroSection = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 1.8, duration: 0.8 }}
           >
-            Building modern web applications with creativity, performance, and elegant user experiences.
+            Building intelligent systems with AI, Computer Vision, and emerging technologies — from Hyderabad, India.
           </motion.p>
 
           {/* CTA */}

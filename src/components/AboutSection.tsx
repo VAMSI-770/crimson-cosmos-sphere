@@ -2,9 +2,9 @@ import ScrollReveal from "./ScrollReveal";
 import { motion } from "framer-motion";
 
 const metrics = [
-  { value: "10+", label: "Projects Built" },
-  { value: "15+", label: "Technologies Mastered" },
-  { value: "3+", label: "Years Learning" },
+  { value: "4+", label: "Projects Built" },
+  { value: "10+", label: "Technologies" },
+  { value: "2+", label: "Hackathons" },
   { value: "∞", label: "Ambition" },
 ];
 
@@ -26,13 +26,13 @@ const AboutSection = () => {
           <ScrollReveal delay={0.1}>
             <div className="space-y-6">
               <p className="text-secondary-foreground leading-relaxed text-base">
-                A curious mind drawn to the intersection of data and intelligence. As a 3rd year B.Tech Data Science student, I don't just study algorithms — I see patterns in the world waiting to be decoded.
+                I am a passionate Data Science student with strong interests in Artificial Intelligence, Computer Vision, and innovative technology solutions.
               </p>
               <p className="text-muted-foreground leading-relaxed text-base">
-                Passionate about AI and machine learning, I'm building the foundation to create intelligent products that think, adapt, and evolve. Currently exploring full-stack development to bring ideas to life end-to-end.
+                I enjoy building intelligent systems that solve real-world problems, especially in areas like space technology, robotics, and AI-powered automation.
               </p>
               <p className="text-muted-foreground leading-relaxed text-base">
-                I believe technology can shape the future — and I'm building the skills to be part of that transformation.
+                Through hackathons, internships, and hands-on projects, I continuously explore new technologies and improve my problem-solving skills. My goal is to create impactful solutions using AI and emerging technologies.
               </p>
             </div>
           </ScrollReveal>
