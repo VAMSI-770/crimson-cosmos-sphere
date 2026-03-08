@@ -223,6 +223,8 @@ const AdminPortal = () => {
         return <MessagesInbox />;
       case "media":
         return <MediaLibrary />;
+      case "resume":
+        return <ResumeManager />;
       default:
         return null;
     }
