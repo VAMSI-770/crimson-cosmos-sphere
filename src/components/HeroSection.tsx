@@ -36,13 +36,47 @@ const AnimatedWord = ({ text, className, startIndex = 0 }: { text: string; class
 
 const HeroSection = () => {
   const { data: content } = useSiteContent("hero");
-  
+  const [isDownloadingResume, setIsDownloadingResume] = useState(false);
+  const [resumeError, setResumeError] = useState("");
+
   const nameFirst = content?.name_first || "BOLLEPALLI";
   const nameLast = content?.name_last || "VAMSI";
   const subtitle = content?.subtitle || "AI & Data Science Developer";
   const tagline = content?.tagline || "Building intelligent systems with AI, Computer Vision, and emerging technologies — from Hyderabad, India.";
   const badgeText = content?.badge_text || "Available for opportunities";
   const resumeUrl = content?.resume_url || "/resume.pdf";
+
+  const handleResumeDownload = async () => {
+    if (!resumeUrl) {
+      setResumeError("Resume currently unavailable.");
+      return;
+    }
+
+    setIsDownloadingResume(true);
+    setResumeError("");
+
+    try {
+      const response = await fetch(resumeUrl);
+
+      if (!response.ok) {
+        throw new Error("Resume not accessible");
+      }
+
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = blobUrl;
+      anchor.download = "Bollepalli_Vamsi_Resume.pdf";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    } catch {
+      setResumeError("Resume currently unavailable.");
+    } finally {
+      setIsDownloadingResume(false);
+    }
+  };
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center overflow-hidden">
