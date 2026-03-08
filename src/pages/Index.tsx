@@ -23,6 +23,7 @@ const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [isArrowHighlighted, setIsArrowHighlighted] = useState(false);
+  const [isArrowUnlocked, setIsArrowUnlocked] = useState(false);
   const handleComplete = useCallback(() => setLoaded(true), []);
   const arrowRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
