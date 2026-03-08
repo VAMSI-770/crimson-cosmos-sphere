@@ -7,8 +7,8 @@ import { LogOut, Eye } from "lucide-react";
 const AdminHeader = () => {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    sessionStorage.removeItem("admin_authenticated");
     toast.success("Logged out successfully");
     navigate("/");
   };
