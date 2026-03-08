@@ -106,20 +106,13 @@ const CinematicLoader = ({ onComplete }: { onComplete: () => void }) => {
                 transition={{ duration: 0.6 }}
               >
                 <motion.h1
-                  className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-[0.15em] text-foreground mb-2"
+                  className="text-3xl md:text-5xl lg:text-7xl font-display font-bold tracking-[0.15em]"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                  BOLLEPALLI
-                </motion.h1>
-                <motion.h1
-                  className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-[0.15em] text-blue-bright"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-                >
-                  VAMSI
+                  <span className="text-foreground mr-3 md:mr-5">BOLLEPALLI</span>
+                  <span className="text-blue-bright">VAMSI</span>
                 </motion.h1>
                 <motion.div
                   className="w-32 h-[2px] mx-auto mt-6 rounded-full bg-gradient-to-r from-transparent via-blue-primary to-transparent"
