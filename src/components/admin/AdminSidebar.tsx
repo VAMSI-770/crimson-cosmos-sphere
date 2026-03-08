@@ -10,6 +10,7 @@ export type AdminTab =
 
 const tabs: { id: AdminTab; label: string; icon: React.ElementType }[] = [
   { id: "about", label: "About / Hero", icon: User },
+  { id: "resume", label: "Resume", icon: FileText },
   { id: "education", label: "Education", icon: GraduationCap },
   { id: "skills", label: "Skills", icon: Code },
   { id: "projects", label: "Projects", icon: FolderOpen },
