@@ -3,29 +3,19 @@ import { motion } from "framer-motion";
 
 const timeline = [
   {
-    year: "2020 – 2021",
-    title: "SSC – A.P. Residential School",
-    description: "Completed SSC from A.P. Residential School, Tadikonda, Guntur with a perfect 10 GPA.",
+    year: "2023 – Present",
+    title: "B.Tech – Data Science",
+    description: "Currently studying at NRI Institute of Technology, Visadala, Guntur. Current CGPA: 8.61.",
   },
   {
-    year: "2023",
+    year: "2021 – 2023",
     title: "Intermediate – Sri Danalakshmi Junior College",
     description: "Completed Intermediate from Sri Danalakshmi Junior College, Muppalla with 83.6%.",
   },
   {
-    year: "2023",
-    title: "Started B.Tech – Data Science",
-    description: "Joined NRI Institute of Technology, Visadala, Guntur. Currently studying with a CGPA of 8.61.",
-  },
-  {
-    year: "2024",
-    title: "Hackathons & Internships",
-    description: "Competed in MindSprint 2K25 and Smart India Hackathon. Completed internships at AIMERS Society and Micro IT Services.",
-  },
-  {
-    year: "2025",
-    title: "AI & Space Tech Innovation",
-    description: "Developing AI Swarm Robotics for space debris cleanup. Building intelligent systems combining AI, robotics, and computer vision.",
+    year: "2020 – 2021",
+    title: "SSC – A.P. Residential School",
+    description: "Completed SSC from A.P. Residential School, Tadikonda, Guntur with a perfect 10 GPA.",
   },
 ];
 
