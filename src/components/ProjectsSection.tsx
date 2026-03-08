@@ -78,11 +78,29 @@ const ProjectsSection = () => {
                               <p className="text-sm text-muted-foreground">{project.outcome}</p>
                             </div>
                           )}
-                          {project.github_link && (
-                            <a href={project.github_link} target="_blank" rel="noopener noreferrer" className="inline-block mt-4 text-xs text-blue-bright hover:underline font-medium" onClick={(e) => e.stopPropagation()}>
-                              View on GitHub →
-                            </a>
+                          {project.video_url && (
+                            <div className="mt-4 rounded-lg overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                              <video
+                                src={project.video_url}
+                                controls
+                                preload="metadata"
+                                className="w-full rounded-lg"
+                                style={{ maxHeight: "360px" }}
+                              />
+                            </div>
                           )}
+                          <div className="flex gap-4 mt-4">
+                            {project.github_link && (
+                              <a href={project.github_link} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-bright hover:underline font-medium" onClick={(e) => e.stopPropagation()}>
+                                View on GitHub →
+                              </a>
+                            )}
+                            {project.demo_link && (
+                              <a href={project.demo_link} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-bright hover:underline font-medium" onClick={(e) => e.stopPropagation()}>
+                                Live Demo →
+                              </a>
+                            )}
+                          </div>
                         </div>
                       </motion.div>
                     )}
