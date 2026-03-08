@@ -23,8 +23,8 @@ const Index = () => {
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-40 backdrop-blur-xl bg-background/60 border-b border-border/30">
         <div className="container mx-auto px-6 lg:px-16 flex items-center justify-between h-14">
-          <a href="#hero" className="font-display font-bold text-lg gradient-text">VB</a>
-          <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground font-body font-medium">
+          <a href="#hero" className="font-display font-bold text-lg text-foreground">VB</a>
+          <div className="hidden md:flex items-center gap-8 text-sm text-secondary-foreground font-body font-medium">
             {["About", "Skills", "Projects", "Experience", "Vision", "Contact"].map((item) => (
               <a
                 key={item}
