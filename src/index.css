@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,53 +6,54 @@
 
 @layer base {
   :root {
-    --background: 300 33% 98%;
-    --foreground: 260 30% 15%;
+    --background: 240 25% 4%;
+    --foreground: 240 10% 92%;
 
-    --card: 300 30% 96%;
-    --card-foreground: 260 30% 15%;
+    --card: 240 20% 7%;
+    --card-foreground: 240 10% 92%;
 
-    --popover: 300 30% 96%;
-    --popover-foreground: 260 30% 15%;
+    --popover: 240 20% 7%;
+    --popover-foreground: 240 10% 92%;
 
-    --primary: 261 78% 64%;
+    --primary: 245 100% 71%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 280 40% 94%;
-    --secondary-foreground: 260 25% 35%;
+    --secondary: 240 18% 12%;
+    --secondary-foreground: 240 10% 70%;
 
-    --muted: 280 30% 92%;
-    --muted-foreground: 260 15% 50%;
+    --muted: 240 15% 14%;
+    --muted-foreground: 240 10% 45%;
 
-    --accent: 330 100% 71%;
+    --accent: 325 100% 68%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 280 25% 88%;
-    --input: 280 25% 88%;
-    --ring: 261 78% 64%;
+    --border: 240 15% 15%;
+    --input: 240 15% 15%;
+    --ring: 245 100% 71%;
 
-    --radius: 1rem;
+    --radius: 0.875rem;
 
-    /* Dessert tokens */
-    --blueberry: 261 78% 64%;
-    --jam: 253 30% 35%;
-    --cream: 340 100% 98%;
-    --lavender: 270 100% 92%;
-    --strawberry: 330 100% 71%;
-    --lemon: 48 100% 71%;
-    --mint: 145 60% 93%;
+    /* Cinematic dessert tokens */
+    --blueberry-glow: 245 100% 71%;
+    --berry-pink: 325 100% 68%;
+    --cream-frost: 340 100% 95%;
+    --lavender-frost: 264 100% 82%;
+    --electric-violet: 258 100% 74%;
+    --midnight: 240 25% 10%;
+    --deep-cinema: 240 25% 4%;
 
-    --font-display: 'Sora', sans-serif;
+    --font-display: 'Sora', 'Space Grotesk', sans-serif;
     --font-body: 'DM Sans', sans-serif;
 
-    --glass-bg: hsla(280, 30%, 97%, 0.7);
-    --glass-border: hsla(261, 78%, 64%, 0.12);
-    --glass-border-hover: hsla(261, 78%, 64%, 0.3);
-    --glow-shadow: 0 8px 40px hsla(261, 78%, 64%, 0.12);
-    --glow-shadow-strong: 0 12px 60px hsla(261, 78%, 64%, 0.2);
+    --glass-bg: hsla(240, 20%, 8%, 0.6);
+    --glass-border: hsla(245, 100%, 71%, 0.1);
+    --glass-border-hover: hsla(245, 100%, 71%, 0.25);
+    --glow-shadow: 0 0 40px hsla(245, 100%, 71%, 0.15);
+    --glow-shadow-strong: 0 0 80px hsla(245, 100%, 71%, 0.25);
+    --glow-pink: 0 0 40px hsla(325, 100%, 68%, 0.12);
   }
 }
 
@@ -82,7 +83,7 @@
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     border-radius: var(--radius);
-    transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+    transition: border-color 0.5s ease, box-shadow 0.5s ease, transform 0.5s ease;
   }
 
   .glass-card:hover {
@@ -92,7 +93,7 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, hsl(var(--blueberry)), hsl(var(--strawberry)), hsl(var(--blueberry)));
+    background: linear-gradient(135deg, hsl(var(--blueberry-glow)), hsl(var(--berry-pink)), hsl(var(--lavender-frost)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -101,7 +102,7 @@
   }
 
   .accent-text {
-    background: linear-gradient(135deg, hsl(var(--blueberry)), hsl(var(--strawberry)));
+    background: linear-gradient(135deg, hsl(var(--blueberry-glow)), hsl(var(--berry-pink)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -109,53 +110,69 @@
 
   .accent-line {
     height: 1px;
-    background: linear-gradient(90deg, transparent, hsl(var(--blueberry)), hsl(var(--strawberry)), transparent);
+    background: linear-gradient(90deg, transparent, hsl(var(--blueberry-glow)), hsl(var(--berry-pink)), transparent);
   }
 
-  .dessert-card {
-    background: hsla(280, 30%, 97%, 0.8);
-    border: 1px solid hsla(261, 78%, 64%, 0.08);
-    backdrop-filter: blur(16px);
+  .cinema-card {
+    background: hsla(240, 20%, 7%, 0.7);
+    border: 1px solid hsla(245, 100%, 71%, 0.08);
+    backdrop-filter: blur(20px);
     border-radius: 1.25rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .dessert-card:hover {
-    border-color: hsla(261, 78%, 64%, 0.2);
-    box-shadow: 0 12px 40px hsla(261, 78%, 64%, 0.1), 0 4px 16px hsla(330, 100%, 71%, 0.06);
+  .cinema-card:hover {
+    border-color: hsla(245, 100%, 71%, 0.2);
+    box-shadow:
+      0 0 30px hsla(245, 100%, 71%, 0.08),
+      0 0 60px hsla(325, 100%, 68%, 0.05),
+      0 20px 50px hsla(240, 25%, 4%, 0.5);
     transform: translateY(-6px);
   }
 
-  .frosting-btn {
-    background: linear-gradient(135deg, hsl(var(--blueberry)), hsl(var(--strawberry)));
+  .glow-btn {
+    background: linear-gradient(135deg, hsl(var(--blueberry-glow)), hsl(var(--berry-pink)));
     color: white;
     border-radius: 9999px;
-    padding: 0.75rem 2rem;
+    padding: 0.85rem 2.2rem;
     font-weight: 600;
     font-size: 0.875rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 20px hsla(261, 78%, 64%, 0.25);
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 25px hsla(245, 100%, 71%, 0.3);
+    position: relative;
+    overflow: hidden;
   }
 
-  .frosting-btn:hover {
-    transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 8px 30px hsla(261, 78%, 64%, 0.35);
+  .glow-btn::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, hsl(var(--blueberry-glow)), hsl(var(--berry-pink)), hsl(var(--lavender-frost)));
+    z-index: -1;
+    filter: blur(12px);
+    opacity: 0;
+    transition: opacity 0.4s ease;
   }
 
-  .bg-gradient-cream {
-    background: linear-gradient(180deg,
-      hsl(var(--cream)) 0%,
-      hsl(var(--lavender)) 50%,
-      hsla(261, 78%, 64%, 0.08) 100%
-    );
+  .glow-btn:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 8px 40px hsla(245, 100%, 71%, 0.4);
   }
 
-  .bg-gradient-frosting {
-    background: linear-gradient(135deg,
-      hsla(261, 78%, 64%, 0.04) 0%,
-      hsla(330, 100%, 71%, 0.04) 50%,
-      hsla(48, 100%, 71%, 0.03) 100%
-    );
+  .glow-btn:hover::before {
+    opacity: 0.6;
+  }
+
+  .bg-cinema-gradient {
+    background:
+      radial-gradient(ellipse at 20% 50%, hsla(245, 100%, 71%, 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, hsla(325, 100%, 68%, 0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, hsla(264, 100%, 82%, 0.03) 0%, transparent 50%);
+  }
+
+  .bg-cinema-subtle {
+    background: radial-gradient(ellipse at 50% 0%, hsla(245, 100%, 71%, 0.05) 0%, transparent 60%);
   }
 
   .particle-bg {
@@ -164,18 +181,41 @@
     z-index: 0;
     pointer-events: none;
   }
+
+  .glow-ring {
+    position: relative;
+  }
+
+  .glow-ring::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(var(--blueberry-glow)), transparent, hsl(var(--berry-pink)));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+
+  .glow-ring:hover::after {
+    opacity: 1;
+  }
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: hsl(var(--cream));
+  background: hsl(240, 25%, 4%);
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, hsl(var(--blueberry)), hsl(var(--strawberry)));
-  border-radius: 3px;
+  background: linear-gradient(180deg, hsl(245, 100%, 71%), hsl(325, 100%, 68%));
+  border-radius: 2px;
 }
 
 /* Section dividers */
@@ -187,10 +227,10 @@ section::before {
   content: '';
   position: absolute;
   top: 0;
-  left: 15%;
-  right: 15%;
+  left: 10%;
+  right: 10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, hsla(261, 78%, 64%, 0.12), hsla(330, 100%, 71%, 0.08), transparent);
+  background: linear-gradient(90deg, transparent, hsla(245, 100%, 71%, 0.1), hsla(325, 100%, 68%, 0.06), transparent);
 }
 
 section:first-child::before {
