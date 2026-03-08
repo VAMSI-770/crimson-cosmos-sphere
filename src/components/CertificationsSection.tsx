@@ -12,6 +12,7 @@ const certifications = [
     description: "Completed a 3-day workshop covering resume building, LinkedIn profile optimization, and interview preparation.",
     skills: ["Resume Building", "LinkedIn Optimization", "Interview Prep"],
     file: { url: "/certificates/brainic_workshop.pdf", type: "pdf" as const },
+    previewImage: "/certificates/brainic_workshop_img.png",
   },
   {
     title: "Getting Started with Artificial Intelligence",
