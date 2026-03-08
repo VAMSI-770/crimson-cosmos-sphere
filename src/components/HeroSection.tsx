@@ -174,6 +174,9 @@ const HeroSection = () => {
               Contact Me
             </a>
           </motion.div>
+          {resumeError ? (
+            <p className="mt-4 text-sm text-muted-foreground">{resumeError}</p>
+          ) : null}
         </div>
       </div>
 
