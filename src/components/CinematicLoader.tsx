@@ -106,7 +106,7 @@ const CinematicLoader = ({ onComplete }: { onComplete: () => void }) => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold tracking-[0.08em] whitespace-nowrap">
+                <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-display font-bold tracking-[0.05em] md:tracking-[0.08em] whitespace-nowrap">
                   {/* B + ollepalli expanding to the right of B */}
                   <span className="text-foreground">
                     <motion.span
