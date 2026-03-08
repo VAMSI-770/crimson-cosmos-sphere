@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface AdminLoginModalProps {
@@ -10,7 +9,7 @@ interface AdminLoginModalProps {
 }
 
 const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) => {
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -18,25 +17,13 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
     e.preventDefault();
     setIsLoading(true);
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        toast.error("Invalid credentials");
-        setIsLoading(false);
-        return;
-      }
-
-      if (data.user) {
-        toast.success("Welcome to Admin Portal");
-        onSuccess();
-      }
-    } catch (err) {
-      toast.error("Authentication failed");
-    } finally {
+    // Check for hardcoded credentials
+    if (name === "Vamsi" && password === "Vamsichowdary25@") {
+      toast.success("Welcome to Admin Portal");
+      setIsLoading(false);
+      onSuccess();
+    } else {
+      toast.error("Invalid credentials");
       setIsLoading(false);
     }
   };
@@ -102,13 +89,13 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
               <form onSubmit={handleLogin} className="space-y-5">
                 <div>
                   <label className="block text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
-                    Email
+                    Name
                   </label>
                   <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@example.com"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter your name"
                     className="w-full bg-secondary/50 border border-border/50 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-primary/50 transition-colors"
                     required
                   />
