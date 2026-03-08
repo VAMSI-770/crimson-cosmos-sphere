@@ -37,6 +37,7 @@ const certifications = [
     description: "Completed Python programming internship with hands-on development experience and real-world project exposure.",
     skills: ["Python", "Programming", "Software Development"],
     file: { url: "/certificates/Micro_IT_certificate_1.pdf", type: "pdf" as const },
+    previewImage: "/certificates/Micro_IT_certificate_img.png",
   },
   {
     title: "SQL Certificate",
