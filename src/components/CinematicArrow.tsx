@@ -114,7 +114,7 @@ const CinematicArrow = forwardRef<HTMLDivElement, CinematicArrowProps>(
           {/* Cinematic Arrow Container */}
           <motion.div
             className="relative cursor-pointer select-none group"
-            onDoubleClick={onDoubleClick}
+            onDoubleClick={isUnlocked ? onDoubleClick : undefined}
             onClick={handleClick}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
