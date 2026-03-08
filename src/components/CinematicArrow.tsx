@@ -4,6 +4,7 @@ import { forwardRef, useRef, useState, useEffect } from "react";
 interface CinematicArrowProps {
   onDoubleClick: () => void;
   isHighlighted: boolean;
+  isUnlocked: boolean;
 }
 
 const CinematicArrow = forwardRef<HTMLDivElement, CinematicArrowProps>(
