@@ -21,22 +21,6 @@ const Index = () => {
       <ParticleBackground />
 
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-40 backdrop-blur-xl bg-background/60 border-b border-border/30">
-        <div className="container mx-auto px-6 lg:px-16 flex items-center justify-between h-14">
-          <a href="#hero" className="font-display font-bold text-lg text-foreground">VB</a>
-          <div className="hidden md:flex items-center gap-8 text-sm text-secondary-foreground font-body font-medium">
-            {["About", "Skills", "Projects", "Experience", "Vision", "Contact"].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="hover:text-blueberry-glow transition-colors duration-400 tracking-wide relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[1px] after:bg-blueberry-glow after:transition-all after:duration-300 hover:after:w-full"
-              >
-                {item}
-              </a>
-            ))}
-          </div>
-        </div>
-      </nav>
 
       <main className="relative z-10">
         <HeroSection />
