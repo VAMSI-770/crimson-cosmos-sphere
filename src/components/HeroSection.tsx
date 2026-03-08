@@ -89,14 +89,13 @@ const HeroSection = () => {
             />
           </motion.div>
 
-          {/* Decorative line */}
+          {/* Decorative diamond */}
           <motion.div
             className="flex items-center justify-center gap-3 mb-6"
-            initial={{ opacity: 0, scaleX: 0 }}
-            animate={{ opacity: 1, scaleX: 1 }}
-            transition={{ delay: 1.4, duration: 0.8, ease: "easeOut" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.4, duration: 0.8 }}
           >
-            <div className="h-px w-16 md:w-28 bg-gradient-to-r from-transparent to-blue-primary/50" />
             <motion.span
               className="text-blue-bright text-xs tracking-[0.5em] uppercase font-display font-medium"
               animate={{ opacity: [0.4, 1, 0.4] }}
@@ -104,7 +103,6 @@ const HeroSection = () => {
             >
               ✦
             </motion.span>
-            <div className="h-px w-16 md:w-28 bg-gradient-to-l from-transparent to-blue-glow/40" />
           </motion.div>
 
           {/* Subtitle */}
