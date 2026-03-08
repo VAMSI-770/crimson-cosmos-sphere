@@ -126,7 +126,7 @@ const HeroSection = () => {
             transition={{ delay: 2, duration: 0.7 }}
           >
             <a href="#projects" className="glow-btn">View Projects</a>
-            <a href={resumeUrl} download className="px-8 py-3.5 rounded-full border border-blue-bright/30 text-blue-bright font-display font-semibold text-sm tracking-wider uppercase transition-all duration-400 hover:border-blue-bright/60 hover:bg-blue-bright/5 hover:shadow-[0_0_25px_hsla(217,91%,60%,0.15)] flex items-center gap-2">
+            <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-blue-bright/30 text-blue-bright font-display font-semibold text-sm tracking-wider uppercase transition-all duration-400 hover:border-blue-bright/60 hover:bg-blue-bright/5 hover:shadow-[0_0_25px_hsla(217,91%,60%,0.15)] flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
               Resume
             </a>
