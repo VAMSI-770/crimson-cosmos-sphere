@@ -110,6 +110,7 @@ const AdminPortal = () => {
               { key: "github_link", label: "GitHub Link", type: "text" },
               { key: "demo_link", label: "Demo Link", type: "text" },
               { key: "image_url", label: "Image", type: "file" },
+              { key: "video_url", label: "Project Video", type: "video" },
             ]}
           />
         );
