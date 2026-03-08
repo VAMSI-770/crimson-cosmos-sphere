@@ -44,12 +44,26 @@ const HeroSection = () => {
   const badgeText = content?.badge_text || "Available for opportunities";
   const resumeUrl = content?.resume_url || "";
 
-  const handleResumeDownload = () => {
+  const handleResumeDownload = async () => {
     if (!resumeUrl) {
       toast.error("Resume currently unavailable.");
       return;
     }
-    window.open(resumeUrl, "_blank", "noopener,noreferrer");
+    try {
+      const response = await fetch(resumeUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Bollepalli_Vamsi_Resume.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      // Fallback: open in new tab if fetch fails (e.g. CORS)
+      window.open(resumeUrl, "_blank", "noopener,noreferrer");
+    }
   };
 
   return (
