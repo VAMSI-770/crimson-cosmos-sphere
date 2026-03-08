@@ -42,11 +42,15 @@ const ProjectsSection = () => {
   const handleMouseLeave = useCallback((index: number) => {
     setHoveredIndex(null);
     setBufferingIndex(null);
+    if (rafRef.current[index]) {
+      cancelAnimationFrame(rafRef.current[index]);
+    }
     const video = videoRefs.current[index];
     if (video) {
       video.pause();
       video.currentTime = 0;
     }
+    setVideoProgress(prev => ({ ...prev, [index]: 0 }));
   }, []);
 
   return (
