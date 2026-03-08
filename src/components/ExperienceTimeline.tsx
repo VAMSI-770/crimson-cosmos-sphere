@@ -3,14 +3,19 @@ import { motion } from "framer-motion";
 
 const timeline = [
   {
-    year: "2023",
-    title: "Started B.Tech – Data Science",
-    description: "Joined NRI Institute of Technology, Visadala, Guntur. Began learning Python, statistics, and data science fundamentals.",
+    year: "2020 – 2021",
+    title: "SSC – A.P. Residential School",
+    description: "Completed SSC from A.P. Residential School, Tadikonda, Guntur with a perfect 10 GPA.",
   },
   {
     year: "2023",
-    title: "First AI & ML Projects",
-    description: "Built computer vision models using YOLOv8, explored machine learning, and started working with Roboflow and OpenCV.",
+    title: "Intermediate – Sri Danalakshmi Junior College",
+    description: "Completed Intermediate from Sri Danalakshmi Junior College, Muppalla with 83.6%.",
+  },
+  {
+    year: "2023",
+    title: "Started B.Tech – Data Science",
+    description: "Joined NRI Institute of Technology, Visadala, Guntur. Currently studying with a CGPA of 8.61.",
   },
   {
     year: "2024",

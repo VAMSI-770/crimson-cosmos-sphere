@@ -17,6 +17,12 @@ const achievements = [
     details: "Top team at college level, qualified for Level 2 of the Smart India Hackathon. Built the AI Swarm Robotics Space Debris Cleanup project. Applied AI and robotics knowledge, improved teamwork and problem solving, and worked on real-world space challenges.",
     team: "Space Savants",
   },
+  {
+    title: "Vignan Nirula Chess Competition",
+    label: "Competition",
+    description: "2nd Prize Winner",
+    details: "Won 2nd Prize at the Vignan Nirula Chess Competition, demonstrating strategic thinking and competitive excellence.",
+  },
 ];
 
 const AchievementsSection = () => {
