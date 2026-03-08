@@ -21,9 +21,9 @@ const ParticleBackground = () => {
     window.addEventListener("resize", resize);
 
     const colors = [
-      "43, 76%, 52%",   // royal gold
-      "43, 80%, 65%",   // gold light
-      "18, 100%, 62%",  // cinematic fire
+      "221, 83%, 53%",  // blue primary
+      "217, 91%, 60%",  // blue bright
+      "213, 94%, 68%",  // blue glow
       "0, 0%, 78%",     // silver
     ];
 

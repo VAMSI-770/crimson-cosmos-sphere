@@ -11,16 +11,15 @@ const metrics = [
 const AboutSection = () => {
   return (
     <section id="about" className="relative py-32 bg-cinema-subtle">
-      {/* Atmospheric beams */}
-      <div className="absolute top-0 right-[20%] w-[300px] h-[500px] bg-royal-gold/[0.02] blur-[100px] pointer-events-none rotate-12" />
+      <div className="absolute top-0 right-[20%] w-[300px] h-[500px] bg-blue-primary/[0.02] blur-[100px] pointer-events-none rotate-12" />
 
       <div className="container mx-auto px-6 lg:px-16">
         <ScrollReveal>
-          <p className="accent-text text-xs tracking-[0.4em] uppercase mb-4 font-semibold font-display">Chapter I</p>
+          <p className="accent-text text-xs tracking-[0.4em] uppercase mb-4 font-semibold font-display">About Me</p>
           <h2 className="text-3xl md:text-5xl font-bold font-display mb-5">
             The <span className="gradient-text">Journey</span> of a Developer
           </h2>
-          <div className="w-20 h-[2px] rounded-full bg-gradient-to-r from-royal-gold to-cinematic-fire mb-16" />
+          <div className="w-20 h-[2px] rounded-full bg-gradient-to-r from-blue-primary to-blue-bright mb-16" />
         </ScrollReveal>
 
         <div className="grid lg:grid-cols-2 gap-16 items-start">

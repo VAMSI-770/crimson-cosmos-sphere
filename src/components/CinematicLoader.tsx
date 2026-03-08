@@ -7,9 +7,9 @@ const CinematicLoader = ({ onComplete }: { onComplete: () => void }) => {
 
   useEffect(() => {
     const timers = [
-      setTimeout(() => setPhase(1), 800),   // Show VB
-      setTimeout(() => setPhase(2), 2000),  // Expand to full name
-      setTimeout(() => setPhase(3), 3500),  // Final glow
+      setTimeout(() => setPhase(1), 800),
+      setTimeout(() => setPhase(2), 2000),
+      setTimeout(() => setPhase(3), 3500),
       setTimeout(() => {
         setVisible(false);
         setTimeout(onComplete, 800);
@@ -26,7 +26,7 @@ const CinematicLoader = ({ onComplete }: { onComplete: () => void }) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
         >
-          {/* Smoke/mist particles */}
+          {/* Floating particles */}
           <div className="absolute inset-0 overflow-hidden">
             {[...Array(6)].map((_, i) => (
               <motion.div
@@ -36,8 +36,8 @@ const CinematicLoader = ({ onComplete }: { onComplete: () => void }) => {
                   width: 200 + i * 60,
                   height: 200 + i * 60,
                   background: i % 2 === 0
-                    ? "radial-gradient(circle, hsla(43, 76%, 52%, 0.06), transparent 70%)"
-                    : "radial-gradient(circle, hsla(18, 100%, 62%, 0.04), transparent 70%)",
+                    ? "radial-gradient(circle, hsla(221, 83%, 53%, 0.06), transparent 70%)"
+                    : "radial-gradient(circle, hsla(217, 91%, 60%, 0.04), transparent 70%)",
                   left: `${15 + i * 12}%`,
                   top: `${20 + (i % 3) * 20}%`,
                 }}
@@ -53,21 +53,21 @@ const CinematicLoader = ({ onComplete }: { onComplete: () => void }) => {
 
           {/* Light rays */}
           <motion.div
-            className="absolute w-[2px] h-[80vh] bg-gradient-to-b from-transparent via-royal-gold/20 to-transparent rotate-[15deg]"
+            className="absolute w-[2px] h-[80vh] bg-gradient-to-b from-transparent via-blue-primary/20 to-transparent rotate-[15deg]"
             initial={{ opacity: 0 }}
             animate={{ opacity: [0, 0.5, 0] }}
             transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
           />
           <motion.div
-            className="absolute w-[1px] h-[60vh] bg-gradient-to-b from-transparent via-cinematic-fire/15 to-transparent rotate-[-20deg]"
+            className="absolute w-[1px] h-[60vh] bg-gradient-to-b from-transparent via-blue-bright/15 to-transparent rotate-[-20deg]"
             initial={{ opacity: 0 }}
             animate={{ opacity: [0, 0.4, 0] }}
             transition={{ duration: 4, repeat: Infinity, delay: 1 }}
           />
 
-          {/* Main gold glow backdrop */}
+          {/* Main blue glow backdrop */}
           <motion.div
-            className="absolute w-[400px] h-[400px] rounded-full bg-royal-gold/[0.06] blur-[120px]"
+            className="absolute w-[400px] h-[400px] rounded-full bg-blue-primary/[0.06] blur-[120px]"
             initial={{ scale: 0 }}
             animate={{ scale: phase >= 1 ? 1.5 : 0 }}
             transition={{ duration: 2, ease: "easeOut" }}
@@ -87,7 +87,7 @@ const CinematicLoader = ({ onComplete }: { onComplete: () => void }) => {
                   VB
                 </h1>
                 <motion.div
-                  className="w-20 h-[2px] mx-auto mt-6 rounded-full bg-gradient-to-r from-royal-gold to-cinematic-fire"
+                  className="w-20 h-[2px] mx-auto mt-6 rounded-full bg-gradient-to-r from-blue-primary to-blue-bright"
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
                   transition={{ delay: 0.5, duration: 0.8 }}
@@ -114,7 +114,7 @@ const CinematicLoader = ({ onComplete }: { onComplete: () => void }) => {
                   BOLLEPALLI
                 </motion.h1>
                 <motion.h1
-                  className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-[0.15em] text-royal-gold"
+                  className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-[0.15em] text-blue-bright"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
@@ -122,14 +122,14 @@ const CinematicLoader = ({ onComplete }: { onComplete: () => void }) => {
                   VAMSI
                 </motion.h1>
                 <motion.div
-                  className="w-32 h-[2px] mx-auto mt-6 rounded-full bg-gradient-to-r from-transparent via-royal-gold to-transparent"
+                  className="w-32 h-[2px] mx-auto mt-6 rounded-full bg-gradient-to-r from-transparent via-blue-primary to-transparent"
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
                   transition={{ delay: 0.8, duration: 0.8 }}
                 />
                 {phase >= 3 && (
                   <motion.p
-                    className="text-royal-silver text-sm tracking-[0.4em] uppercase mt-4 font-body"
+                    className="text-text-soft text-sm tracking-[0.4em] uppercase mt-4 font-body"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 0.6 }}
                     transition={{ duration: 1 }}

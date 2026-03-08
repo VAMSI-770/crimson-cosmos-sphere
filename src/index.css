@@ -6,54 +6,55 @@
 
 @layer base {
   :root {
-    --background: 240 20% 4%;
-    --foreground: 40 10% 96%;
+    --background: 222 47% 5%;
+    --foreground: 0 0% 96%;
 
-    --card: 240 15% 6%;
-    --card-foreground: 40 10% 96%;
+    --card: 222 40% 8%;
+    --card-foreground: 0 0% 96%;
 
-    --popover: 240 15% 6%;
-    --popover-foreground: 40 10% 96%;
+    --popover: 222 40% 8%;
+    --popover-foreground: 0 0% 96%;
 
-    --primary: 43 76% 52%;
-    --primary-foreground: 240 20% 4%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 230 20% 10%;
-    --secondary-foreground: 40 5% 70%;
+    --secondary: 222 35% 12%;
+    --secondary-foreground: 226 70% 85%;
 
-    --muted: 230 15% 12%;
-    --muted-foreground: 230 10% 45%;
+    --muted: 222 30% 14%;
+    --muted-foreground: 222 15% 50%;
 
-    --accent: 18 100% 62%;
+    --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 230 15% 14%;
-    --input: 230 15% 14%;
-    --ring: 43 76% 52%;
+    --border: 222 20% 14%;
+    --input: 222 20% 14%;
+    --ring: 221 83% 53%;
 
     --radius: 0.875rem;
 
-    /* Royal cinematic tokens */
-    --royal-gold: 43 76% 52%;
-    --royal-gold-light: 43 80% 65%;
-    --royal-silver: 0 0% 78%;
-    --cinematic-fire: 18 100% 62%;
-    --midnight-blue: 220 33% 11%;
-    --royal-black: 240 24% 4%;
-    --deep-shadow: 240 30% 3%;
+    /* Blue cinematic tokens */
+    --blue-primary: 221 83% 53%;
+    --blue-bright: 217 91% 60%;
+    --blue-glow: 213 94% 68%;
+    --blue-deep: 222 47% 11%;
+    --blue-navy: 222 40% 8%;
+    --blue-slate: 220 27% 14%;
+    --text-soft: 226 70% 85%;
+    --deep-black: 222 47% 5%;
 
     --font-display: 'Cinzel', 'Playfair Display', serif;
     --font-body: 'DM Sans', sans-serif;
 
-    --glass-bg: hsla(230, 20%, 6%, 0.7);
-    --glass-border: hsla(43, 76%, 52%, 0.1);
-    --glass-border-hover: hsla(43, 76%, 52%, 0.3);
-    --glow-shadow: 0 0 40px hsla(43, 76%, 52%, 0.15);
-    --glow-shadow-strong: 0 0 80px hsla(43, 76%, 52%, 0.25);
-    --glow-fire: 0 0 40px hsla(18, 100%, 62%, 0.12);
+    --glass-bg: hsla(222, 40%, 8%, 0.7);
+    --glass-border: hsla(221, 83%, 53%, 0.1);
+    --glass-border-hover: hsla(221, 83%, 53%, 0.3);
+    --glow-shadow: 0 0 40px hsla(221, 83%, 53%, 0.15);
+    --glow-shadow-strong: 0 0 80px hsla(221, 83%, 53%, 0.25);
+    --glow-accent: 0 0 40px hsla(217, 91%, 60%, 0.12);
   }
 }
 
@@ -93,7 +94,7 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, hsl(var(--royal-gold)), hsl(var(--royal-gold-light)), hsl(var(--cinematic-fire)));
+    background: linear-gradient(135deg, hsl(var(--blue-primary)), hsl(var(--blue-bright)), hsl(var(--blue-glow)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -101,12 +102,8 @@
     animation: gradient-shift 6s ease infinite;
   }
 
-  .gold-text {
-    color: hsl(var(--royal-gold));
-  }
-
   .accent-text {
-    background: linear-gradient(135deg, hsl(var(--royal-gold)), hsl(var(--cinematic-fire)));
+    background: linear-gradient(135deg, hsl(var(--blue-bright)), hsl(var(--blue-glow)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -114,29 +111,29 @@
 
   .accent-line {
     height: 1px;
-    background: linear-gradient(90deg, transparent, hsl(var(--royal-gold)), hsl(var(--cinematic-fire)), transparent);
+    background: linear-gradient(90deg, transparent, hsl(var(--blue-primary)), hsl(var(--blue-bright)), transparent);
   }
 
   .cinema-card {
-    background: hsla(230, 15%, 6%, 0.8);
-    border: 1px solid hsla(43, 76%, 52%, 0.08);
+    background: hsla(222, 40%, 8%, 0.8);
+    border: 1px solid hsla(221, 83%, 53%, 0.08);
     backdrop-filter: blur(20px);
     border-radius: 1.25rem;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .cinema-card:hover {
-    border-color: hsla(43, 76%, 52%, 0.25);
+    border-color: hsla(221, 83%, 53%, 0.25);
     box-shadow:
-      0 0 30px hsla(43, 76%, 52%, 0.1),
-      0 0 60px hsla(18, 100%, 62%, 0.05),
-      0 20px 50px hsla(240, 25%, 4%, 0.5);
+      0 0 30px hsla(221, 83%, 53%, 0.1),
+      0 0 60px hsla(217, 91%, 60%, 0.05),
+      0 20px 50px hsla(222, 47%, 4%, 0.5);
     transform: translateY(-6px);
   }
 
   .glow-btn {
-    background: linear-gradient(135deg, hsl(var(--royal-gold)), hsl(var(--cinematic-fire)));
-    color: hsl(var(--royal-black));
+    background: linear-gradient(135deg, hsl(var(--blue-primary)), hsl(var(--blue-bright)));
+    color: hsl(0, 0%, 100%);
     border-radius: 9999px;
     padding: 0.85rem 2.2rem;
     font-weight: 700;
@@ -145,7 +142,7 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     transition: all 0.4s ease;
-    box-shadow: 0 4px 25px hsla(43, 76%, 52%, 0.3);
+    box-shadow: 0 4px 25px hsla(221, 83%, 53%, 0.3);
     position: relative;
     overflow: hidden;
   }
@@ -155,7 +152,7 @@
     position: absolute;
     inset: -2px;
     border-radius: inherit;
-    background: linear-gradient(135deg, hsl(var(--royal-gold)), hsl(var(--cinematic-fire)), hsl(var(--royal-gold-light)));
+    background: linear-gradient(135deg, hsl(var(--blue-primary)), hsl(var(--blue-bright)), hsl(var(--blue-glow)));
     z-index: -1;
     filter: blur(12px);
     opacity: 0;
@@ -164,7 +161,7 @@
 
   .glow-btn:hover {
     transform: translateY(-2px) scale(1.04);
-    box-shadow: 0 8px 40px hsla(43, 76%, 52%, 0.45);
+    box-shadow: 0 8px 40px hsla(221, 83%, 53%, 0.45);
   }
 
   .glow-btn:hover::before {
@@ -173,13 +170,13 @@
 
   .bg-cinema-gradient {
     background:
-      radial-gradient(ellipse at 20% 50%, hsla(43, 76%, 52%, 0.04) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 20%, hsla(18, 100%, 62%, 0.03) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 80%, hsla(43, 80%, 65%, 0.02) 0%, transparent 50%);
+      radial-gradient(ellipse at 20% 50%, hsla(221, 83%, 53%, 0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, hsla(217, 91%, 60%, 0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, hsla(213, 94%, 68%, 0.02) 0%, transparent 50%);
   }
 
   .bg-cinema-subtle {
-    background: radial-gradient(ellipse at 50% 0%, hsla(43, 76%, 52%, 0.04) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 50% 0%, hsla(221, 83%, 53%, 0.04) 0%, transparent 60%);
   }
 
   .particle-bg {
@@ -199,7 +196,7 @@
     inset: -2px;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, hsl(var(--royal-gold)), transparent, hsl(var(--cinematic-fire)));
+    background: linear-gradient(135deg, hsl(var(--blue-primary)), transparent, hsl(var(--blue-glow)));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -218,10 +215,10 @@
   width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: hsl(240, 20%, 4%);
+  background: hsl(222, 47%, 5%);
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, hsl(43, 76%, 52%), hsl(18, 100%, 62%));
+  background: linear-gradient(180deg, hsl(221, 83%, 53%), hsl(217, 91%, 60%));
   border-radius: 2px;
 }
 
@@ -237,7 +234,7 @@ section::before {
   left: 10%;
   right: 10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, hsla(43, 76%, 52%, 0.15), hsla(18, 100%, 62%, 0.08), transparent);
+  background: linear-gradient(90deg, transparent, hsla(221, 83%, 53%, 0.15), hsla(217, 91%, 60%, 0.08), transparent);
 }
 
 section:first-child::before {

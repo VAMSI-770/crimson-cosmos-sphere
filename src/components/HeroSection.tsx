@@ -35,16 +35,16 @@ const AnimatedWord = ({ text, className, startIndex = 0 }: { text: string; class
 const HeroSection = () => {
   return (
     <section id="hero" className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Atmospheric lighting - royal gold tones */}
-      <div className="absolute top-1/4 left-[15%] w-[500px] h-[500px] rounded-full bg-royal-gold/[0.04] blur-[140px] animate-blob pointer-events-none" />
-      <div className="absolute bottom-1/4 right-[10%] w-[400px] h-[400px] rounded-full bg-cinematic-fire/[0.03] blur-[120px] animate-blob pointer-events-none" style={{ animationDelay: "5s" }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-royal-gold/[0.02] blur-[160px] pointer-events-none" />
+      {/* Atmospheric lighting */}
+      <div className="absolute top-1/4 left-[15%] w-[500px] h-[500px] rounded-full bg-blue-primary/[0.04] blur-[140px] animate-blob pointer-events-none" />
+      <div className="absolute bottom-1/4 right-[10%] w-[400px] h-[400px] rounded-full bg-blue-bright/[0.03] blur-[120px] animate-blob pointer-events-none" style={{ animationDelay: "5s" }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-blue-primary/[0.02] blur-[160px] pointer-events-none" />
 
       {/* Vertical light beams */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-[30%] w-px h-full bg-gradient-to-b from-transparent via-royal-gold/[0.08] to-transparent" />
-        <div className="absolute top-0 right-[25%] w-px h-full bg-gradient-to-b from-transparent via-cinematic-fire/[0.05] to-transparent" />
-        <div className="absolute top-0 left-1/2 w-px h-full bg-gradient-to-b from-transparent via-royal-gold/[0.04] to-transparent" />
+        <div className="absolute top-0 left-[30%] w-px h-full bg-gradient-to-b from-transparent via-blue-primary/[0.08] to-transparent" />
+        <div className="absolute top-0 right-[25%] w-px h-full bg-gradient-to-b from-transparent via-blue-bright/[0.05] to-transparent" />
+        <div className="absolute top-0 left-1/2 w-px h-full bg-gradient-to-b from-transparent via-blue-glow/[0.04] to-transparent" />
       </div>
 
       <div className="container mx-auto px-6 lg:px-16 relative z-10">
@@ -55,9 +55,9 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-royal-gold/20 bg-secondary/40 backdrop-blur-sm mb-14">
-              <span className="w-2 h-2 rounded-full bg-royal-gold animate-glow-pulse" />
-              <span className="text-xs text-royal-silver font-medium tracking-[0.3em] uppercase">Available for opportunities</span>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-blue-primary/20 bg-secondary/40 backdrop-blur-sm mb-14">
+              <span className="w-2 h-2 rounded-full bg-blue-bright animate-glow-pulse" />
+              <span className="text-xs text-text-soft font-medium tracking-[0.3em] uppercase">Available for opportunities</span>
             </div>
           </motion.div>
 
@@ -70,32 +70,32 @@ const HeroSection = () => {
             />
             <AnimatedWord
               text="VAMSI"
-              className="text-royal-gold tracking-[0.12em]"
+              className="text-blue-bright tracking-[0.12em]"
               startIndex={10}
             />
           </h1>
 
-          {/* Decorative gold line */}
+          {/* Decorative line */}
           <motion.div
             className="flex items-center justify-center gap-3 mb-6"
             initial={{ opacity: 0, scaleX: 0 }}
             animate={{ opacity: 1, scaleX: 1 }}
             transition={{ delay: 1.4, duration: 0.8, ease: "easeOut" }}
           >
-            <div className="h-px w-16 md:w-28 bg-gradient-to-r from-transparent to-royal-gold/50" />
+            <div className="h-px w-16 md:w-28 bg-gradient-to-r from-transparent to-blue-primary/50" />
             <motion.span
-              className="text-royal-gold text-xs tracking-[0.5em] uppercase font-display font-medium"
+              className="text-blue-bright text-xs tracking-[0.5em] uppercase font-display font-medium"
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
             >
               ✦
             </motion.span>
-            <div className="h-px w-16 md:w-28 bg-gradient-to-l from-transparent to-cinematic-fire/40" />
+            <div className="h-px w-16 md:w-28 bg-gradient-to-l from-transparent to-blue-glow/40" />
           </motion.div>
 
           {/* Subtitle */}
           <motion.p
-            className="text-xl md:text-2xl text-royal-silver font-display font-medium mb-4 tracking-wider"
+            className="text-xl md:text-2xl text-text-soft font-display font-medium mb-4 tracking-wider"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.6, duration: 0.8 }}
@@ -109,7 +109,7 @@ const HeroSection = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 1.8, duration: 0.8 }}
           >
-            Building powerful digital experiences with creativity and engineering.
+            Building modern web applications with creativity, performance, and elegant user experiences.
           </motion.p>
 
           {/* CTA */}
@@ -120,11 +120,11 @@ const HeroSection = () => {
             transition={{ delay: 2, duration: 0.7 }}
           >
             <a href="#projects" className="glow-btn">
-              Explore My Work
+              View Projects
             </a>
             <a
               href="#contact"
-              className="px-8 py-3.5 rounded-full border border-royal-gold/25 text-foreground font-display font-semibold text-sm tracking-wider uppercase transition-all duration-400 hover:border-royal-gold/50 hover:bg-royal-gold/5 hover:shadow-[0_0_25px_hsla(43,76%,52%,0.15)]"
+              className="px-8 py-3.5 rounded-full border border-blue-primary/25 text-foreground font-display font-semibold text-sm tracking-wider uppercase transition-all duration-400 hover:border-blue-primary/50 hover:bg-blue-primary/5 hover:shadow-[0_0_25px_hsla(221,83%,53%,0.15)]"
             >
               Contact Me
             </a>
@@ -140,8 +140,8 @@ const HeroSection = () => {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 0.4 }}
       >
-        <div className="w-5 h-8 rounded-full border border-royal-gold/30 flex justify-center pt-2">
-          <div className="w-0.5 h-2 rounded-full bg-royal-gold" />
+        <div className="w-5 h-8 rounded-full border border-blue-primary/30 flex justify-center pt-2">
+          <div className="w-0.5 h-2 rounded-full bg-blue-bright" />
         </div>
       </motion.div>
     </section>
