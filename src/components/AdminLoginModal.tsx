@@ -92,7 +92,7 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <label className="block text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
-                    Email
+                    Name
                   </label>
                   <input
                     type="email"
