@@ -120,7 +120,7 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
                 >
-                  {isLoading ? "Authenticating..." : isSignUp ? "Create Account" : "Access Portal"}
+                  {isLoading ? "Authenticating..." : "Access Portal"}
                 </motion.button>
               </form>
 
