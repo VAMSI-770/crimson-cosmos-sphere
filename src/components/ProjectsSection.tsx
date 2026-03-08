@@ -10,6 +10,7 @@ const fallbackProjects = [
 const ProjectsSection = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [bufferingIndex, setBufferingIndex] = useState<number | null>(null);
   const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
   const { data: dbProjects } = useProjects();
   const projects = dbProjects && dbProjects.length > 0 ? dbProjects : fallbackProjects;
@@ -18,6 +19,7 @@ const ProjectsSection = () => {
 
   const handleMouseEnter = useCallback((index: number) => {
     setHoveredIndex(index);
+    setBufferingIndex(index);
     const video = videoRefs.current[index];
     if (video) {
       video.currentTime = 0;
@@ -27,6 +29,7 @@ const ProjectsSection = () => {
 
   const handleMouseLeave = useCallback((index: number) => {
     setHoveredIndex(null);
+    setBufferingIndex(null);
     const video = videoRefs.current[index];
     if (video) {
       video.pause();
@@ -67,6 +70,8 @@ const ProjectsSection = () => {
                       loop
                       playsInline
                       preload="metadata"
+                      onPlaying={() => setBufferingIndex((prev) => prev === i ? null : prev)}
+                      onWaiting={() => hoveredIndex === i && setBufferingIndex(i)}
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 z-10 ${
                         hoveredIndex === i ? "opacity-100" : "opacity-0"
                       }`}
@@ -81,6 +86,16 @@ const ProjectsSection = () => {
                         {project.title.charAt(0)}
                       </motion.span>
                     </>
+                  )}
+                  {/* Buffering spinner */}
+                  {hoveredIndex === i && bufferingIndex === i && (
+                    <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/30 backdrop-blur-[2px]">
+                      <motion.div
+                        className="w-8 h-8 border-2 border-blue-bright border-t-transparent rounded-full"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                      />
+                    </div>
                   )}
                   {/* Play icon indicator for videos */}
                   {project.video_url && hoveredIndex !== i && (
