@@ -29,6 +29,10 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome to Admin Portal");
+        // Send login notification email (fire and forget)
+        supabase.functions.invoke("admin-login-notify", {
+          body: { email },
+        }).catch(console.error);
         onSuccess();
       }
     } catch (err: any) {
