@@ -8,6 +8,7 @@ import AdminSidebar, { type AdminTab } from "@/components/admin/AdminSidebar";
 import SiteContentEditor from "@/components/admin/SiteContentEditor";
 import GenericCrudManager from "@/components/admin/GenericCrudManager";
 import MessagesInbox from "@/components/admin/MessagesInbox";
+import SkillsManager from "@/components/admin/SkillsManager";
 import MediaLibrary from "@/components/admin/MediaLibrary";
 import {
   useEducation, useSkillCategories, useProjects, useCertifications,
@@ -98,24 +99,7 @@ const AdminPortal = () => {
           />
         );
       case "skills":
-        return (
-          <GenericCrudManager
-            title="Skill Categories"
-            description="Manage skill groups and individual skills."
-            tableName="skill_categories"
-            queryKey="skill_categories"
-            items={(skillCategories.data || []).map((cat: any) => ({
-              ...cat,
-              description: `${cat.proficiency} — ${(cat.skills || []).map((s: any) => s.name).join(", ")}`,
-            }))}
-            isLoading={skillCategories.isLoading}
-            fields={[
-              { key: "title", label: "Category Name", type: "text", placeholder: "e.g. AI & ML" },
-              { key: "description", label: "Description", type: "textarea" },
-              { key: "proficiency", label: "Proficiency Level", type: "text", placeholder: "e.g. Advanced" },
-            ]}
-          />
-        );
+        return <SkillsManager />;
       case "projects":
         return (
           <GenericCrudManager
