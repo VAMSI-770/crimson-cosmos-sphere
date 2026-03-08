@@ -8,6 +8,7 @@ import AdminSidebar, { type AdminTab } from "@/components/admin/AdminSidebar";
 import SiteContentEditor from "@/components/admin/SiteContentEditor";
 import GenericCrudManager from "@/components/admin/GenericCrudManager";
 import MessagesInbox from "@/components/admin/MessagesInbox";
+import SkillsManager from "@/components/admin/SkillsManager";
 import MediaLibrary from "@/components/admin/MediaLibrary";
 import {
   useEducation, useSkillCategories, useProjects, useCertifications,
