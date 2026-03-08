@@ -29,7 +29,7 @@ const ExperienceTimeline = () => {
     <section id="education" className="relative py-32">
       <div className="container mx-auto px-6 lg:px-16">
         <ScrollReveal>
-          <p className="accent-text text-xs tracking-[0.4em] uppercase mb-4 font-semibold font-display">Education</p>
+          <p className="accent-text text-xs tracking-[0.4em] uppercase mb-4 font-semibold font-display">Journey</p>
           <h2 className="text-3xl md:text-5xl font-bold font-display mb-5">
             Education <span className="gradient-text">Timeline</span>
           </h2>
