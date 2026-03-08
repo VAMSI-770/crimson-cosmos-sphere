@@ -14,7 +14,389 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      achievements: {
+        Row: {
+          created_at: string
+          description: string
+          details: string
+          file_type: string | null
+          file_url: string | null
+          id: string
+          label: string
+          preview_image_url: string | null
+          sort_order: number
+          team: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          details?: string
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          label?: string
+          preview_image_url?: string | null
+          sort_order?: number
+          team?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          details?: string
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          label?: string
+          preview_image_url?: string | null
+          sort_order?: number
+          team?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      certifications: {
+        Row: {
+          created_at: string
+          description: string
+          file_type: string | null
+          file_url: string | null
+          id: string
+          issuer: string
+          preview_image_url: string | null
+          skills: string[]
+          sort_order: number
+          title: string
+          year: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          issuer?: string
+          preview_image_url?: string | null
+          skills?: string[]
+          sort_order?: number
+          title: string
+          year?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          issuer?: string
+          preview_image_url?: string | null
+          skills?: string[]
+          sort_order?: number
+          title?: string
+          year?: string
+        }
+        Relationships: []
+      }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_read: boolean
+          message: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          is_read?: boolean
+          message: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      education: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          sort_order: number
+          title: string
+          year: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          sort_order?: number
+          title: string
+          year: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          sort_order?: number
+          title?: string
+          year?: string
+        }
+        Relationships: []
+      }
+      goals: {
+        Row: {
+          created_at: string
+          description: string
+          full_description: string
+          id: string
+          milestones: string[]
+          sort_order: number
+          timeline: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          full_description?: string
+          id?: string
+          milestones?: string[]
+          sort_order?: number
+          timeline?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          full_description?: string
+          id?: string
+          milestones?: string[]
+          sort_order?: number
+          timeline?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      ideas: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          full_description: string
+          id: string
+          potential_impact: string
+          sort_order: number
+          technologies: string[]
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string
+          full_description?: string
+          id?: string
+          potential_impact?: string
+          sort_order?: number
+          technologies?: string[]
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          full_description?: string
+          id?: string
+          potential_impact?: string
+          sort_order?: number
+          technologies?: string[]
+          title?: string
+        }
+        Relationships: []
+      }
+      internships: {
+        Row: {
+          company: string
+          created_at: string
+          description: string
+          duration: string
+          file_type: string | null
+          file_url: string | null
+          full_description: string
+          highlights: string[]
+          id: string
+          preview_image_url: string | null
+          role: string
+          sort_order: number
+          technologies: string[]
+        }
+        Insert: {
+          company: string
+          created_at?: string
+          description?: string
+          duration?: string
+          file_type?: string | null
+          file_url?: string | null
+          full_description?: string
+          highlights?: string[]
+          id?: string
+          preview_image_url?: string | null
+          role: string
+          sort_order?: number
+          technologies?: string[]
+        }
+        Update: {
+          company?: string
+          created_at?: string
+          description?: string
+          duration?: string
+          file_type?: string | null
+          file_url?: string | null
+          full_description?: string
+          highlights?: string[]
+          id?: string
+          preview_image_url?: string | null
+          role?: string
+          sort_order?: number
+          technologies?: string[]
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          challenges: string
+          created_at: string
+          demo_link: string | null
+          description: string
+          full_description: string
+          github_link: string | null
+          id: string
+          image_url: string | null
+          outcome: string
+          sort_order: number
+          tags: string[]
+          team: string | null
+          title: string
+        }
+        Insert: {
+          challenges?: string
+          created_at?: string
+          demo_link?: string | null
+          description?: string
+          full_description?: string
+          github_link?: string | null
+          id?: string
+          image_url?: string | null
+          outcome?: string
+          sort_order?: number
+          tags?: string[]
+          team?: string | null
+          title: string
+        }
+        Update: {
+          challenges?: string
+          created_at?: string
+          demo_link?: string | null
+          description?: string
+          full_description?: string
+          github_link?: string | null
+          id?: string
+          image_url?: string | null
+          outcome?: string
+          sort_order?: number
+          tags?: string[]
+          team?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      site_content: {
+        Row: {
+          id: string
+          key: string
+          section: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          id?: string
+          key: string
+          section: string
+          updated_at?: string
+          value?: string
+        }
+        Update: {
+          id?: string
+          key?: string
+          section?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      skill_categories: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          proficiency: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          proficiency?: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          proficiency?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      skills: {
+        Row: {
+          category_id: string
+          id: string
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          category_id: string
+          id?: string
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          category_id?: string
+          id?: string
+          name?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "skills_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "skill_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
