@@ -19,6 +19,7 @@ const ProjectsSection = () => {
 
   const handleMouseEnter = useCallback((index: number) => {
     setHoveredIndex(index);
+    setBufferingIndex(index);
     const video = videoRefs.current[index];
     if (video) {
       video.currentTime = 0;
