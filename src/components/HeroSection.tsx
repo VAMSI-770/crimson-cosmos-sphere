@@ -58,7 +58,7 @@ const HeroSection = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.8 }}
           >
-            Data Science Student · Future AI Engineer · Creative Technologist
+            Building modern web applications with performance, creativity, and elegant design.
           </motion.p>
 
           {/* CTA */}
