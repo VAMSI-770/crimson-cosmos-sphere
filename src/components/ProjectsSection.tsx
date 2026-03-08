@@ -29,6 +29,7 @@ const ProjectsSection = () => {
 
   const handleMouseLeave = useCallback((index: number) => {
     setHoveredIndex(null);
+    setBufferingIndex(null);
     const video = videoRefs.current[index];
     if (video) {
       video.pause();
