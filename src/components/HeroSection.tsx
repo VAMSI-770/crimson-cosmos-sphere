@@ -41,6 +41,7 @@ const HeroSection = () => {
   const subtitle = content?.subtitle || "AI & Data Science Developer";
   const tagline = content?.tagline || "Building intelligent systems with AI, Computer Vision, and emerging technologies — from Hyderabad, India.";
   const badgeText = content?.badge_text || "Available for opportunities";
+  const resumeUrl = content?.resume_url || "/resume.pdf";
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center overflow-hidden">
