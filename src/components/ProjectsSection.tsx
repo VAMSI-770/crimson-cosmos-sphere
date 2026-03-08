@@ -11,7 +11,9 @@ const ProjectsSection = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [bufferingIndex, setBufferingIndex] = useState<number | null>(null);
+  const [videoProgress, setVideoProgress] = useState<Record<number, number>>({});
   const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
+  const rafRef = useRef<Record<number, number>>({});
   const { data: dbProjects } = useProjects();
   const projects = dbProjects && dbProjects.length > 0 ? dbProjects : fallbackProjects;
 
