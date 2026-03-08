@@ -19,15 +19,25 @@ const ProjectsSection = () => {
 
   const toggleExpand = (index: number) => setExpandedIndex(expandedIndex === index ? null : index);
 
+  const updateProgress = useCallback((index: number) => {
+    const video = videoRefs.current[index];
+    if (video && video.duration) {
+      setVideoProgress(prev => ({ ...prev, [index]: (video.currentTime / video.duration) * 100 }));
+    }
+    rafRef.current[index] = requestAnimationFrame(() => updateProgress(index));
+  }, []);
+
   const handleMouseEnter = useCallback((index: number) => {
     setHoveredIndex(index);
     setBufferingIndex(index);
+    setVideoProgress(prev => ({ ...prev, [index]: 0 }));
     const video = videoRefs.current[index];
     if (video) {
       video.currentTime = 0;
       video.play().catch(() => {});
     }
-  }, []);
+    rafRef.current[index] = requestAnimationFrame(() => updateProgress(index));
+  }, [updateProgress]);
 
   const handleMouseLeave = useCallback((index: number) => {
     setHoveredIndex(null);
