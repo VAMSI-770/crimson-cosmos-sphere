@@ -14,6 +14,7 @@ const internships = [
     technologies: ["Python", "Pandas", "Data Analysis", "Machine Learning"],
     highlights: ["Hands-on data science training", "Real-world project development", "Collaborative team experience"],
     file: { url: "/certificates/AIMERS_intern_certificate.pdf", type: "pdf" as const },
+    previewImage: "/certificates/AIMERS_intern_certificate_img.png",
   },
   {
     company: "Micro Information Technology Services",
