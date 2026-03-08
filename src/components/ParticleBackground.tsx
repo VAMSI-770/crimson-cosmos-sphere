@@ -11,7 +11,7 @@ const ParticleBackground = () => {
 
     let animationId: number;
     const particles: { x: number; y: number; vx: number; vy: number; size: number; alpha: number; color: string }[] = [];
-    const count = 30;
+    const count = 40;
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -21,20 +21,20 @@ const ParticleBackground = () => {
     window.addEventListener("resize", resize);
 
     const colors = [
-      "261, 78%, 64%",  // blueberry
-      "330, 100%, 71%", // strawberry
-      "270, 100%, 92%", // lavender
-      "48, 100%, 71%",  // lemon
+      "245, 100%, 71%",  // blueberry glow
+      "325, 100%, 68%",  // berry pink
+      "264, 100%, 82%",  // lavender
+      "258, 100%, 74%",  // electric violet
     ];
 
     for (let i = 0; i < count; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.15,
-        vy: (Math.random() - 0.5) * 0.15,
-        size: Math.random() * 3 + 1,
-        alpha: Math.random() * 0.12 + 0.03,
+        vx: (Math.random() - 0.5) * 0.12,
+        vy: (Math.random() - 0.5) * 0.12,
+        size: Math.random() * 2 + 0.5,
+        alpha: Math.random() * 0.15 + 0.03,
         color: colors[Math.floor(Math.random() * colors.length)],
       });
     }

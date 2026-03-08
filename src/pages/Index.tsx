@@ -15,13 +15,13 @@ const Index = () => {
   const handleComplete = useCallback(() => setLoaded(true), []);
 
   return (
-    <div className="relative min-h-screen bg-gradient-cream overflow-x-hidden">
+    <div className="relative min-h-screen bg-background overflow-x-hidden">
       <CinematicLoader onComplete={handleComplete} />
 
       <ParticleBackground />
 
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-40 backdrop-blur-xl bg-background/70 border-b border-border/50">
+      <nav className="fixed top-0 left-0 right-0 z-40 backdrop-blur-xl bg-background/60 border-b border-border/30">
         <div className="container mx-auto px-6 lg:px-16 flex items-center justify-between h-14">
           <a href="#hero" className="font-display font-bold text-lg gradient-text">VB</a>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground font-body font-medium">
@@ -29,7 +29,7 @@ const Index = () => {
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="hover:text-blueberry transition-colors duration-300 tracking-wide"
+                className="hover:text-blueberry-glow transition-colors duration-400 tracking-wide relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[1px] after:bg-blueberry-glow after:transition-all after:duration-300 hover:after:w-full"
               >
                 {item}
               </a>
