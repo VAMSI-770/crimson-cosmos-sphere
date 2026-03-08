@@ -10,33 +10,23 @@ interface AdminLoginModalProps {
 }
 
 const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) => {
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    try {
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        toast.success("Account created! You can now log in.");
-        setIsSignUp(false);
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        toast.success("Welcome to Admin Portal");
-        // Send login notification email (fire and forget)
-        supabase.functions.invoke("admin-login-notify", {
-          body: { email },
-        }).catch(console.error);
-        onSuccess();
-      }
-    } catch (err: any) {
-      toast.error(err.message || "Authentication failed");
+    if (name === "Vamsi" && password === "Vamsichowdary25@") {
+      toast.success("Welcome to Admin Portal");
+      // Send login notification email (fire and forget)
+      supabase.functions.invoke("admin-login-notify", {
+        body: { email: "Vamsi (Admin)" },
+      }).catch(console.error);
+      onSuccess();
+    } else {
+      toast.error("Invalid credentials");
     }
     setIsLoading(false);
   };
