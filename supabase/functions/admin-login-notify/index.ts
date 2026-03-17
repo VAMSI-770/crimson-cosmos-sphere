@@ -6,25 +6,54 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const { email } = await req.json();
-    if (!email) {
-      return new Response(JSON.stringify({ error: "Email is required" }), {
-        status: 400,
+    // Verify the caller is authenticated
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const userEmail = claimsData.claims.email || "Unknown";
+    const safeEmail = escapeHtml(String(userEmail));
+
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-    const OWNER_EMAIL = Deno.env.get("OWNER_EMAIL") || email;
+    const OWNER_EMAIL = Deno.env.get("OWNER_EMAIL") || safeEmail;
 
     if (!RESEND_API_KEY) {
-      console.log("RESEND_API_KEY not set, skipping email. Login by:", email);
+      console.log("RESEND_API_KEY not set, skipping email. Login by:", safeEmail);
       return new Response(
         JSON.stringify({ success: true, message: "Login logged (email not configured)" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -56,7 +85,7 @@ serve(async (req) => {
                 <table style="width: 100%; border-collapse: collapse;">
                   <tr>
                     <td style="color: #6b7280; font-size: 13px; padding: 6px 0;">Account</td>
-                    <td style="color: #111827; font-size: 13px; padding: 6px 0; text-align: right; font-weight: 600;">${email}</td>
+                    <td style="color: #111827; font-size: 13px; padding: 6px 0; text-align: right; font-weight: 600;">${safeEmail}</td>
                   </tr>
                   <tr>
                     <td style="color: #6b7280; font-size: 13px; padding: 6px 0;">Time</td>
@@ -77,7 +106,7 @@ serve(async (req) => {
 
     if (!res.ok) {
       console.error("Resend error:", data);
-      return new Response(JSON.stringify({ error: "Email send failed", details: data }), {
+      return new Response(JSON.stringify({ error: "Email send failed" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -88,7 +117,7 @@ serve(async (req) => {
     });
   } catch (err) {
     console.error("Error:", err);
-    return new Response(JSON.stringify({ error: err.message }), {
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

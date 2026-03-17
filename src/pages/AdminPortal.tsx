@@ -23,15 +23,27 @@ const AdminPortal = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if admin is authenticated via sessionStorage flag
-    const isAdmin = sessionStorage.getItem("admin_authenticated");
-    if (isAdmin === "true") {
-      setIsAuthenticated(true);
-    } else {
-      navigate("/");
-      toast.error("Please login to access admin portal");
-    }
-    setIsLoading(false);
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setIsAuthenticated(true);
+      } else {
+        navigate("/");
+        toast.error("Please login to access admin portal");
+      }
+      setIsLoading(false);
+    };
+
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        setIsAuthenticated(false);
+        navigate("/");
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
   // Data hooks

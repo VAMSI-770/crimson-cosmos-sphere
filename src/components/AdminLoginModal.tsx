@@ -10,7 +10,7 @@ interface AdminLoginModalProps {
 }
 
 const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) => {
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -18,16 +18,28 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
     e.preventDefault();
     setIsLoading(true);
 
-    if (name === "Vamsi" && password === "Vamsichowdary25@") {
-      sessionStorage.setItem("admin_authenticated", "true");
-      toast.success("Welcome to Admin Portal");
-      // Send login notification email (fire and forget)
-      supabase.functions.invoke("admin-login-notify", {
-        body: { email: "Vamsi (Admin)" },
-      }).catch(console.error);
-      onSuccess();
-    } else {
-      toast.error("Invalid credentials");
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast.error("Invalid credentials");
+        setIsLoading(false);
+        return;
+      }
+
+      if (data.user) {
+        toast.success("Welcome to Admin Portal");
+        // Send login notification email (fire and forget)
+        supabase.functions.invoke("admin-login-notify", {
+          body: { email: data.user.email },
+        }).catch(console.error);
+        onSuccess();
+      }
+    } catch {
+      toast.error("Authentication failed");
     }
     setIsLoading(false);
   };
@@ -87,13 +99,13 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <label className="block text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
-                    Name
+                    Email
                   </label>
                   <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your name"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
                     className="w-full bg-secondary/50 border border-border/50 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-primary/50 transition-colors"
                     required
                   />
