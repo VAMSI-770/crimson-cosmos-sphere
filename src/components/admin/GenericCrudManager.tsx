@@ -56,12 +56,25 @@ const GenericCrudManager = ({ title, description, tableName, queryKey, items, fi
   };
 
   const handleFileUpload = async (field: string, file: File) => {
-    const ext = file.name.split('.').pop();
-    const path = `${tableName}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error } = await supabase.storage.from("media").upload(path, file);
-    if (error) { toast.error("Upload failed"); return; }
+    const invalid = validateUpload(file);
+    if (invalid) {
+      toast.error(invalid);
+      logAudit({ action: "media.upload", status: "rejected", entity: tableName, details: { reason: invalid } });
+      return;
+    }
+    const path = buildStoragePath(tableName, file.name);
+    const { error } = await supabase.storage.from("media").upload(path, file, {
+      contentType: file.type,
+      upsert: false,
+    });
+    if (error) {
+      toast.error("Upload failed");
+      logAudit({ action: "media.upload", status: "failed", entity: tableName });
+      return;
+    }
     const { data: { publicUrl } } = supabase.storage.from("media").getPublicUrl(path);
     setFormData(prev => ({ ...prev, [field]: publicUrl }));
+    logAudit({ action: "media.upload", entity: tableName, entity_id: path });
     toast.success("File uploaded");
   };
 
@@ -76,10 +89,12 @@ const GenericCrudManager = ({ title, description, tableName, queryKey, items, fi
       if (isAdding) {
         const { error } = await supabase.from(tableName as any).insert(payload);
         if (error) throw error;
+        logAudit({ action: "content.create", entity: tableName });
         toast.success(`${title} added`);
       } else if (editingId) {
         const { error } = await supabase.from(tableName as any).update(payload).eq("id", editingId);
         if (error) throw error;
+        logAudit({ action: "content.update", entity: tableName, entity_id: editingId });
         toast.success(`${title} updated`);
       }
       queryClient.invalidateQueries({ queryKey: [queryKey] });
@@ -94,6 +109,7 @@ const GenericCrudManager = ({ title, description, tableName, queryKey, items, fi
     try {
       const { error } = await supabase.from(tableName as any).delete().eq("id", id);
       if (error) throw error;
+      logAudit({ action: "content.delete", entity: tableName, entity_id: id });
       toast.success("Deleted");
       queryClient.invalidateQueries({ queryKey: [queryKey] });
     } catch (err: any) {
