@@ -1,17 +1,22 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { logAudit } from "@/lib/audit";
 import { toast } from "sonner";
 import { LogOut, Eye } from "lucide-react";
 
 const AdminHeader = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    logAudit({ action: "admin.logout" });
     sessionStorage.removeItem("admin_authenticated");
+    // Invalidate the session everywhere, not just this tab
+    await supabase.auth.signOut({ scope: "global" });
     toast.success("Logged out successfully");
     navigate("/");
   };
+
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/50">
