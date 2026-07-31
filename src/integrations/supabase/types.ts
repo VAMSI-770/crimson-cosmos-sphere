@@ -80,6 +80,54 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_id: string | null
+          created_at: string
+          details: Json
+          entity: string | null
+          entity_id: string | null
+          id: string
+          ip_address: string | null
+          request_id: string | null
+          session_id: string | null
+          status: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          entity?: string | null
+          entity_id?: string | null
+          id?: string
+          ip_address?: string | null
+          request_id?: string | null
+          session_id?: string | null
+          status?: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          entity?: string | null
+          entity_id?: string | null
+          id?: string
+          ip_address?: string | null
+          request_id?: string | null
+          session_id?: string | null
+          status?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       certifications: {
         Row: {
           created_at: string
@@ -290,6 +338,33 @@ export type Database = {
           role?: string
           sort_order?: number
           technologies?: string[]
+        }
+        Relationships: []
+      }
+      login_attempts: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          ip_address: string
+          success: boolean
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          ip_address: string
+          success?: boolean
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          ip_address?: string
+          success?: boolean
+          user_agent?: string | null
         }
         Relationships: []
       }
