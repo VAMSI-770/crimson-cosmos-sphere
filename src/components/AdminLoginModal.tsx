@@ -19,25 +19,33 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      // Rate-limited, brute-force protected login endpoint (audited server-side)
+      const { data, error } = await supabase.functions.invoke("admin-login", {
+        body: { email: email.trim().toLowerCase(), password },
       });
 
-      if (error) {
+      const message = (data as any)?.error as string | undefined;
+      const session = (data as any)?.session as
+        | { access_token: string; refresh_token: string }
+        | undefined;
+
+      if (error || !session) {
+        toast.error(message || "Invalid credentials");
+        setIsLoading(false);
+        return;
+      }
+
+      const { error: sessionError } = await supabase.auth.setSession(session);
+      if (sessionError) {
         toast.error("Invalid credentials");
         setIsLoading(false);
         return;
       }
 
-      if (data.user) {
-        toast.success("Welcome to Admin Portal");
-        // Send login notification email (fire and forget)
-        supabase.functions.invoke("admin-login-notify", {
-          body: { email: data.user.email },
-        }).catch(console.error);
-        onSuccess();
-      }
+      toast.success("Welcome to Admin Portal");
+      // Send login notification email (fire and forget)
+      supabase.functions.invoke("admin-login-notify", { body: {} }).catch(() => {});
+      onSuccess();
     } catch {
       toast.error("Authentication failed");
     }
