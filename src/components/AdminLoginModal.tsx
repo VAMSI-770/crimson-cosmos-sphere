@@ -24,7 +24,14 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }: AdminLoginModalProps) =
         body: { email: email.trim().toLowerCase(), password },
       });
 
-      const message = (data as any)?.error as string | undefined;
+      let message = (data as any)?.error as string | undefined;
+      if (error && (error as any).context?.json) {
+        try {
+          message = (await (error as any).context.json())?.error ?? message;
+        } catch {
+          /* keep generic message */
+        }
+      }
       const session = (data as any)?.session as
         | { access_token: string; refresh_token: string }
         | undefined;
