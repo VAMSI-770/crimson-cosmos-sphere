@@ -5,6 +5,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSiteContent } from "@/hooks/usePortfolioData";
 import { Upload, Trash2, FileText, Download } from "lucide-react";
 import { motion } from "framer-motion";
+import { logAudit } from "@/lib/audit";
+import { buildStoragePath, validateUpload } from "@/lib/uploads";
 
 const ResumeManager = () => {
   const { data: content, isLoading } = useSiteContent("hero");
@@ -17,14 +19,18 @@ const ResumeManager = () => {
   }, [content]);
 
   const handleUpload = async (file: File) => {
-    if (!file.name.toLowerCase().endsWith(".pdf")) {
-      toast.error("Please upload a PDF file");
+    const invalid = validateUpload(file, "document");
+    if (invalid) {
+      toast.error(invalid);
+      logAudit({ action: "resume.upload", status: "rejected", details: { reason: invalid } });
       return;
     }
     setUploading(true);
     try {
-      const path = `resume/${Date.now()}-${file.name}`;
-      const { error: uploadError } = await supabase.storage.from("media").upload(path, file);
+      const path = buildStoragePath("resume", file.name);
+      const { error: uploadError } = await supabase.storage
+        .from("media")
+        .upload(path, file, { contentType: file.type, upsert: false });
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage.from("media").getPublicUrl(path);
@@ -39,8 +45,10 @@ const ResumeManager = () => {
 
       setResumeUrl(publicUrl);
       queryClient.invalidateQueries({ queryKey: ["site_content", "hero"] });
+      logAudit({ action: "resume.upload", entity: "site_content", entity_id: path });
       toast.success("Resume uploaded successfully!");
     } catch (err: any) {
+      logAudit({ action: "resume.upload", status: "failed" });
       toast.error(err.message || "Upload failed");
     }
     setUploading(false);

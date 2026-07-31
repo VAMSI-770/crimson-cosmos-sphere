@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Plus, Pencil, Trash2, Save, X, Upload } from "lucide-react";
+import { logAudit } from "@/lib/audit";
+import { buildStoragePath, validateUpload } from "@/lib/uploads";
 
 interface FieldDef {
   key: string;
