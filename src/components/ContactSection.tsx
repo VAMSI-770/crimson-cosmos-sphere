@@ -1,9 +1,17 @@
 import { useState } from "react";
+import { z } from "zod";
 import ScrollReveal from "./ScrollReveal";
 import { Mail, Linkedin, Github } from "lucide-react";
 import { useSiteContent } from "@/hooks/usePortfolioData";
 import { supabase } from "@/integrations/supabase/client";
+import { logAudit } from "@/lib/audit";
 import { toast } from "sonner";
+
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Please enter your name").max(100, "Name must be under 100 characters"),
+  email: z.string().trim().email("Please enter a valid email").max(255, "Email must be under 255 characters"),
+  message: z.string().trim().min(1, "Please enter a message").max(5000, "Message must be under 5000 characters"),
+});
 
 const ContactSection = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -16,21 +24,28 @@ const ContactSection = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const parsed = contactSchema.safeParse(form);
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0].message);
+      logAudit({ action: "contact.validation_error", status: "rejected" });
+      return;
+    }
+
     setSending(true);
     try {
-      const { error } = await supabase.from("contact_messages").insert({
-        name: form.name,
-        email: form.email,
-        message: form.message,
-      });
+      const { error } = await supabase.from("contact_messages").insert(parsed.data);
       if (error) throw error;
       toast.success("Thanks for reaching out! I'll get back to you soon.");
+      logAudit({ action: "contact.submit", status: "success", entity: "contact_messages" });
       setForm({ name: "", email: "", message: "" });
-    } catch (err: any) {
+    } catch {
       toast.error("Failed to send message. Please try again.");
+      logAudit({ action: "contact.submit", status: "failed", entity: "contact_messages" });
     }
     setSending(false);
   };
+
 
   return (
     <section id="contact" className="relative py-32 bg-cinema-subtle">
