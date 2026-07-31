@@ -34,7 +34,10 @@ const ContactSection = () => {
 
     setSending(true);
     try {
-      const { error } = await supabase.from("contact_messages").insert(parsed.data);
+      const { name, email: senderEmail, message } = parsed.data;
+      const { error } = await supabase
+        .from("contact_messages")
+        .insert({ name, email: senderEmail, message });
       if (error) throw error;
       toast.success("Thanks for reaching out! I'll get back to you soon.");
       logAudit({ action: "contact.submit", status: "success", entity: "contact_messages" });
