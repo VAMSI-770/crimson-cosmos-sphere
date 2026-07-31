@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSiteContent } from "@/hooks/usePortfolioData";
 import { Save } from "lucide-react";
+import { logAudit } from "@/lib/audit";
 
 interface Props {
   section: "hero" | "about" | "contact";
@@ -70,6 +71,7 @@ const SiteContentEditor = ({ section }: Props) => {
           .upsert({ section, key: field.key, value, updated_at: new Date().toISOString() }, { onConflict: "section,key" });
         if (error) throw error;
       }
+      logAudit({ action: "content.update", entity: "site_content", entity_id: section });
       toast.success("Saved successfully");
       queryClient.invalidateQueries({ queryKey: ["site_content", section] });
     } catch (err: any) {

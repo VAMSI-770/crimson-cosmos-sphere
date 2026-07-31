@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Upload, Trash2, Copy, Image, FileText } from "lucide-react";
 import { motion } from "framer-motion";
+import { logAudit } from "@/lib/audit";
+import { buildStoragePath, validateUpload } from "@/lib/uploads";
 
 interface MediaFile {
   name: string;
@@ -56,15 +58,27 @@ const MediaLibrary = () => {
     const fileList = e.target.files;
     if (!fileList?.length) return;
     setUploading(true);
-    
+
     for (const file of Array.from(fileList)) {
-      const ext = file.name.split('.').pop();
-      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from("media").upload(path, file);
-      if (error) toast.error(`Failed to upload ${file.name}`);
-      else toast.success(`Uploaded ${file.name}`);
+      const invalid = validateUpload(file);
+      if (invalid) {
+        toast.error(`${file.name}: ${invalid}`);
+        logAudit({ action: "media.upload", status: "rejected", details: { reason: invalid } });
+        continue;
+      }
+      const path = buildStoragePath("uploads", file.name);
+      const { error } = await supabase.storage
+        .from("media")
+        .upload(path, file, { contentType: file.type, upsert: false });
+      if (error) {
+        toast.error(`Failed to upload ${file.name}`);
+        logAudit({ action: "media.upload", status: "failed" });
+      } else {
+        toast.success(`Uploaded ${file.name}`);
+        logAudit({ action: "media.upload", entity: "storage", entity_id: path });
+      }
     }
-    
+
     setUploading(false);
     loadFiles();
   };
@@ -72,8 +86,14 @@ const MediaLibrary = () => {
   const handleDelete = async (name: string) => {
     if (!confirm(`Delete ${name}?`)) return;
     const { error } = await supabase.storage.from("media").remove([name]);
-    if (error) toast.error("Delete failed");
-    else { toast.success("Deleted"); loadFiles(); }
+    if (error) {
+      toast.error("Delete failed");
+      logAudit({ action: "media.delete", status: "failed", entity: "storage", entity_id: name });
+    } else {
+      toast.success("Deleted");
+      logAudit({ action: "media.delete", entity: "storage", entity_id: name });
+      loadFiles();
+    }
   };
 
   const copyUrl = (url: string) => {

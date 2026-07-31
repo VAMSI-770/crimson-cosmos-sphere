@@ -67,6 +67,7 @@ const ResumeManager = () => {
 
       setResumeUrl("");
       queryClient.invalidateQueries({ queryKey: ["site_content", "hero"] });
+      logAudit({ action: "resume.remove", entity: "site_content" });
       toast.success("Resume removed");
     } catch (err: any) {
       toast.error(err.message || "Failed to remove");
