@@ -18,6 +18,7 @@ import GoalsSection from "../components/GoalsSection";
 import Chatbot from "../components/Chatbot";
 import CinematicArrow from "../components/CinematicArrow";
 import AdminLoginModal from "../components/AdminLoginModal";
+import PortfolioVerificationSection from "../components/blockchain/PortfolioVerificationSection";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
@@ -45,6 +46,7 @@ const Index = () => {
       "show ideas": "ideas",
       "show achievements": "achievements",
       "show goals": "goals",
+      "show verification": "verification",
       "contact vamsi": "contact",
       "about": "about",
     };
@@ -89,6 +91,7 @@ const Index = () => {
         <IdeasSection />
         <AchievementsSection />
         <GoalsSection />
+        <PortfolioVerificationSection />
         <VisionSection />
         <CinematicArrow 
           ref={arrowRef}

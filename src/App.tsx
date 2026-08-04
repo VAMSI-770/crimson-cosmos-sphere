@@ -6,11 +6,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import AdminPortal from "./pages/AdminPortal";
 import NotFound from "./pages/NotFound";
+import { WalletProvider } from "@/lib/blockchain/WalletProvider";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <WalletProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -23,6 +25,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </WalletProvider>
   </QueryClientProvider>
 );
 

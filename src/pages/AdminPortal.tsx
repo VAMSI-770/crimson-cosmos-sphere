@@ -11,6 +11,7 @@ import MessagesInbox from "@/components/admin/MessagesInbox";
 import SkillsManager from "@/components/admin/SkillsManager";
 import MediaLibrary from "@/components/admin/MediaLibrary";
 import ResumeManager from "@/components/admin/ResumeManager";
+import BlockchainManager from "@/components/admin/BlockchainManager";
 import {
   useEducation, useSkillCategories, useProjects, useCertifications,
   useInternships, useAchievements, useIdeas, useGoals, useContactMessages,
@@ -237,6 +238,8 @@ const AdminPortal = () => {
         return <MediaLibrary />;
       case "resume":
         return <ResumeManager />;
+      case "blockchain":
+        return <BlockchainManager />;
       default:
         return null;
     }

@@ -4,11 +4,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, Download, FileText, Image } from "lucide-react";
 import CertificateViewer from "./CertificateViewer";
 import { useCertifications } from "@/hooks/usePortfolioData";
+import { useBlockchainConfig, useRecordIndex } from "@/hooks/useBlockchain";
+import VerificationBadge from "./blockchain/VerificationBadge";
 
 const CertificationsSection = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [viewerFile, setViewerFile] = useState<{ url: string; title: string; type: "pdf" | "image" } | null>(null);
   const { data: certifications = [] } = useCertifications();
+  const { data: blockchainConfig = null } = useBlockchainConfig();
+  const { index: recordIndex } = useRecordIndex();
 
   const toggleExpand = (index: number) => setExpandedIndex(expandedIndex === index ? null : index);
 
