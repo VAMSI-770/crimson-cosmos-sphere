@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { 
   User, Code, FolderOpen, Award, Briefcase, Lightbulb, Trophy, Target, 
-  Mail, Image, GraduationCap, FileText 
+  Mail, Image, GraduationCap, FileText, ShieldCheck 
 } from "lucide-react";
 
 export type AdminTab = 
   | "about" | "education" | "skills" | "projects" | "certifications" 
-  | "internships" | "ideas" | "achievements" | "goals" | "contact" | "messages" | "media" | "resume";
+  | "internships" | "ideas" | "achievements" | "goals" | "contact" | "messages" | "media" | "resume" | "blockchain";
 
 const tabs: { id: AdminTab; label: string; icon: React.ElementType }[] = [
   { id: "about", label: "About / Hero", icon: User },
@@ -22,7 +22,9 @@ const tabs: { id: AdminTab; label: string; icon: React.ElementType }[] = [
   { id: "contact", label: "Contact Settings", icon: Mail },
   { id: "messages", label: "Inbox", icon: Mail },
   { id: "media", label: "Media Library", icon: Image },
+  { id: "blockchain", label: "Blockchain", icon: ShieldCheck },
 ];
+
 
 interface Props {
   activeTab: AdminTab;
