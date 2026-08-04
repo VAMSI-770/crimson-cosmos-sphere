@@ -4,11 +4,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, Download, FileText, Image } from "lucide-react";
 import CertificateViewer from "./CertificateViewer";
 import { useCertifications } from "@/hooks/usePortfolioData";
+import { useBlockchainConfig, useRecordIndex } from "@/hooks/useBlockchain";
+import VerificationBadge from "./blockchain/VerificationBadge";
 
 const CertificationsSection = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [viewerFile, setViewerFile] = useState<{ url: string; title: string; type: "pdf" | "image" } | null>(null);
   const { data: certifications = [] } = useCertifications();
+  const { data: blockchainConfig = null } = useBlockchainConfig();
+  const { index: recordIndex } = useRecordIndex();
 
   const toggleExpand = (index: number) => setExpandedIndex(expandedIndex === index ? null : index);
 
@@ -67,7 +71,18 @@ const CertificationsSection = () => {
                   </div>
 
                   <h3 className="text-sm font-display font-semibold text-foreground mb-2 group-hover:text-blue-bright transition-colors">{cert.title}</h3>
-                  <p className="text-xs text-muted-foreground mb-4">{cert.issuer}</p>
+                  <p className="text-xs text-muted-foreground mb-3">{cert.issuer}</p>
+
+                  <div className="mb-4">
+                    <VerificationBadge
+                      type="certificate"
+                      entity={cert}
+                      record={recordIndex.get(`certifications:${cert.id}`) ?? null}
+                      config={blockchainConfig}
+                      compact
+                    />
+                  </div>
+
 
                   {cert.file_url && (
                     <div className="flex gap-2 mt-auto pt-3 border-t border-border/20">

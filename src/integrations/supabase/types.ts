@@ -128,6 +128,117 @@ export type Database = {
         }
         Relationships: []
       }
+      blockchain_config: {
+        Row: {
+          chain_id: number
+          contract_address: string | null
+          created_at: string
+          deployed_at: string | null
+          deployment_tx: string | null
+          id: string
+          is_active: boolean
+          last_sync_at: string | null
+          network: string
+          owner_wallet: string | null
+          portfolio_id: string
+          updated_at: string
+        }
+        Insert: {
+          chain_id?: number
+          contract_address?: string | null
+          created_at?: string
+          deployed_at?: string | null
+          deployment_tx?: string | null
+          id?: string
+          is_active?: boolean
+          last_sync_at?: string | null
+          network?: string
+          owner_wallet?: string | null
+          portfolio_id: string
+          updated_at?: string
+        }
+        Update: {
+          chain_id?: number
+          contract_address?: string | null
+          created_at?: string
+          deployed_at?: string | null
+          deployment_tx?: string | null
+          id?: string
+          is_active?: boolean
+          last_sync_at?: string | null
+          network?: string
+          owner_wallet?: string | null
+          portfolio_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      blockchain_records: {
+        Row: {
+          block_number: number | null
+          chain_id: number
+          content_hash: string
+          contract_address: string | null
+          created_at: string
+          entity_id: string | null
+          entity_table: string | null
+          id: string
+          metadata: Json
+          network: string
+          owner_wallet: string | null
+          record_type: string
+          registered_at: string | null
+          status: string
+          title: string
+          tx_hash: string | null
+          updated_at: string
+          verification_id: string
+          version: number
+        }
+        Insert: {
+          block_number?: number | null
+          chain_id?: number
+          content_hash: string
+          contract_address?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_table?: string | null
+          id?: string
+          metadata?: Json
+          network?: string
+          owner_wallet?: string | null
+          record_type: string
+          registered_at?: string | null
+          status?: string
+          title?: string
+          tx_hash?: string | null
+          updated_at?: string
+          verification_id: string
+          version?: number
+        }
+        Update: {
+          block_number?: number | null
+          chain_id?: number
+          content_hash?: string
+          contract_address?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_table?: string | null
+          id?: string
+          metadata?: Json
+          network?: string
+          owner_wallet?: string | null
+          record_type?: string
+          registered_at?: string | null
+          status?: string
+          title?: string
+          tx_hash?: string | null
+          updated_at?: string
+          verification_id?: string
+          version?: number
+        }
+        Relationships: []
+      }
       certifications: {
         Row: {
           created_at: string
