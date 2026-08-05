@@ -2,6 +2,9 @@ import { useState, useRef, useCallback } from "react";
 import ScrollReveal from "./ScrollReveal";
 import { motion, AnimatePresence } from "framer-motion";
 import { useProjects } from "@/hooks/usePortfolioData";
+import { useBlockchainConfig, useRecordIndex } from "@/hooks/useBlockchain";
+import VerificationBadge from "./blockchain/VerificationBadge";
+import ProjectVersionHistory from "./blockchain/ProjectVersionHistory";
 
 const fallbackProjects = [
   { id: "1", title: "AI Swarm Robotics for Space Debris Cleanup", description: "AI-powered swarm robotics system.", full_description: "", tags: ["AI", "Robotics"], team: "The Space Savants", challenges: "", outcome: "", github_link: null, video_url: null },
@@ -15,6 +18,8 @@ const ProjectsSection = () => {
   const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
   const rafRef = useRef<Record<number, number>>({});
   const { data: dbProjects } = useProjects();
+  const { data: blockchainConfig = null } = useBlockchainConfig();
+  const { index: recordIndex } = useRecordIndex();
   const projects = dbProjects && dbProjects.length > 0 ? dbProjects : fallbackProjects;
 
   const toggleExpand = (index: number) => setExpandedIndex(expandedIndex === index ? null : index);
@@ -138,6 +143,16 @@ const ProjectsSection = () => {
                     <motion.span className="text-xs text-muted-foreground flex-shrink-0 ml-2" animate={{ rotate: expandedIndex === i ? 180 : 0 }}>↓</motion.span>
                   </div>
                   <p className="text-muted-foreground text-sm leading-relaxed mb-4">{project.description}</p>
+                  <div className="mb-4">
+                    <VerificationBadge
+                      type="project"
+                      entity={project}
+                      record={recordIndex.get(`projects:${project.id}`) ?? null}
+                      config={blockchainConfig}
+                      compact
+                    />
+                  </div>
+
                   <div className="flex flex-wrap gap-2">
                     {(project.tags || []).map((tag: string) => (
                       <span key={tag} className="text-xs px-3 py-1.5 rounded-full bg-secondary/60 text-muted-foreground border border-border/50 font-medium">{tag}</span>
@@ -173,6 +188,8 @@ const ProjectsSection = () => {
                               />
                             </div>
                           )}
+                          <ProjectVersionHistory entityTable="projects" entityId={project.id} />
+
                           <div className="flex gap-4 mt-4">
                             {project.github_link && (
                               <a href={project.github_link} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-bright hover:underline font-medium" onClick={(e) => e.stopPropagation()}>

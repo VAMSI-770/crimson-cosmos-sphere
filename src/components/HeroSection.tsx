@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { useSiteContent } from "@/hooks/usePortfolioData";
 import { toast } from "sonner";
+import { useBlockchainConfig, useRecordIndex } from "@/hooks/useBlockchain";
+import VerificationBadge from "./blockchain/VerificationBadge";
 
 const letterVariants = {
   hidden: { opacity: 0, y: 60, rotateX: -90 },
@@ -36,6 +38,8 @@ const AnimatedWord = ({ text, className, startIndex = 0 }: { text: string; class
 
 const HeroSection = () => {
   const { data: content } = useSiteContent("hero");
+  const { data: blockchainConfig = null } = useBlockchainConfig();
+  const { index: recordIndex } = useRecordIndex();
 
   const nameFirst = content?.name_first || "BOLLEPALLI";
   const nameLast = content?.name_last || "VAMSI";
@@ -161,6 +165,22 @@ const HeroSection = () => {
               Contact Me
             </a>
           </motion.div>
+
+          {resumeUrl && (
+            <motion.div
+              className="flex justify-center mt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2.3, duration: 0.7 }}
+            >
+              <VerificationBadge
+                type="resume"
+                entity={{ id: "resume", url: resumeUrl }}
+                record={recordIndex.get("site_content:resume") ?? null}
+                config={blockchainConfig}
+              />
+            </motion.div>
+          )}
         </div>
       </div>
 
