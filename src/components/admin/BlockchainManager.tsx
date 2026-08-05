@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,6 +34,8 @@ import {
   DEFAULT_NETWORK_KEY,
 } from "@/lib/blockchain/networks";
 import VerificationTimeline from "@/components/blockchain/VerificationTimeline";
+import WalletConnectButton from "@/components/blockchain/WalletConnectButton";
+import { fetchWalletConnectProjectId, saveWalletConnectProjectId } from "@/lib/blockchain/walletconnect";
 
 type Stage = "idle" | "preparing" | "signing" | "pending" | "confirmed";
 
@@ -73,6 +75,8 @@ const BlockchainManager = () => {
   const [busyKey, setBusyKey] = useState<string | null>(null);
   const [networkKey, setNetworkKey] = useState<string>(config?.network ?? DEFAULT_NETWORK_KEY);
   const [contractOwner, setContractOwner] = useState<string | null>(null);
+  const [wcProjectId, setWcProjectId] = useState("");
+  const [savingWc, setSavingWc] = useState(false);
   const [chainCount, setChainCount] = useState<number | null>(null);
 
   const network = getNetwork(config?.network ?? networkKey);
@@ -100,6 +104,23 @@ const BlockchainManager = () => {
     };
   }, [records]);
 
+  useEffect(() => {
+    void fetchWalletConnectProjectId().then((value) => setWcProjectId(value ?? ""));
+  }, []);
+
+  const handleSaveWalletConnect = async () => {
+    setSavingWc(true);
+    try {
+      await saveWalletConnectProjectId(wcProjectId);
+      logAudit({ action: "blockchain.walletconnect.configure" });
+      toast.success("WalletConnect project ID saved — reload to activate");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save project ID");
+    } finally {
+      setSavingWc(false);
+    }
+  };
+
   const walletOnWrongChain = Boolean(wallet.address && config?.chain_id && wallet.chainId !== config.chain_id);
 
   // ------------------------------------------------------------------
@@ -126,26 +147,6 @@ const BlockchainManager = () => {
     if (error) throw error;
     await refetchConfig();
     return data as never;
-  };
-
-  const handleConnect = async () => {
-    try {
-      const account = await wallet.connect();
-      if (!account) return;
-      logAudit({ action: "blockchain.wallet.connect", details: { address: account } });
-      toast.success(`Wallet connected · ${shortHash(account)}`);
-      if (config?.owner_wallet && config.owner_wallet.toLowerCase() !== account.toLowerCase()) {
-        toast.warning("Connected wallet differs from the registry owner wallet.");
-      }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Wallet connection failed");
-    }
-  };
-
-  const handleDisconnect = () => {
-    wallet.disconnect();
-    logAudit({ action: "blockchain.wallet.disconnect" });
-    toast.success("Wallet disconnected");
   };
 
   const handleSwitchNetwork = async (key: string) => {
@@ -477,24 +478,16 @@ const BlockchainManager = () => {
 
         {/* Wallet + contract controls */}
         <div className="flex flex-wrap items-center gap-3">
-          {wallet.address ? (
-            <motion.button
-              onClick={handleDisconnect}
-              whileTap={{ scale: 0.98 }}
-              className="px-5 py-2.5 rounded-xl text-sm font-medium bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors"
-            >
-              Disconnect Wallet
-            </motion.button>
-          ) : (
-            <motion.button
-              onClick={handleConnect}
-              disabled={wallet.isConnecting}
-              whileTap={{ scale: 0.98 }}
-              className="px-5 py-2.5 rounded-xl text-sm font-medium bg-gradient-to-r from-blue-primary to-blue-bright text-white hover:shadow-lg hover:shadow-blue-primary/30 transition-all disabled:opacity-60"
-            >
-              {wallet.isConnecting ? "Connecting…" : "Connect Wallet"}
-            </motion.button>
-          )}
+          <WalletConnectButton
+            networkKey={config?.network ?? networkKey}
+            onConnected={(account, kind) => {
+              logAudit({ action: "blockchain.wallet.connect", details: { address: account, connector: kind } });
+              if (config?.owner_wallet && config.owner_wallet.toLowerCase() !== account.toLowerCase()) {
+                toast.warning("Connected wallet differs from the registry owner wallet.");
+              }
+            }}
+            onDisconnected={() => logAudit({ action: "blockchain.wallet.disconnect" })}
+          />
 
           <select
             value={config?.network ?? networkKey}
@@ -541,10 +534,35 @@ const BlockchainManager = () => {
 
         {!wallet.isAvailable && (
           <p className="mt-4 text-xs text-amber-400">
-            No injected wallet found. Install MetaMask (desktop) or open the admin portal inside a
-            WalletConnect-compatible mobile wallet browser to sign transactions.
+            No browser wallet found. Use WalletConnect to sign from any mobile wallet (Trust, Rainbow,
+            MetaMask Mobile, Ledger Live…).
           </p>
         )}
+
+        <div className="mt-5 rounded-xl border border-border/40 bg-secondary/20 p-4">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground mb-2">
+            WalletConnect Project ID
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <input
+              value={wcProjectId}
+              onChange={(e) => setWcProjectId(e.target.value)}
+              placeholder="Project ID from cloud.reown.com"
+              className="flex-1 min-w-[220px] px-4 py-2.5 rounded-xl text-sm bg-secondary/40 border border-border/50 font-mono"
+            />
+            <motion.button
+              onClick={handleSaveWalletConnect}
+              disabled={savingWc || !wcProjectId.trim()}
+              whileTap={{ scale: 0.98 }}
+              className="px-5 py-2.5 rounded-xl text-sm font-medium border border-blue-primary/30 bg-blue-primary/10 text-blue-bright hover:bg-blue-primary/20 transition-colors disabled:opacity-60"
+            >
+              {savingWc ? "Saving…" : "Save"}
+            </motion.button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            Required once to enable mobile WalletConnect sessions. Verification stays wallet-free for visitors.
+          </p>
+        </div>
         {walletOnWrongChain && (
           <p className="mt-4 text-xs text-amber-400">
             Connected wallet is on chain {wallet.chainId}. It will be switched to {network.name}
