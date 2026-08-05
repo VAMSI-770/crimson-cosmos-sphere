@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
@@ -221,6 +222,16 @@ const VerificationModal = ({ open, onClose, type, entity, record, config }: Prop
           >
             View on {network.explorerName}
           </a>
+        )}
+
+        {record && (
+          <Link
+            to={`/verify/${record.verification_id}`}
+            onClick={onClose}
+            className="mt-2 block text-center text-sm font-semibold rounded-xl border border-border/50 bg-secondary/40 px-4 py-2.5 hover:bg-secondary transition-colors"
+          >
+            Open full verification report
+          </Link>
         )}
       </DialogContent>
     </Dialog>

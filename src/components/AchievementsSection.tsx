@@ -4,11 +4,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, Download, FileText, Image } from "lucide-react";
 import CertificateViewer from "./CertificateViewer";
 import { useAchievements } from "@/hooks/usePortfolioData";
+import { useBlockchainConfig, useRecordIndex } from "@/hooks/useBlockchain";
+import VerificationBadge from "./blockchain/VerificationBadge";
 
 const AchievementsSection = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [viewerFile, setViewerFile] = useState<{ url: string; title: string; type: "pdf" | "image" } | null>(null);
   const { data: achievements = [] } = useAchievements();
+  const { data: blockchainConfig = null } = useBlockchainConfig();
+  const { index: recordIndex } = useRecordIndex();
 
   const toggleExpand = (index: number) => setExpandedIndex(expandedIndex === index ? null : index);
 
@@ -70,6 +74,16 @@ const AchievementsSection = () => {
                   <h3 className="text-base md:text-lg font-display font-semibold text-foreground mb-2 group-hover:text-blue-bright transition-colors">{achievement.title}</h3>
                   <p className="text-sm text-muted-foreground">{achievement.description}</p>
                   {achievement.team && <p className="text-xs text-blue-bright/70 mt-2">Team: {achievement.team}</p>}
+
+                  <div className="mt-3">
+                    <VerificationBadge
+                      type="achievement"
+                      entity={achievement}
+                      record={recordIndex.get(`achievements:${achievement.id}`) ?? null}
+                      config={blockchainConfig}
+                      compact
+                    />
+                  </div>
 
                   {achievement.file_url && (
                     <div className="flex gap-2 mt-auto pt-3 border-t border-border/20">
