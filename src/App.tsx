@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import AdminPortal from "./pages/AdminPortal";
 import NotFound from "./pages/NotFound";
+import VerifyRecord from "./pages/VerifyRecord";
 import { WalletProvider } from "@/lib/blockchain/WalletProvider";
 
 const queryClient = new QueryClient();
