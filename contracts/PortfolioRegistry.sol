@@ -14,8 +14,11 @@ contract PortfolioRegistry is Ownable {
         Certificate,
         Resume,
         Achievement,
-        Project
+        Project,
+        Internship,
+        Ownership
     }
+
 
     struct Record {
         bytes32 contentHash;
