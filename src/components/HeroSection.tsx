@@ -3,6 +3,8 @@ import { useSiteContent } from "@/hooks/usePortfolioData";
 import { toast } from "sonner";
 import { useBlockchainConfig, useRecordIndex } from "@/hooks/useBlockchain";
 import VerificationBadge from "./blockchain/VerificationBadge";
+import CopyButton from "./blockchain/CopyButton";
+import { shortHash, txUrl } from "@/lib/blockchain/networks";
 
 const letterVariants = {
   hidden: { opacity: 0, y: 60, rotateX: -90 },
