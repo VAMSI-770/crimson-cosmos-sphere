@@ -437,6 +437,24 @@ const BlockchainManager = () => {
       subtitle: String(n.duration ?? "Internship"),
       entity: n,
     })),
+    ...(config
+      ? [
+          {
+            key: `blockchain_config:${config.id}`,
+            type: "ownership" as VerifiableType,
+            table: "blockchain_config",
+            title: "Portfolio Ownership",
+            subtitle: config.portfolio_id,
+            entity: {
+              id: config.id,
+              portfolio_id: config.portfolio_id,
+              owner: "Bollepalli Vamsi",
+              owner_wallet: config.owner_wallet,
+              network: config.network,
+            } as Record<string, unknown>,
+          },
+        ]
+      : []),
     ...(resumeUrl
       ? [
           {
