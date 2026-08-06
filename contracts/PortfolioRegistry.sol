@@ -46,10 +46,21 @@ contract PortfolioRegistry is Ownable {
         string metadata
     );
 
+    event RecordUpdated(bytes32 indexed verificationId, string metadata, uint64 timestamp);
+    event CertificateRegistered(bytes32 indexed verificationId, bytes32 contentHash);
+    event ResumeRegistered(bytes32 indexed verificationId, bytes32 contentHash, uint32 version);
+    event AchievementRegistered(bytes32 indexed verificationId, bytes32 contentHash);
+    event InternshipRegistered(bytes32 indexed verificationId, bytes32 contentHash);
+    event ProjectVersionCreated(bytes32 indexed verificationId, bytes32 contentHash, uint32 version);
+    event OwnershipRecorded(bytes32 indexed verificationId, bytes32 contentHash);
+    event VerificationPerformed(bytes32 indexed verificationId, bool valid, uint64 timestamp);
+
     error EmptyHash();
     error VerificationIdExists(bytes32 verificationId);
     error HashAlreadyRegistered(bytes32 contentHash, bytes32 verificationId);
     error UnknownRecord(bytes32 verificationId);
+    error LengthMismatch();
+
 
     constructor(string memory portfolioId_) Ownable(msg.sender) {
         portfolioId = portfolioId_;
