@@ -9,6 +9,7 @@ import { readOnChainRecord, verifyHashOnChain, type OnChainRecord } from "@/lib/
 import { addressUrl, getNetwork, shortHash, txUrl } from "@/lib/blockchain/networks";
 import { displayVerificationId } from "@/lib/blockchain/hash";
 import ProjectVersionHistory from "@/components/blockchain/ProjectVersionHistory";
+import CopyButton from "@/components/blockchain/CopyButton";
 
 type Status = "loading" | "verified" | "modified" | "unregistered" | "notfound" | "error";
 
@@ -194,9 +195,13 @@ const VerifyRecord = () => {
           <Row label="Record Type">{record ? RECORD_TYPE_LABEL[record.record_type as VerifiableType] : "—"}</Row>
           <Row label="Title">{record?.title ?? "—"}</Row>
           <Row label="Version">{record ? `v${record.version}` : "—"}</Row>
+          <Row label="Portfolio Owner">Bollepalli Vamsi</Row>
           <Row label="Verification ID">
-            <span className="font-mono text-xs">
-              {record ? displayVerificationId(record.verification_id) : id}
+            <span className="inline-flex items-center gap-2">
+              <span className="font-mono text-xs">
+                {record ? displayVerificationId(record.verification_id) : id}
+              </span>
+              <CopyButton value={record?.verification_id ?? id} label="Copy" />
             </span>
           </Row>
           <Row label="Network">
@@ -216,6 +221,7 @@ const VerifyRecord = () => {
             ) : (
               "—"
             )}
+            <CopyButton value={contractAddress} label="Copy" className="ml-2" />
           </Row>
           <Row label="Owner Wallet">
             {record?.owner_wallet ? (
@@ -240,7 +246,12 @@ const VerifyRecord = () => {
           </Row>
           <Row label="Block">{onChain?.blockNumber || record?.block_number || "—"}</Row>
           <Row label="On-Chain Hash">
-            <span className="font-mono text-xs">{shortHash(onChain?.contentHash ?? record?.content_hash, 10)}</span>
+            <span className="inline-flex items-center gap-2">
+              <span className="font-mono text-xs">
+                {shortHash(onChain?.contentHash ?? record?.content_hash, 10)}
+              </span>
+              <CopyButton value={onChain?.contentHash ?? record?.content_hash} label="Copy" />
+            </span>
           </Row>
           <Row label="Re-Computed Hash">
             <span className="font-mono text-xs">{computedHash ? shortHash(computedHash, 10) : "—"}</span>

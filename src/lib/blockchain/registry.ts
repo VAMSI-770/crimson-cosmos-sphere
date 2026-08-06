@@ -10,6 +10,8 @@ export const RECORD_TYPE_INDEX: Record<string, number> = {
   resume: 1,
   achievement: 2,
   project: 3,
+  internship: 4,
+  ownership: 5,
 };
 
 /** Read-only provider for visitors without a wallet. Verification is always free. */
@@ -61,6 +63,12 @@ export const registerOnChain = async (
       break;
     case "resume":
       tx = await contract.registerResume(verificationId, contentHash, version, metadata);
+      break;
+    case "internship":
+      tx = await contract.registerInternship(verificationId, contentHash, metadata);
+      break;
+    case "ownership":
+      tx = await contract.registerOwnership(verificationId, contentHash, metadata);
       break;
     default:
       tx = await contract.registerProjectVersion(verificationId, contentHash, version, metadata);
@@ -137,4 +145,82 @@ export const getInjectedProvider = () => {
   const injected = (window as { ethereum?: unknown }).ethereum;
   if (!injected) throw new Error("No Web3 wallet detected. Install MetaMask to continue.");
   return new BrowserProvider(injected as never);
+};
+
+/** Free batch verification — a single RPC round-trip for many proofs. */
+export const verifyBatchOnChain = async (
+  address: string,
+  networkKey: string | null | undefined,
+  ids: string[],
+  hashes: string[],
+): Promise<boolean[]> => {
+  if (!ids.length) return [];
+  const contract = getReadContract(address, networkKey);
+  const result = (await contract.verifyBatch(ids, hashes)) as boolean[];
+  return result.map(Boolean);
+};
+
+/** Latest block height on the configured network (RPC connectivity probe). */
+export const readLatestBlock = async (networkKey?: string | null) => {
+  try {
+    return await getReadProvider(networkKey).getBlockNumber();
+  } catch {
+    return null;
+  }
+};
+
+/** Gas price in gwei, used by the health panel. */
+export const readGasPriceGwei = async (networkKey?: string | null) => {
+  try {
+    const fee = await getReadProvider(networkKey).getFeeData();
+    const price = fee.maxFeePerGas ?? fee.gasPrice;
+    return price ? Number(price) / 1e9 : null;
+  } catch {
+    return null;
+  }
+};
+
+/** Estimated gas for one registration call (read-only, no signature). */
+export const estimateRegisterGas = async (
+  address: string,
+  signer: Signer,
+  input: RegisterInput,
+): Promise<number | null> => {
+  try {
+    const contract = getWriteContract(address, signer);
+    const { verificationId, contentHash, version, metadata } = input;
+    const fn =
+      input.recordType === "resume" || input.recordType === "project"
+        ? contract.getFunction(input.recordType === "resume" ? "registerResume" : "registerProjectVersion")
+        : contract.getFunction(
+            input.recordType === "certificate"
+              ? "registerCertificate"
+              : input.recordType === "achievement"
+                ? "registerAchievement"
+                : input.recordType === "internship"
+                  ? "registerInternship"
+                  : "registerOwnership",
+          );
+    const args =
+      input.recordType === "resume" || input.recordType === "project"
+        ? [verificationId, contentHash, version, metadata]
+        : [verificationId, contentHash, metadata];
+    return Number(await fn.estimateGas(...args));
+  } catch {
+    return null;
+  }
+};
+
+/** True when the record exists on-chain (used by background sync + health). */
+export const readVerificationStatus = async (
+  address: string,
+  networkKey: string | null | undefined,
+  verificationId: string,
+) => {
+  try {
+    const contract = getReadContract(address, networkKey);
+    return Number(await contract.getVerificationStatus(verificationId)) === 1;
+  } catch {
+    return null;
+  }
 };

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useBlockchainConfig, useBlockchainRecords } from "@/hooks/useBlockchain";
 import { getNetwork, addressUrl, shortHash, txUrl } from "@/lib/blockchain/networks";
 import VerificationTimeline from "./VerificationTimeline";
+import CopyButton from "./CopyButton";
 
 const Stat = ({ label, value }: { label: string; value: string | number }) => (
   <div className="rounded-xl border border-border/50 bg-secondary/30 px-4 py-3">
@@ -35,6 +36,7 @@ const PortfolioVerificationSection = () => {
       .sort((a, b) => b.version - a.version)[0];
     return {
       certificates: count("certificate"),
+      internships: count("internship"),
       achievements: count("achievement"),
       projects: count("project"),
       resumeVersion: resume ? `v${resume.version}` : "—",
@@ -81,12 +83,17 @@ const PortfolioVerificationSection = () => {
                 <Stat label="Certificates Verified" value={stats.certificates} />
                 <Stat label="Achievements Verified" value={stats.achievements} />
                 <Stat label="Projects Registered" value={stats.projects} />
+                <Stat label="Internships Verified" value={stats.internships} />
                 <Stat label="Resume Version" value={stats.resumeVersion} />
+                <Stat label="Total Proofs" value={records.filter((r) => Boolean(r.tx_hash)).length} />
               </div>
 
               <Detail label="Owner">Bollepalli Vamsi</Detail>
               <Detail label="Portfolio ID">
-                <span className="font-mono text-xs">{config?.portfolio_id ?? "—"}</span>
+                <span className="inline-flex items-center gap-2">
+                  <span className="font-mono text-xs">{config?.portfolio_id ?? "—"}</span>
+                  <CopyButton value={config?.portfolio_id} label="Copy" />
+                </span>
               </Detail>
               <Detail label="Owner Wallet">
                 {config?.owner_wallet ? (
@@ -98,6 +105,9 @@ const PortfolioVerificationSection = () => {
                   >
                     {shortHash(config.owner_wallet, 8)}
                   </a>
+                ) : null}
+                {config?.owner_wallet ? (
+                  <CopyButton value={config.owner_wallet} label="Copy Wallet" className="ml-2" />
                 ) : (
                   "—"
                 )}
@@ -116,6 +126,30 @@ const PortfolioVerificationSection = () => {
                   >
                     {shortHash(config.contract_address, 8)}
                   </a>
+                ) : null}
+                {config?.contract_address ? (
+                  <CopyButton value={config.contract_address} label="Copy Contract" className="ml-2" />
+                ) : (
+                  "—"
+                )}
+              </Detail>
+              <Detail label="Verification Status">
+                <span className={config?.contract_address ? "text-emerald-300" : "text-muted-foreground"}>
+                  {config?.contract_address
+                    ? `Active · ${records.filter((r) => Boolean(r.tx_hash)).length} proof(s) anchored`
+                    : "Awaiting contract deployment"}
+                </span>
+              </Detail>
+              <Detail label="Explorer">
+                {config?.contract_address ? (
+                  <a
+                    className="text-blue-bright hover:underline text-xs"
+                    href={addressUrl(config.network, config.contract_address)}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    View on {network.explorerName} ↗
+                  </a>
                 ) : (
                   "—"
                 )}
@@ -133,6 +167,7 @@ const PortfolioVerificationSection = () => {
                   >
                     {shortHash(config.deployment_tx)} ↗
                   </a>
+                  <CopyButton value={config.deployment_tx} label="Copy Tx" className="ml-2" />
                 </Detail>
               )}
             </motion.div>

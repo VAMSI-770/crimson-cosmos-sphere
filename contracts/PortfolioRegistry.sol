@@ -14,8 +14,11 @@ contract PortfolioRegistry is Ownable {
         Certificate,
         Resume,
         Achievement,
-        Project
+        Project,
+        Internship,
+        Ownership
     }
+
 
     struct Record {
         bytes32 contentHash;
@@ -43,10 +46,21 @@ contract PortfolioRegistry is Ownable {
         string metadata
     );
 
+    event RecordUpdated(bytes32 indexed verificationId, string metadata, uint64 timestamp);
+    event CertificateRegistered(bytes32 indexed verificationId, bytes32 contentHash);
+    event ResumeRegistered(bytes32 indexed verificationId, bytes32 contentHash, uint32 version);
+    event AchievementRegistered(bytes32 indexed verificationId, bytes32 contentHash);
+    event InternshipRegistered(bytes32 indexed verificationId, bytes32 contentHash);
+    event ProjectVersionCreated(bytes32 indexed verificationId, bytes32 contentHash, uint32 version);
+    event OwnershipRecorded(bytes32 indexed verificationId, bytes32 contentHash);
+    event VerificationPerformed(bytes32 indexed verificationId, bool valid, uint64 timestamp);
+
     error EmptyHash();
     error VerificationIdExists(bytes32 verificationId);
     error HashAlreadyRegistered(bytes32 contentHash, bytes32 verificationId);
     error UnknownRecord(bytes32 verificationId);
+    error LengthMismatch();
+
 
     constructor(string memory portfolioId_) Ownable(msg.sender) {
         portfolioId = portfolioId_;
@@ -90,12 +104,56 @@ contract PortfolioRegistry is Ownable {
         _register(verificationId, RecordType.Project, contentHash, version, metadata);
     }
 
+    function registerInternship(
+        bytes32 verificationId,
+        bytes32 contentHash,
+        string calldata metadata
+    ) external onlyOwner {
+        _register(verificationId, RecordType.Internship, contentHash, 1, metadata);
+    }
+
+    function registerOwnership(
+        bytes32 verificationId,
+        bytes32 contentHash,
+        string calldata metadata
+    ) external onlyOwner {
+        _register(verificationId, RecordType.Ownership, contentHash, 1, metadata);
+    }
+
+    /// @notice Register many proofs in a single transaction (gas-efficient bulk anchoring).
+    function batchRegister(
+        bytes32[] calldata verificationIds,
+        RecordType[] calldata recordTypes,
+        bytes32[] calldata contentHashes,
+        uint32[] calldata versions,
+        string[] calldata metadatas
+    ) external onlyOwner {
+        uint256 len = verificationIds.length;
+        if (
+            recordTypes.length != len ||
+            contentHashes.length != len ||
+            versions.length != len ||
+            metadatas.length != len
+        ) revert LengthMismatch();
+        for (uint256 i = 0; i < len; i++) {
+            _register(verificationIds[i], recordTypes[i], contentHashes[i], versions[i], metadatas[i]);
+        }
+    }
+
+    /// @notice Append-only metadata correction. The content hash can never change.
+    function updateMetadata(bytes32 verificationId, string calldata metadata) external onlyOwner {
+        Record storage r = _records[verificationId];
+        if (!r.exists) revert UnknownRecord(verificationId);
+        r.metadata = metadata;
+        emit RecordUpdated(verificationId, metadata, uint64(block.timestamp));
+    }
+
     function _register(
         bytes32 verificationId,
         RecordType recordType,
         bytes32 contentHash,
         uint32 version,
-        string calldata metadata
+        string memory metadata
     ) internal {
         if (contentHash == bytes32(0) || verificationId == bytes32(0)) revert EmptyHash();
         if (_records[verificationId].exists) revert VerificationIdExists(verificationId);
@@ -117,7 +175,15 @@ contract PortfolioRegistry is Ownable {
         _recordIds.push(verificationId);
 
         emit RecordRegistered(verificationId, recordType, contentHash, version, ts, metadata);
+
+        if (recordType == RecordType.Certificate) emit CertificateRegistered(verificationId, contentHash);
+        else if (recordType == RecordType.Resume) emit ResumeRegistered(verificationId, contentHash, version);
+        else if (recordType == RecordType.Achievement) emit AchievementRegistered(verificationId, contentHash);
+        else if (recordType == RecordType.Project) emit ProjectVersionCreated(verificationId, contentHash, version);
+        else if (recordType == RecordType.Internship) emit InternshipRegistered(verificationId, contentHash);
+        else emit OwnershipRecorded(verificationId, contentHash);
     }
+
 
     // --------------------------------------------------------------------
     // Public verification (read-only, free)
@@ -128,6 +194,28 @@ contract PortfolioRegistry is Ownable {
         Record storage r = _records[verificationId];
         return r.exists && r.contentHash == contentHash;
     }
+
+    /// @notice Free batch verification — one RPC call for many proofs.
+    function verifyBatch(bytes32[] calldata verificationIds, bytes32[] calldata contentHashes)
+        external
+        view
+        returns (bool[] memory results)
+    {
+        if (verificationIds.length != contentHashes.length) revert LengthMismatch();
+        results = new bool[](verificationIds.length);
+        for (uint256 i = 0; i < verificationIds.length; i++) {
+            Record storage r = _records[verificationIds[i]];
+            results[i] = r.exists && r.contentHash == contentHashes[i];
+        }
+    }
+
+    /// @notice Verification that leaves an on-chain audit event (optional, costs gas).
+    function verifyAndLog(bytes32 verificationId, bytes32 contentHash) external returns (bool valid) {
+        Record storage r = _records[verificationId];
+        valid = r.exists && r.contentHash == contentHash;
+        emit VerificationPerformed(verificationId, valid, uint64(block.timestamp));
+    }
+
 
     function getMetadata(bytes32 verificationId) external view returns (string memory) {
         if (!_records[verificationId].exists) revert UnknownRecord(verificationId);

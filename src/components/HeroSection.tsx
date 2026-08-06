@@ -3,6 +3,8 @@ import { useSiteContent } from "@/hooks/usePortfolioData";
 import { toast } from "sonner";
 import { useBlockchainConfig, useRecordIndex } from "@/hooks/useBlockchain";
 import VerificationBadge from "./blockchain/VerificationBadge";
+import CopyButton from "./blockchain/CopyButton";
+import { shortHash, txUrl } from "@/lib/blockchain/networks";
 
 const letterVariants = {
   hidden: { opacity: 0, y: 60, rotateX: -90 },
@@ -168,7 +170,7 @@ const HeroSection = () => {
 
           {resumeUrl && (
             <motion.div
-              className="flex justify-center mt-6"
+              className="flex flex-col items-center gap-2 mt-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 2.3, duration: 0.7 }}
@@ -179,8 +181,31 @@ const HeroSection = () => {
                 record={recordIndex.get("site_content:resume") ?? null}
                 config={blockchainConfig}
               />
+              {(() => {
+                const resumeRecord = recordIndex.get("site_content:resume");
+                if (!resumeRecord?.tx_hash) return null;
+                return (
+                  <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                    <span>Version v{resumeRecord.version}</span>
+                    <span aria-hidden>·</span>
+                    <span>
+                      {new Date(resumeRecord.registered_at ?? resumeRecord.created_at).toLocaleDateString()}
+                    </span>
+                    <a
+                      href={txUrl(resumeRecord.network, resumeRecord.tx_hash)}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="text-blue-bright hover:underline normal-case tracking-normal font-mono"
+                    >
+                      {shortHash(resumeRecord.tx_hash)} ↗
+                    </a>
+                    <CopyButton value={resumeRecord.tx_hash} label="Copy Tx" />
+                  </div>
+                );
+              })()}
             </motion.div>
           )}
+
         </div>
       </div>
 

@@ -4,11 +4,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, Download, FileText } from "lucide-react";
 import CertificateViewer from "./CertificateViewer";
 import { useInternships } from "@/hooks/usePortfolioData";
+import { useBlockchainConfig, useRecordIndex } from "@/hooks/useBlockchain";
+import VerificationBadge from "./blockchain/VerificationBadge";
 
 const InternshipsSection = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [viewerFile, setViewerFile] = useState<{ url: string; title: string; type: "pdf" | "image" } | null>(null);
   const { data: internships = [] } = useInternships();
+  const { data: blockchainConfig = null } = useBlockchainConfig();
+  const { index: recordIndex } = useRecordIndex();
 
   const toggleExpand = (index: number) => setExpandedIndex(expandedIndex === index ? null : index);
 
@@ -69,6 +73,16 @@ const InternshipsSection = () => {
                     <h3 className="text-base md:text-lg font-display font-semibold text-foreground mb-1 group-hover:text-blue-bright transition-colors">{item.role}</h3>
                     <p className="text-sm text-blue-bright/70 mb-3">{item.company}</p>
                     <p className="text-sm text-muted-foreground leading-relaxed mb-4">{item.description}</p>
+
+                    <div className="mb-4">
+                      <VerificationBadge
+                        type="internship"
+                        entity={item}
+                        record={recordIndex.get(`internships:${item.id}`) ?? null}
+                        config={blockchainConfig}
+                        compact
+                      />
+                    </div>
 
                     {item.file_url && (
                       <div className="flex gap-2 mt-auto pt-3 border-t border-border/20">
