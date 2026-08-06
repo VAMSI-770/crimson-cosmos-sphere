@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { buildContentProof, RECORD_TYPE_LABEL, type VerifiableType } from "@/lib/blockchain/content";
 import { verifyHashOnChain, readOnChainRecord } from "@/lib/blockchain/registry";
 import { getNetwork, shortHash, txUrl, addressUrl } from "@/lib/blockchain/networks";
+import CopyButton from "./CopyButton";
 import { displayVerificationId } from "@/lib/blockchain/hash";
 import type { BlockchainConfig, BlockchainRecord } from "@/hooks/useBlockchain";
 
