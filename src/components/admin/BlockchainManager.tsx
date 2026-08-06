@@ -12,15 +12,18 @@ import {
 import {
   useAchievements,
   useCertifications,
+  useInternships,
   useProjects,
   useSiteContent,
 } from "@/hooks/usePortfolioData";
+import { useBackgroundSync, useBlockchainHealth } from "@/hooks/useBlockchainHealth";
 import { useWallet } from "@/lib/blockchain/WalletProvider";
 import { buildContentProof, RECORD_TYPE_LABEL, type VerifiableType } from "@/lib/blockchain/content";
 import { buildVerificationId, displayVerificationId } from "@/lib/blockchain/hash";
 import {
   deployRegistry,
   readContractOwner,
+  readLatestBlock,
   readTotalRecords,
   registerOnChain,
   verifyHashOnChain,
@@ -34,6 +37,7 @@ import {
   DEFAULT_NETWORK_KEY,
 } from "@/lib/blockchain/networks";
 import VerificationTimeline from "@/components/blockchain/VerificationTimeline";
+import CopyButton from "@/components/blockchain/CopyButton";
 import WalletConnectButton from "@/components/blockchain/WalletConnectButton";
 import { fetchWalletConnectProjectId, saveWalletConnectProjectId } from "@/lib/blockchain/walletconnect";
 
@@ -68,6 +72,7 @@ const BlockchainManager = () => {
   const certifications = useCertifications();
   const achievements = useAchievements();
   const projects = useProjects();
+  const internships = useInternships();
   const hero = useSiteContent("hero");
 
   const wallet = useWallet();
@@ -78,6 +83,7 @@ const BlockchainManager = () => {
   const [wcProjectId, setWcProjectId] = useState("");
   const [savingWc, setSavingWc] = useState(false);
   const [chainCount, setChainCount] = useState<number | null>(null);
+  const [latestBlock, setLatestBlock] = useState<number | null>(null);
 
   const network = getNetwork(config?.network ?? networkKey);
   const resumeUrl = hero.data?.resume_url ?? "";
@@ -100,9 +106,30 @@ const BlockchainManager = () => {
       certificates: count("certificate"),
       achievements: count("achievement"),
       projects: count("project"),
+      internships: count("internship"),
       resumeVersion: resume ? `v${resume.version}` : "—",
+      pending: records.filter((r) => r.status === "pending" && !r.tx_hash).length,
+      failed: records.filter((r) => r.status === "failed").length,
     };
   }, [records]);
+
+  const health = useBlockchainHealth(config, records, wallet.address);
+  useBackgroundSync(config, records, invalidate);
+
+  // Lazy, cached RPC read for the latest block — refreshed in the background.
+  useEffect(() => {
+    let active = true;
+    const load = () =>
+      void readLatestBlock(config?.network).then((block) => {
+        if (active) setLatestBlock(block);
+      });
+    load();
+    const timer = setInterval(load, 60_000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, [config?.network]);
 
   useEffect(() => {
     void fetchWalletConnectProjectId().then((value) => setWcProjectId(value ?? ""));
@@ -402,6 +429,14 @@ const BlockchainManager = () => {
       subtitle: String(p.team ?? "Project"),
       entity: p,
     })),
+    ...(internships.data ?? []).map((n: Record<string, unknown>) => ({
+      key: `internships:${n.id}`,
+      type: "internship" as VerifiableType,
+      table: "internships",
+      title: `${String(n.role ?? "")} — ${String(n.company ?? "")}`,
+      subtitle: String(n.duration ?? "Internship"),
+      entity: n,
+    })),
     ...(resumeUrl
       ? [
           {
@@ -458,7 +493,11 @@ const BlockchainManager = () => {
           <Widget label="Certificates Verified" value={stats.certificates} />
           <Widget label="Achievements Verified" value={stats.achievements} />
           <Widget label="Projects Registered" value={stats.projects} />
+          <Widget label="Internships Verified" value={stats.internships} />
           <Widget label="Resume Version" value={stats.resumeVersion} />
+          <Widget label="Latest Block" value={latestBlock ? latestBlock.toLocaleString() : "—"} />
+          <Widget label="Pending Registrations" value={stats.pending} tone={stats.pending ? "warn" : "default"} />
+          <Widget label="Failed Transactions" value={stats.failed} tone={stats.failed ? "warn" : "default"} />
           <Widget
             label="Contract Status"
             value={config?.contract_address ? "Live" : "Not deployed"}
@@ -573,7 +612,8 @@ const BlockchainManager = () => {
         {config && (
           <div className="mt-6 grid sm:grid-cols-2 gap-x-8 gap-y-2 text-xs text-muted-foreground">
             <p>
-              Portfolio ID: <span className="font-mono text-foreground">{config.portfolio_id}</span>
+              Portfolio ID: <span className="font-mono text-foreground">{config.portfolio_id}</span>{" "}
+              <CopyButton value={config.portfolio_id} label="Copy ID" />
             </p>
             <p>
               Contract:{" "}
@@ -588,7 +628,8 @@ const BlockchainManager = () => {
                 </a>
               ) : (
                 "—"
-              )}
+              )}{" "}
+              <CopyButton value={config.contract_address} label="Copy" />
             </p>
             <p>
               On-chain owner:{" "}
@@ -598,6 +639,55 @@ const BlockchainManager = () => {
               On-chain records:{" "}
               <span className="font-mono text-foreground">{chainCount ?? "run sync"}</span>
             </p>
+          </div>
+        )}
+      </div>
+
+      {/* Blockchain health */}
+      <div className="cinema-card rounded-2xl p-6 md:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+          <div>
+            <h3 className="text-lg font-display font-bold mb-1">Blockchain Health</h3>
+            <p className="text-muted-foreground text-sm">
+              {health.checkedAt
+                ? `Last checked ${new Date(health.checkedAt).toLocaleTimeString()}`
+                : "Run a diagnostic to check RPC, contract, sync and gas conditions."}
+            </p>
+          </div>
+          <motion.button
+            onClick={() => void health.run()}
+            disabled={health.running}
+            whileTap={{ scale: 0.98 }}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors disabled:opacity-60"
+          >
+            {health.running ? "Checking…" : "Run Health Check"}
+          </motion.button>
+        </div>
+
+        {health.checks.length > 0 && (
+          <div className="grid sm:grid-cols-2 gap-2">
+            {health.checks.map((check) => (
+              <div
+                key={check.key}
+                className="flex items-start gap-3 rounded-xl border border-border/40 bg-secondary/20 px-4 py-3"
+              >
+                <span
+                  className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${
+                    check.status === "ok"
+                      ? "bg-emerald-400"
+                      : check.status === "warn"
+                        ? "bg-amber-400"
+                        : check.status === "fail"
+                          ? "bg-red-400"
+                          : "bg-muted-foreground"
+                  }`}
+                />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium">{check.label}</p>
+                  <p className="text-xs text-muted-foreground break-words">{check.detail}</p>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -641,6 +731,12 @@ const BlockchainManager = () => {
                   >
                     View Tx ↗
                   </a>
+                )}
+                {record?.tx_hash && (
+                  <div className="flex items-center gap-1.5">
+                    <CopyButton value={record.tx_hash} label="Copy Tx" />
+                    <CopyButton value={record.verification_id} label="Copy ID" />
+                  </div>
                 )}
                 <motion.button
                   onClick={() => register(row.type, row.table, row.entity, row.title)}
