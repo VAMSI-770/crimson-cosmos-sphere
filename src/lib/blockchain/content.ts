@@ -3,7 +3,13 @@ import {
   sha256Url,
 } from "./hash";
 
-export type VerifiableType = "certificate" | "resume" | "achievement" | "project";
+export type VerifiableType =
+  | "certificate"
+  | "resume"
+  | "achievement"
+  | "project"
+  | "internship"
+  | "ownership";
 
 export interface ContentProof {
   hash: string;
@@ -49,6 +55,39 @@ export const buildContentProof = async (
     };
   }
 
+  if (type === "internship") {
+    const fileUrl = entity.file_url as string | undefined;
+    if (fileUrl) {
+      return { hash: await sha256Url(fileUrl), source: "file", label: "Internship certificate" };
+    }
+    return {
+      hash: await sha256Record({
+        company: entity.company,
+        role: entity.role,
+        duration: entity.duration,
+        description: entity.description,
+        full_description: entity.full_description,
+        technologies: entity.technologies,
+        highlights: entity.highlights,
+      }),
+      source: "metadata",
+      label: "Internship record",
+    };
+  }
+
+  if (type === "ownership") {
+    return {
+      hash: await sha256Record({
+        portfolio_id: entity.portfolio_id,
+        owner: entity.owner,
+        owner_wallet: entity.owner_wallet,
+        network: entity.network,
+      }),
+      source: "metadata",
+      label: "Portfolio ownership claim",
+    };
+  }
+
   if (type === "resume") {
     const url = entity.url as string;
     return { hash: await sha256Url(url), source: "file", label: "Resume document" };
@@ -76,6 +115,8 @@ export const RECORD_TYPE_LABEL: Record<VerifiableType, string> = {
   resume: "Resume",
   achievement: "Achievement",
   project: "Project Version",
+  internship: "Internship",
+  ownership: "Portfolio Ownership",
 };
 
 export const TIMELINE_EVENT_LABEL: Record<VerifiableType, string> = {
@@ -83,4 +124,6 @@ export const TIMELINE_EVENT_LABEL: Record<VerifiableType, string> = {
   resume: "Resume Updated",
   achievement: "Achievement Verified",
   project: "Project Updated",
+  internship: "Internship Verified",
+  ownership: "Portfolio Ownership Recorded",
 };
