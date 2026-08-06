@@ -166,8 +166,12 @@ const VerificationModal = ({ open, onClose, type, entity, record, config }: Prop
             {network.isTestnet && <span className="ml-2 text-xs text-muted-foreground">testnet</span>}
           </Row>
           <Row label="Verification ID">
-            {record ? displayVerificationId(record.verification_id) : "—"}
+            <span className="inline-flex items-center gap-2">
+              {record ? displayVerificationId(record.verification_id) : "—"}
+              <CopyButton value={record?.verification_id} label="Copy" />
+            </span>
           </Row>
+
           <Row label="Owner Wallet">
             {record?.owner_wallet || config?.owner_wallet ? (
               <a
