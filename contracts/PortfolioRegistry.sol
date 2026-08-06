@@ -195,6 +195,28 @@ contract PortfolioRegistry is Ownable {
         return r.exists && r.contentHash == contentHash;
     }
 
+    /// @notice Free batch verification — one RPC call for many proofs.
+    function verifyBatch(bytes32[] calldata verificationIds, bytes32[] calldata contentHashes)
+        external
+        view
+        returns (bool[] memory results)
+    {
+        if (verificationIds.length != contentHashes.length) revert LengthMismatch();
+        results = new bool[](verificationIds.length);
+        for (uint256 i = 0; i < verificationIds.length; i++) {
+            Record storage r = _records[verificationIds[i]];
+            results[i] = r.exists && r.contentHash == contentHashes[i];
+        }
+    }
+
+    /// @notice Verification that leaves an on-chain audit event (optional, costs gas).
+    function verifyAndLog(bytes32 verificationId, bytes32 contentHash) external returns (bool valid) {
+        Record storage r = _records[verificationId];
+        valid = r.exists && r.contentHash == contentHash;
+        emit VerificationPerformed(verificationId, valid, uint64(block.timestamp));
+    }
+
+
     function getMetadata(bytes32 verificationId) external view returns (string memory) {
         if (!_records[verificationId].exists) revert UnknownRecord(verificationId);
         return _records[verificationId].metadata;
