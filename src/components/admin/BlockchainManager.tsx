@@ -834,7 +834,25 @@ const BlockchainManager = () => {
           >
             {busyKey === "verify" ? "Verifying…" : "Verify Records"}
           </motion.button>
+
+          <motion.button
+            onClick={handleRepair}
+            disabled={repairing}
+            whileTap={{ scale: 0.98 }}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium border border-amber-400/30 bg-amber-400/10 text-amber-300 hover:bg-amber-400/20 transition-colors disabled:opacity-60"
+          >
+            {repairing ? "Repairing…" : "Scan & Repair Sync"}
+          </motion.button>
         </div>
+
+        {repairItems.length > 0 && (
+          <div className="mt-5">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+              Repair Results
+            </p>
+            <ProgressList items={repairItems} />
+          </div>
+        )}
 
         {!wallet.isAvailable && (
           <p className="mt-4 text-xs text-amber-400">
@@ -959,10 +977,44 @@ const BlockchainManager = () => {
 
       {/* Registerable content */}
       <div className="cinema-card rounded-2xl p-6 md:p-8">
-        <h3 className="text-lg font-display font-bold mb-1">Register Records</h3>
-        <p className="text-muted-foreground text-sm mb-5">
-          Registering an edited item creates a new version with a fresh proof. Unchanged items are skipped.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div>
+            <h3 className="text-lg font-display font-bold mb-1">Register Records</h3>
+            <p className="text-muted-foreground text-sm">
+              Registering an edited item creates a new version with a fresh proof. Unchanged items are skipped.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() =>
+                setSelected((prev) => (prev.size === rows.length ? new Set() : new Set(rows.map((r) => r.key))))
+              }
+              className="px-4 py-2 rounded-lg text-xs font-semibold bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors"
+            >
+              {selected.size === rows.length && rows.length ? "Clear selection" : "Select all"}
+            </button>
+            <motion.button
+              onClick={handleBatchRegister}
+              disabled={batchRunning || !selected.size || !config?.contract_address}
+              whileTap={{ scale: 0.98 }}
+              className="px-4 py-2 rounded-lg text-xs font-semibold border border-blue-primary/30 bg-blue-primary/10 text-blue-bright hover:bg-blue-primary/20 transition-colors disabled:opacity-50"
+            >
+              {batchRunning ? "Registering batch…" : `Register Selected (${selected.size})`}
+            </motion.button>
+          </div>
+        </div>
+
+        {batchItems.length > 0 && (
+          <div className="mb-5">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+              Batch Progress ·{" "}
+              {batchItems.filter((i) => i.status === "done" || i.status === "skipped").length}/
+              {batchItems.length} complete
+            </p>
+            <ProgressList items={batchItems} />
+          </div>
+        )}
 
         <div className="space-y-2">
           {rows.map((row) => {
@@ -973,6 +1025,13 @@ const BlockchainManager = () => {
                 key={row.key}
                 className="flex flex-wrap items-center gap-3 rounded-xl border border-border/40 bg-secondary/20 px-4 py-3"
               >
+                <input
+                  type="checkbox"
+                  checked={selected.has(row.key)}
+                  onChange={() => toggleSelected(row.key)}
+                  aria-label={`Select ${row.title || "record"} for batch registration`}
+                  className="w-4 h-4 shrink-0 accent-blue-bright bg-secondary/40 rounded"
+                />
                 <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground w-24 shrink-0">
                   {RECORD_TYPE_LABEL[row.type]}
                 </span>
@@ -1018,6 +1077,62 @@ const BlockchainManager = () => {
             <p className="text-sm text-muted-foreground">Nothing to register yet.</p>
           )}
         </div>
+      </div>
+
+      {/* Live chain events */}
+      <div className="cinema-card rounded-2xl p-6 md:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 className="text-lg font-display font-bold mb-1">Live Chain Events</h3>
+            <p className="text-muted-foreground text-sm">
+              Streaming <span className="font-mono">RecordRegistered</span> and{" "}
+              <span className="font-mono">VerificationPerformed</span> events
+              {chain.lastBlock ? ` · head block ${chain.lastBlock.toLocaleString()}` : ""}.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => void chain.refresh()}
+            className="px-4 py-2 rounded-lg text-xs font-semibold bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors"
+          >
+            Refresh now
+          </button>
+        </div>
+        {chain.events.length ? (
+          <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+            {chain.events.map((event) => (
+              <div
+                key={`${event.txHash}-${event.logIndex}`}
+                className="flex flex-wrap items-center gap-3 rounded-xl border border-border/40 bg-secondary/20 px-4 py-2.5"
+              >
+                <span
+                  className={`w-2 h-2 rounded-full shrink-0 ${
+                    event.valid === false ? "bg-red-400" : "bg-emerald-400"
+                  }`}
+                />
+                <p className="text-sm min-w-0 flex-1 truncate">{chainEventLabel(event.name)}</p>
+                <span className="text-xs text-muted-foreground font-mono">
+                  {event.verificationId ? displayVerificationId(event.verificationId) : "—"}
+                </span>
+                <span className="text-xs text-muted-foreground">#{event.blockNumber.toLocaleString()}</span>
+                <a
+                  href={txUrl(config?.network, event.txHash)}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-xs text-blue-bright hover:underline"
+                >
+                  Tx ↗
+                </a>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            {config?.contract_address
+              ? "No contract events in the recent block window yet."
+              : "Deploy the registry contract to start streaming events."}
+          </p>
+        )}
       </div>
 
       {/* Logs */}
