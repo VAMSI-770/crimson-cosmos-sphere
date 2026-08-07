@@ -1,5 +1,6 @@
 import {
   sha256Record,
+  sha256Text,
   sha256Url,
 } from "./hash";
 
@@ -24,6 +25,19 @@ export interface ContentProof {
  * edit to the underlying file or record produces a different hash.
  */
 export const buildContentProof = async (
+  type: VerifiableType,
+  entity: Record<string, unknown>,
+): Promise<ContentProof> => {
+  const proof = await buildBaseProof(type, entity);
+  // Domain separation: two records may legitimately share the same document
+  // (e.g. an internship and its certificate). Binding the record type and
+  // entity id keeps every proof unique on-chain while still changing whenever
+  // the underlying content changes.
+  const entityId = String(entity.id ?? entity.entity_id ?? "");
+  return { ...proof, hash: await sha256Text(`${type}:${entityId}:${proof.hash}`) };
+};
+
+const buildBaseProof = async (
   type: VerifiableType,
   entity: Record<string, unknown>,
 ): Promise<ContentProof> => {
