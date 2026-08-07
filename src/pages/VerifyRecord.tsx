@@ -332,7 +332,21 @@ const VerifyRecord = () => {
             >
               Re-verify
             </button>
+            <button
+              type="button"
+              onClick={() => void handleExportPdf()}
+              disabled={!record || exporting}
+              className="flex-1 min-w-[160px] text-sm font-semibold rounded-xl border border-border/50 bg-secondary/40 px-4 py-2.5 hover:bg-secondary transition-colors disabled:opacity-50"
+            >
+              {exporting ? "Preparing…" : "Export PDF Report"}
+            </button>
           </div>
+          {record && (
+            <p className="text-[11px] text-muted-foreground mt-2">
+              The report includes both hashes, timestamps, transaction details and {network.explorerName}{" "}
+              links, plus a SHA-256 fingerprint of its own contents.
+            </p>
+          )}
 
           {record?.entity_table && record.entity_id && (
             <ProjectVersionHistory entityTable={record.entity_table} entityId={record.entity_id} />
