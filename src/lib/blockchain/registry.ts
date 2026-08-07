@@ -224,3 +224,58 @@ export const readVerificationStatus = async (
     return null;
   }
 };
+
+export interface RegistryEvent {
+  name: string;
+  verificationId: string | null;
+  txHash: string;
+  blockNumber: number;
+  logIndex: number;
+  valid?: boolean;
+  version?: number;
+}
+
+/**
+ * Poll-based event feed for the registry contract. Public Polygon RPCs do not
+ * expose stable websockets, so we page `getLogs` and decode with the ABI —
+ * cheap, free and reliable for driving live UI updates.
+ */
+export const readRegistryEvents = async (
+  address: string,
+  networkKey: string | null | undefined,
+  fromBlock: number,
+  toBlock?: number | "latest",
+): Promise<RegistryEvent[]> => {
+  try {
+    const provider = getReadProvider(networkKey);
+    const contract = new Contract(address, REGISTRY_ABI, provider);
+    const logs = await provider.getLogs({
+      address,
+      fromBlock: Math.max(0, fromBlock),
+      toBlock: toBlock ?? "latest",
+    });
+    return logs
+      .map((log) => {
+        try {
+          const parsed = contract.interface.parseLog({ topics: [...log.topics], data: log.data });
+          if (!parsed) return null;
+          const args = parsed.args as unknown as Record<string, unknown>;
+          const id = args.verificationId;
+          return {
+            name: parsed.name,
+            verificationId: typeof id === "string" ? id : null,
+            txHash: log.transactionHash,
+            blockNumber: log.blockNumber,
+            logIndex: log.index,
+            valid: typeof args.valid === "boolean" ? args.valid : undefined,
+            version: args.version !== undefined ? Number(args.version) : undefined,
+          } satisfies RegistryEvent;
+        } catch {
+          return null;
+        }
+      })
+      .filter((event): event is RegistryEvent => Boolean(event));
+  } catch {
+    return [];
+  }
+};
