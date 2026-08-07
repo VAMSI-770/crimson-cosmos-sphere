@@ -10,6 +10,8 @@ import { addressUrl, getNetwork, shortHash, txUrl } from "@/lib/blockchain/netwo
 import { displayVerificationId } from "@/lib/blockchain/hash";
 import ProjectVersionHistory from "@/components/blockchain/ProjectVersionHistory";
 import CopyButton from "@/components/blockchain/CopyButton";
+import { useVerificationRealtime } from "@/hooks/useChainEvents";
+import { generateVerificationReport } from "@/lib/blockchain/report";
 
 type Status = "loading" | "verified" | "modified" | "unregistered" | "notfound" | "error";
 
