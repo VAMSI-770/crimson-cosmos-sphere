@@ -255,7 +255,7 @@ export const readRegistryEvents = async (
       toBlock: toBlock ?? "latest",
     });
     return logs
-      .map((log) => {
+      .map((log): RegistryEvent | null => {
         try {
           const parsed = contract.interface.parseLog({ topics: [...log.topics], data: log.data });
           if (!parsed) return null;
@@ -269,7 +269,7 @@ export const readRegistryEvents = async (
             logIndex: log.index,
             valid: typeof args.valid === "boolean" ? args.valid : undefined,
             version: args.version !== undefined ? Number(args.version) : undefined,
-          } satisfies RegistryEvent;
+          };
         } catch {
           return null;
         }
