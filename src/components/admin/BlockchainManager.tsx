@@ -17,12 +17,15 @@ import {
   useSiteContent,
 } from "@/hooks/usePortfolioData";
 import { useBackgroundSync, useBlockchainHealth } from "@/hooks/useBlockchainHealth";
+import { chainEventLabel, useChainEvents, useVerificationRealtime } from "@/hooks/useChainEvents";
 import { useWallet } from "@/lib/blockchain/WalletProvider";
 import { buildContentProof, RECORD_TYPE_LABEL, type VerifiableType } from "@/lib/blockchain/content";
 import { buildVerificationId, displayVerificationId } from "@/lib/blockchain/hash";
 import {
   deployRegistry,
   readContractOwner,
+  readOnChainRecord,
+  verifyBatchOnChain,
   readLatestBlock,
   readTotalRecords,
   registerOnChain,
@@ -42,6 +45,46 @@ import WalletConnectButton from "@/components/blockchain/WalletConnectButton";
 import { fetchWalletConnectProjectId, saveWalletConnectProjectId } from "@/lib/blockchain/walletconnect";
 
 type Stage = "idle" | "preparing" | "signing" | "pending" | "confirmed";
+
+export interface BatchItem {
+  key: string;
+  title: string;
+  status: "queued" | "running" | "done" | "skipped" | "failed";
+  message: string;
+}
+
+const BATCH_TONE: Record<BatchItem["status"], string> = {
+  queued: "bg-muted-foreground",
+  running: "bg-blue-bright",
+  done: "bg-emerald-400",
+  skipped: "bg-amber-400",
+  failed: "bg-red-400",
+};
+
+const ProgressList = ({ items }: { items: BatchItem[] }) => (
+  <div className="mt-4 space-y-2">
+    {items.map((item) => (
+      <div
+        key={item.key}
+        className="flex flex-wrap items-center gap-3 rounded-xl border border-border/40 bg-secondary/20 px-4 py-2.5"
+      >
+        <span className={`w-2 h-2 rounded-full shrink-0 ${BATCH_TONE[item.status]}`} />
+        <p className="text-sm min-w-0 flex-1 truncate">{item.title}</p>
+        <p
+          className={`text-xs break-words max-w-full sm:max-w-[55%] ${
+            item.status === "failed"
+              ? "text-red-400"
+              : item.status === "done"
+                ? "text-emerald-400"
+                : "text-muted-foreground"
+          }`}
+        >
+          {item.message}
+        </p>
+      </div>
+    ))}
+  </div>
+);
 
 const STAGE_LABEL: Record<Stage, string> = {
   idle: "",
@@ -84,6 +127,11 @@ const BlockchainManager = () => {
   const [savingWc, setSavingWc] = useState(false);
   const [chainCount, setChainCount] = useState<number | null>(null);
   const [latestBlock, setLatestBlock] = useState<number | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [batchRunning, setBatchRunning] = useState(false);
+  const [batchItems, setBatchItems] = useState<BatchItem[]>([]);
+  const [repairing, setRepairing] = useState(false);
+  const [repairItems, setRepairItems] = useState<BatchItem[]>([]);
 
   const network = getNetwork(config?.network ?? networkKey);
   const resumeUrl = hero.data?.resume_url ?? "";
@@ -115,6 +163,8 @@ const BlockchainManager = () => {
 
   const health = useBlockchainHealth(config, records, wallet.address);
   useBackgroundSync(config, records, invalidate);
+  useVerificationRealtime(invalidate);
+  const chain = useChainEvents(config, records, invalidate);
 
   // Lazy, cached RPC read for the latest block — refreshed in the background.
   useEffect(() => {
@@ -234,27 +284,22 @@ const BlockchainManager = () => {
   // Registration
   // ------------------------------------------------------------------
 
-  const register = async (
+  /** Core registration routine — returns a structured result instead of toasting. */
+  const performRegistration = async (
     type: VerifiableType,
     entityTable: string,
     entity: Record<string, unknown>,
     title: string,
-  ) => {
-    if (!config?.contract_address) {
-      toast.error("Deploy the registry contract first");
-      return;
-    }
-    if (!wallet.address) {
-      toast.error("Connect your wallet first");
-      return;
-    }
+  ): Promise<{ status: BatchItem["status"]; message: string }> => {
+    if (!config?.contract_address) return { status: "failed", message: "No registry contract deployed" };
+    if (!wallet.address) return { status: "failed", message: "Wallet not connected" };
+
     const entityId = String(entity.id ?? entity.entity_id ?? "");
-    const key = `${entityTable}:${entityId}`;
-    setBusyKey(key);
     setStage("preparing");
 
     let insertedId: string | null = null;
     try {
+      const key = `${entityTable}:${entityId}`;
       await wallet.switchNetwork(config.network);
       const proof = await buildContentProof(type, entity);
       const previous = latestByEntity.get(key);
@@ -262,9 +307,7 @@ const BlockchainManager = () => {
 
       if (previous?.content_hash === proof.hash && previous.tx_hash) {
         setStage("idle");
-        setBusyKey(null);
-        toast.info("Content unchanged — already registered on-chain");
-        return;
+        return { status: "skipped", message: "Content unchanged — already anchored on-chain" };
       }
 
       const verificationId = buildVerificationId(type, entityId, version);
@@ -319,7 +362,7 @@ const BlockchainManager = () => {
         details: { verificationId, txHash, version },
       });
       invalidate();
-      toast.success(`${RECORD_TYPE_LABEL[type]} verified on-chain`);
+      return { status: "done", message: `${displayVerificationId(verificationId)} · v${version}` };
     } catch (error) {
       if (insertedId) {
         await supabase.from("blockchain_records").update({ status: "failed" }).eq("id", insertedId);
@@ -327,10 +370,214 @@ const BlockchainManager = () => {
       }
       setStage("idle");
       logAudit({ action: `blockchain.register.${type}`, status: "failed", entity: entityTable });
-      toast.error(error instanceof Error ? error.message.slice(0, 180) : "Registration failed");
+      return {
+        status: "failed",
+        message: error instanceof Error ? error.message.slice(0, 200) : "Registration failed",
+      };
     } finally {
-      setBusyKey(null);
       setTimeout(() => setStage("idle"), 2500);
+    }
+  };
+
+  /** Single-row registration (existing per-item buttons). */
+  const register = async (
+    type: VerifiableType,
+    entityTable: string,
+    entity: Record<string, unknown>,
+    title: string,
+  ) => {
+    const entityId = String(entity.id ?? entity.entity_id ?? "");
+    setBusyKey(`${entityTable}:${entityId}`);
+    const result = await performRegistration(type, entityTable, entity, title);
+    setBusyKey(null);
+    if (result.status === "done") toast.success(`${RECORD_TYPE_LABEL[type]} verified on-chain`);
+    else if (result.status === "skipped") toast.info(result.message);
+    else toast.error(result.message);
+  };
+
+  // ------------------------------------------------------------------
+  // Batch registration
+  // ------------------------------------------------------------------
+
+  const toggleSelected = (key: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+
+  const handleBatchRegister = async () => {
+    if (!config?.contract_address) {
+      toast.error("Deploy the registry contract first");
+      return;
+    }
+    if (!wallet.address) {
+      toast.error("Connect your wallet first");
+      return;
+    }
+    const queue = rows.filter((row) => selected.has(row.key));
+    if (!queue.length) {
+      toast.error("Select at least one record");
+      return;
+    }
+
+    setBatchRunning(true);
+    setBatchItems(queue.map((row) => ({ key: row.key, title: row.title || "Untitled", status: "queued", message: "Waiting" })));
+
+    let done = 0;
+    let failed = 0;
+    let skipped = 0;
+
+    for (const row of queue) {
+      setBatchItems((prev) =>
+        prev.map((item) =>
+          item.key === row.key ? { ...item, status: "running", message: "Signing & confirming…" } : item,
+        ),
+      );
+      const result = await performRegistration(row.type, row.table, row.entity, row.title);
+      if (result.status === "done") done += 1;
+      else if (result.status === "skipped") skipped += 1;
+      else failed += 1;
+      setBatchItems((prev) =>
+        prev.map((item) => (item.key === row.key ? { ...item, ...result } : item)),
+      );
+    }
+
+    logAudit({ action: "blockchain.batch_register", details: { total: queue.length, done, skipped, failed } });
+    setBatchRunning(false);
+    setSelected(new Set());
+    invalidate();
+    if (failed) toast.error(`${done} registered · ${skipped} skipped · ${failed} failed`);
+    else toast.success(`${done} registered · ${skipped} skipped`);
+  };
+
+  // ------------------------------------------------------------------
+  // Repair / retry workflow
+  // ------------------------------------------------------------------
+
+  const handleRepair = async () => {
+    if (!config?.contract_address) {
+      toast.error("No contract deployed yet");
+      return;
+    }
+    setRepairing(true);
+    setRepairItems([]);
+    try {
+      const stuck = records.filter((r) => r.status !== "confirmed" || !r.tx_hash);
+      const confirmed = records.filter((r) => r.status === "confirmed" && r.tx_hash);
+      const batch = confirmed.length
+        ? await verifyBatchOnChain(
+            config.contract_address,
+            config.network,
+            confirmed.map((r) => r.verification_id),
+            confirmed.map((r) => `0x${r.content_hash}`),
+          ).catch(() => [] as boolean[])
+        : [];
+      const broken = confirmed.filter((_, i) => batch.length > i && !batch[i]);
+      const targets = [...stuck, ...broken];
+
+      if (!targets.length) {
+        setRepairItems([]);
+        toast.success("No missing or failed sync items — everything is in order");
+        logAudit({ action: "blockchain.repair.scan", details: { issues: 0 } });
+        return;
+      }
+
+      setRepairItems(
+        targets.map((r) => ({
+          key: r.id,
+          title: `${RECORD_TYPE_LABEL[r.record_type as VerifiableType]} · ${r.title}`,
+          status: "running",
+          message: "Re-checking chain…",
+        })),
+      );
+
+      let healed = 0;
+      let retried = 0;
+      let unresolved = 0;
+
+      for (const record of targets) {
+        const onChain = await readOnChainRecord(
+          config.contract_address,
+          record.network,
+          record.verification_id,
+        );
+        const matches = onChain?.contentHash?.replace(/^0x/, "") === record.content_hash;
+
+        if (onChain && matches) {
+          await supabase
+            .from("blockchain_records")
+            .update({
+              status: "confirmed",
+              block_number: onChain.blockNumber || record.block_number,
+              registered_at: onChain.timestamp
+                ? new Date(onChain.timestamp * 1000).toISOString()
+                : record.registered_at ?? new Date().toISOString(),
+            })
+            .eq("id", record.id);
+          healed += 1;
+          setRepairItems((prev) =>
+            prev.map((item) =>
+              item.key === record.id
+                ? { ...item, status: "done", message: "Found on-chain — status repaired" }
+                : item,
+            ),
+          );
+          continue;
+        }
+
+        const row = rows.find(
+          (candidate) => candidate.table === record.entity_table &&
+            String(candidate.entity.id ?? "") === String(record.entity_id ?? ""),
+        );
+
+        if (!row || !wallet.address) {
+          unresolved += 1;
+          setRepairItems((prev) =>
+            prev.map((item) =>
+              item.key === record.id
+                ? {
+                    ...item,
+                    status: "failed",
+                    message: !wallet.address
+                      ? "Not on-chain — connect your wallet to re-register"
+                      : "Not on-chain and the source content no longer exists",
+                  }
+                : item,
+            ),
+          );
+          continue;
+        }
+
+        const result = await performRegistration(row.type, row.table, row.entity, row.title);
+        if (result.status === "failed") unresolved += 1;
+        else retried += 1;
+        setRepairItems((prev) =>
+          prev.map((item) =>
+            item.key === record.id
+              ? {
+                  ...item,
+                  status: result.status,
+                  message: result.status === "failed" ? result.message : `Re-registered · ${result.message}`,
+                }
+              : item,
+          ),
+        );
+      }
+
+      logAudit({
+        action: "blockchain.repair.run",
+        details: { scanned: records.length, issues: targets.length, healed, retried, unresolved },
+      });
+      invalidate();
+      await refetchConfig();
+      if (unresolved) toast.error(`${healed} repaired · ${retried} re-registered · ${unresolved} unresolved`);
+      else toast.success(`${healed} repaired · ${retried} re-registered`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message.slice(0, 180) : "Repair failed");
+    } finally {
+      setRepairing(false);
     }
   };
 
@@ -587,7 +834,25 @@ const BlockchainManager = () => {
           >
             {busyKey === "verify" ? "Verifying…" : "Verify Records"}
           </motion.button>
+
+          <motion.button
+            onClick={handleRepair}
+            disabled={repairing}
+            whileTap={{ scale: 0.98 }}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium border border-amber-400/30 bg-amber-400/10 text-amber-300 hover:bg-amber-400/20 transition-colors disabled:opacity-60"
+          >
+            {repairing ? "Repairing…" : "Scan & Repair Sync"}
+          </motion.button>
         </div>
+
+        {repairItems.length > 0 && (
+          <div className="mt-5">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+              Repair Results
+            </p>
+            <ProgressList items={repairItems} />
+          </div>
+        )}
 
         {!wallet.isAvailable && (
           <p className="mt-4 text-xs text-amber-400">
@@ -712,10 +977,44 @@ const BlockchainManager = () => {
 
       {/* Registerable content */}
       <div className="cinema-card rounded-2xl p-6 md:p-8">
-        <h3 className="text-lg font-display font-bold mb-1">Register Records</h3>
-        <p className="text-muted-foreground text-sm mb-5">
-          Registering an edited item creates a new version with a fresh proof. Unchanged items are skipped.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div>
+            <h3 className="text-lg font-display font-bold mb-1">Register Records</h3>
+            <p className="text-muted-foreground text-sm">
+              Registering an edited item creates a new version with a fresh proof. Unchanged items are skipped.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() =>
+                setSelected((prev) => (prev.size === rows.length ? new Set() : new Set(rows.map((r) => r.key))))
+              }
+              className="px-4 py-2 rounded-lg text-xs font-semibold bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors"
+            >
+              {selected.size === rows.length && rows.length ? "Clear selection" : "Select all"}
+            </button>
+            <motion.button
+              onClick={handleBatchRegister}
+              disabled={batchRunning || !selected.size || !config?.contract_address}
+              whileTap={{ scale: 0.98 }}
+              className="px-4 py-2 rounded-lg text-xs font-semibold border border-blue-primary/30 bg-blue-primary/10 text-blue-bright hover:bg-blue-primary/20 transition-colors disabled:opacity-50"
+            >
+              {batchRunning ? "Registering batch…" : `Register Selected (${selected.size})`}
+            </motion.button>
+          </div>
+        </div>
+
+        {batchItems.length > 0 && (
+          <div className="mb-5">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+              Batch Progress ·{" "}
+              {batchItems.filter((i) => i.status === "done" || i.status === "skipped").length}/
+              {batchItems.length} complete
+            </p>
+            <ProgressList items={batchItems} />
+          </div>
+        )}
 
         <div className="space-y-2">
           {rows.map((row) => {
@@ -726,6 +1025,13 @@ const BlockchainManager = () => {
                 key={row.key}
                 className="flex flex-wrap items-center gap-3 rounded-xl border border-border/40 bg-secondary/20 px-4 py-3"
               >
+                <input
+                  type="checkbox"
+                  checked={selected.has(row.key)}
+                  onChange={() => toggleSelected(row.key)}
+                  aria-label={`Select ${row.title || "record"} for batch registration`}
+                  className="w-4 h-4 shrink-0 accent-blue-bright bg-secondary/40 rounded"
+                />
                 <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground w-24 shrink-0">
                   {RECORD_TYPE_LABEL[row.type]}
                 </span>
@@ -771,6 +1077,62 @@ const BlockchainManager = () => {
             <p className="text-sm text-muted-foreground">Nothing to register yet.</p>
           )}
         </div>
+      </div>
+
+      {/* Live chain events */}
+      <div className="cinema-card rounded-2xl p-6 md:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 className="text-lg font-display font-bold mb-1">Live Chain Events</h3>
+            <p className="text-muted-foreground text-sm">
+              Streaming <span className="font-mono">RecordRegistered</span> and{" "}
+              <span className="font-mono">VerificationPerformed</span> events
+              {chain.lastBlock ? ` · head block ${chain.lastBlock.toLocaleString()}` : ""}.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => void chain.refresh()}
+            className="px-4 py-2 rounded-lg text-xs font-semibold bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors"
+          >
+            Refresh now
+          </button>
+        </div>
+        {chain.events.length ? (
+          <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+            {chain.events.map((event) => (
+              <div
+                key={`${event.txHash}-${event.logIndex}`}
+                className="flex flex-wrap items-center gap-3 rounded-xl border border-border/40 bg-secondary/20 px-4 py-2.5"
+              >
+                <span
+                  className={`w-2 h-2 rounded-full shrink-0 ${
+                    event.valid === false ? "bg-red-400" : "bg-emerald-400"
+                  }`}
+                />
+                <p className="text-sm min-w-0 flex-1 truncate">{chainEventLabel(event.name)}</p>
+                <span className="text-xs text-muted-foreground font-mono">
+                  {event.verificationId ? displayVerificationId(event.verificationId) : "—"}
+                </span>
+                <span className="text-xs text-muted-foreground">#{event.blockNumber.toLocaleString()}</span>
+                <a
+                  href={txUrl(config?.network, event.txHash)}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-xs text-blue-bright hover:underline"
+                >
+                  Tx ↗
+                </a>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            {config?.contract_address
+              ? "No contract events in the recent block window yet."
+              : "Deploy the registry contract to start streaming events."}
+          </p>
+        )}
       </div>
 
       {/* Logs */}

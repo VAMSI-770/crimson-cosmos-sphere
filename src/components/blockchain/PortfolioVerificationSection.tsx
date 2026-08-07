@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import ScrollReveal from "../ScrollReveal";
 import { motion } from "framer-motion";
-import { useBlockchainConfig, useBlockchainRecords } from "@/hooks/useBlockchain";
+import { useBlockchainConfig, useBlockchainRecords, useInvalidateBlockchain } from "@/hooks/useBlockchain";
+import { useVerificationRealtime } from "@/hooks/useChainEvents";
 import { getNetwork, addressUrl, shortHash, txUrl } from "@/lib/blockchain/networks";
 import VerificationTimeline from "./VerificationTimeline";
 import CopyButton from "./CopyButton";
@@ -26,6 +27,7 @@ const Detail = ({ label, children }: { label: string; children: React.ReactNode 
  */
 const PortfolioVerificationSection = () => {
   const { data: config } = useBlockchainConfig();
+  useVerificationRealtime(useInvalidateBlockchain());
   const { data: records = [] } = useBlockchainRecords();
 
   const stats = useMemo(() => {
