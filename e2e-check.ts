@@ -5,12 +5,16 @@ const url = process.env.VITE_SUPABASE_URL!;
 const key = process.env.VITE_SUPABASE_PUBLISHABLE_KEY!;
 const sb = createClient(url, key);
 
+const abs = (v: unknown) =>
+  typeof v === "string" && v.startsWith("/") ? `http://localhost:8080${v}` : v;
+
 const run = async () => {
   const out: string[] = [];
   const check = async (type: VerifiableType, label: string, entity: Record<string, unknown>) => {
     try {
-      const a = await buildContentProof(type, entity);
-      const b = await buildContentProof(type, entity);
+      const fixed = { ...entity, file_url: abs(entity.file_url), url: abs(entity.url) };
+      const a = await buildContentProof(type, fixed);
+      const b = await buildContentProof(type, fixed);
       out.push(`${a.hash === b.hash ? "OK  " : "MISMATCH"} ${type.padEnd(11)} ${label.slice(0,42).padEnd(44)} ${a.source.padEnd(8)} ${a.hash.slice(0,16)}`);
     } catch (e) {
       out.push(`FAIL     ${type.padEnd(11)} ${label.slice(0,42).padEnd(44)} ${(e as Error).message}`);
