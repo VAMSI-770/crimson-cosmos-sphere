@@ -131,6 +131,45 @@ const VerifyRecord = () => {
     void run();
   }, [run]);
 
+  // Live refresh: any registration or status change re-runs the proof check.
+  useVerificationRealtime(run);
+
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportPdf = async () => {
+    if (!record) return;
+    setExporting(true);
+    try {
+      await generateVerificationReport({
+        status: label,
+        statusNote: message || "Verification result for this portfolio record.",
+        recordType: RECORD_TYPE_LABEL[record.record_type as VerifiableType],
+        title: record.title,
+        version: record.version,
+        owner: "Bollepalli Vamsi",
+        verificationId: record.verification_id,
+        shortId: displayVerificationId(record.verification_id),
+        network: networkKey,
+        contractAddress,
+        ownerWallet: record.owner_wallet,
+        verifiedAt: onChain?.timestamp
+          ? new Date(onChain.timestamp * 1000).toISOString()
+          : record.registered_at,
+        blockNumber: onChain?.blockNumber || record.block_number,
+        onChainHash: onChain?.contentHash ?? (record.content_hash ? `0x${record.content_hash}` : null),
+        computedHash: computedHash ? `0x${computedHash}` : null,
+        txHash: record.tx_hash,
+        verifyUrl: `${window.location.origin}/verify/${displayVerificationId(record.verification_id)}`,
+      });
+      toast.success("Verification report downloaded");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not generate report");
+    } finally {
+      setExporting(false);
+    }
+  };
+
+
   const tone = useMemo(() => {
     if (status === "verified") return "text-emerald-400 border-emerald-400/30 bg-emerald-400/10";
     if (status === "loading") return "text-blue-bright border-blue-primary/30 bg-blue-primary/10";
