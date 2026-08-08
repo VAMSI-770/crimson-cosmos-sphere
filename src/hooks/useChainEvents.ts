@@ -85,12 +85,17 @@ export const useChainEvents = (
     setLastBlock(head);
 
     // First pass looks back a short window; later passes only read new blocks.
-    const from = cursor.current === null ? Math.max(0, head - 5_000) : cursor.current + 1;
+    const firstPass = cursor.current === null;
+    const from = firstPass ? Math.max(0, head - 5_000) : cursor.current! + 1;
     if (from > head) return;
 
     const fresh = await readRegistryEvents(address, network, from, head);
     cursor.current = head;
     if (!fresh.length) return;
+
+    // Backfilled history is recorded silently — only genuinely new events toast.
+    if (firstPass) fresh.forEach((event) => announced.current.add(`${event.txHash}-${event.logIndex}`));
+
 
     setEvents((prev) =>
       [...fresh, ...prev]
