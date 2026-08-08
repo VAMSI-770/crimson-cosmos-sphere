@@ -458,8 +458,135 @@ const BlockchainManager = () => {
   };
 
   // ------------------------------------------------------------------
+  // Audit log export
+  // ------------------------------------------------------------------
+
+  const handleExportAudit = async (kind: "csv" | "pdf") => {
+    setExportingAudit(kind);
+    try {
+      const rowsOut = await fetchBlockchainAudit();
+      if (!rowsOut.length) {
+        toast.info("No blockchain audit entries recorded yet");
+        return;
+      }
+      if (kind === "csv") exportAuditCsv(rowsOut);
+      else exportAuditPdf(rowsOut);
+      logAudit({ action: "blockchain.audit.export", details: { format: kind, entries: rowsOut.length } });
+      toast.success(`Audit log exported (${rowsOut.length} entries)`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not export the audit log");
+    } finally {
+      setExportingAudit(null);
+    }
+  };
+
+  // ------------------------------------------------------------------
+  // Deploy + smoke test workflow
+  // ------------------------------------------------------------------
+
+  /** Registers a minimal set of records and waits for live on-chain confirmation. */
+  const runSmokeTest = async () => {
+    if (!config?.contract_address) {
+      toast.error("No registry contract deployed yet");
+      return;
+    }
+    setSmokeRunning(true);
+    const queue = [
+      rows.find((row) => row.type === "ownership"),
+      rows.find((row) => row.type !== "ownership"),
+    ].filter(Boolean) as typeof rows;
+
+    if (!queue.length) {
+      setSmokeRunning(false);
+      toast.error("Nothing available to smoke-test");
+      return;
+    }
+
+    setSmokeItems([
+      ...queue.map((row) => ({
+        key: row.key,
+        title: `Register · ${row.title || "Untitled"}`,
+        status: "queued" as BatchItem["status"],
+        message: "Waiting",
+      })),
+      { key: "events", title: "Live event confirmation", status: "queued", message: "Waiting" },
+    ]);
+
+    const registered: string[] = [];
+    let failures = 0;
+
+    for (const row of queue) {
+      setSmokeItems((prev) =>
+        prev.map((item) =>
+          item.key === row.key ? { ...item, status: "running", message: "Signing & confirming…" } : item,
+        ),
+      );
+      const result = await performRegistration(row.type, row.table, row.entity, row.title);
+      if (result.status === "failed") failures += 1;
+      else registered.push(row.key);
+      setSmokeItems((prev) => prev.map((item) => (item.key === row.key ? { ...item, ...result } : item)));
+    }
+
+    // Confirm the registry actually emitted and stored the proofs.
+    setSmokeItems((prev) =>
+      prev.map((item) =>
+        item.key === "events" ? { ...item, status: "running", message: "Reading contract events…" } : item,
+      ),
+    );
+    await chain.refresh();
+    const total = await readTotalRecords(config.contract_address, config.network);
+    const confirmedEvents = chain.events.filter(
+      (event) => event.name === "RecordRegistered" || event.name === "VerificationPerformed",
+    ).length;
+
+    const ok = failures === 0 && (total ?? 0) > 0;
+    setSmokeItems((prev) =>
+      prev.map((item) =>
+        item.key === "events"
+          ? {
+              ...item,
+              status: ok ? "done" : "failed",
+              message: ok
+                ? `${total} record(s) on-chain · ${confirmedEvents} event(s) observed`
+                : "Could not confirm the registrations on-chain",
+            }
+          : item,
+      ),
+    );
+
+    logAudit({
+      action: "blockchain.smoke_test",
+      status: ok ? "success" : "failed",
+      details: { registered: registered.length, failures, onChainRecords: total },
+    });
+    setSmokeRunning(false);
+    invalidate();
+    if (ok) toast.success("Smoke test passed — proofs are live on-chain");
+    else toast.error("Smoke test failed — check the item details");
+  };
+
+  const handleDeployAndSmokeTest = async () => {
+    if (config?.contract_address) {
+      await runSmokeTest();
+      return;
+    }
+    setSmokePending(true);
+    await handleDeploy();
+  };
+
+  // Once the freshly deployed contract lands in config, run the smoke test.
+  useEffect(() => {
+    if (!smokePending || !config?.contract_address || smokeRunning) return;
+    setSmokePending(false);
+    void runSmokeTest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [smokePending, config?.contract_address]);
+
+  // ------------------------------------------------------------------
   // Repair / retry workflow
   // ------------------------------------------------------------------
+
+
 
   const handleRepair = async () => {
     if (!config?.contract_address) {
