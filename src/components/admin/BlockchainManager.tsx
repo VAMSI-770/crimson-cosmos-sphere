@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { exportAuditCsv, exportAuditPdf, fetchBlockchainAudit } from "@/lib/blockchain/auditExport";
+
 import { logAudit } from "@/lib/audit";
 import {
   useBlockchainConfig,
