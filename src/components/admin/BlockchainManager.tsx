@@ -132,6 +132,11 @@ const BlockchainManager = () => {
   const [batchItems, setBatchItems] = useState<BatchItem[]>([]);
   const [repairing, setRepairing] = useState(false);
   const [repairItems, setRepairItems] = useState<BatchItem[]>([]);
+  const [exportingAudit, setExportingAudit] = useState<"csv" | "pdf" | null>(null);
+  const [smokePending, setSmokePending] = useState(false);
+  const [smokeRunning, setSmokeRunning] = useState(false);
+  const [smokeItems, setSmokeItems] = useState<BatchItem[]>([]);
+
 
   const network = getNetwork(config?.network ?? networkKey);
   const resumeUrl = hero.data?.resume_url ?? "";
