@@ -168,6 +168,8 @@ export const useChainEvents = (
   useEffect(() => {
     if (!address) return;
     cursor.current = null;
+    announced.current.clear();
+
     void poll();
     const timer = setInterval(() => void poll(), intervalMs);
     return () => clearInterval(timer);
