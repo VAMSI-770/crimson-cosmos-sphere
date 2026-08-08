@@ -977,7 +977,52 @@ const BlockchainManager = () => {
           >
             {repairing ? "Repairing…" : "Scan & Repair Sync"}
           </motion.button>
+
+          <motion.button
+            onClick={() => void handleDeployAndSmokeTest()}
+            disabled={smokeRunning || busyKey === "deploy" || !wallet.address}
+            whileTap={{ scale: 0.98 }}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium border border-emerald-400/30 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20 transition-colors disabled:opacity-60"
+          >
+            {smokeRunning
+              ? "Running smoke test…"
+              : config?.contract_address
+                ? "Run Smoke Test"
+                : "Deploy + Smoke Test"}
+          </motion.button>
+
+          <motion.button
+            onClick={() => void handleExportAudit("csv")}
+            disabled={exportingAudit !== null}
+            whileTap={{ scale: 0.98 }}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors disabled:opacity-60"
+          >
+            {exportingAudit === "csv" ? "Exporting…" : "Download Audit CSV"}
+          </motion.button>
+
+          <motion.button
+            onClick={() => void handleExportAudit("pdf")}
+            disabled={exportingAudit !== null}
+            whileTap={{ scale: 0.98 }}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors disabled:opacity-60"
+          >
+            {exportingAudit === "pdf" ? "Exporting…" : "Download Audit PDF"}
+          </motion.button>
         </div>
+
+        <p className="mt-3 text-xs text-muted-foreground">
+          The audit export covers sync repairs, batch registrations, deployments and verification sweeps with
+          timestamps, actor and IP address.
+        </p>
+
+        {smokeItems.length > 0 && (
+          <div className="mt-5">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+              Smoke Test
+            </p>
+            <ProgressList items={smokeItems} />
+          </div>
+        )}
 
         {repairItems.length > 0 && (
           <div className="mt-5">
@@ -987,6 +1032,7 @@ const BlockchainManager = () => {
             <ProgressList items={repairItems} />
           </div>
         )}
+
 
         {!wallet.isAvailable && (
           <p className="mt-4 text-xs text-amber-400">
