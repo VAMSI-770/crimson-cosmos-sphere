@@ -9,6 +9,9 @@ import {
   readRegistryEvents,
   type RegistryEvent,
 } from "@/lib/blockchain/registry";
+import { RECORD_TYPE_LABEL, type VerifiableType } from "@/lib/blockchain/content";
+import { displayVerificationId } from "@/lib/blockchain/hash";
+
 
 /**
  * Live database sync: any insert/update on the verification tables is pushed
