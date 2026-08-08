@@ -12,6 +12,7 @@ import ProjectVersionHistory from "@/components/blockchain/ProjectVersionHistory
 import CopyButton from "@/components/blockchain/CopyButton";
 import { useVerificationRealtime } from "@/hooks/useChainEvents";
 import { generateVerificationReport } from "@/lib/blockchain/report";
+import ReportVerifier from "@/components/blockchain/ReportVerifier";
 
 type Status = "loading" | "verified" | "modified" | "unregistered" | "notfound" | "error";
 
@@ -352,6 +353,8 @@ const VerifyRecord = () => {
             <ProjectVersionHistory entityTable={record.entity_table} entityId={record.entity_id} />
           )}
         </div>
+
+        <ReportVerifier />
       </div>
     </main>
   );
