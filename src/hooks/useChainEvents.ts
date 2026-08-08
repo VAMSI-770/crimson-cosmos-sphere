@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+
 import type { BlockchainConfig, BlockchainRecord } from "@/hooks/useBlockchain";
 import {
   readLatestBlock,
@@ -7,6 +9,9 @@ import {
   readRegistryEvents,
   type RegistryEvent,
 } from "@/lib/blockchain/registry";
+import { RECORD_TYPE_LABEL, type VerifiableType } from "@/lib/blockchain/content";
+import { displayVerificationId } from "@/lib/blockchain/hash";
+
 
 /**
  * Live database sync: any insert/update on the verification tables is pushed
@@ -63,6 +68,8 @@ export const useChainEvents = (
   const [events, setEvents] = useState<RegistryEvent[]>([]);
   const [lastBlock, setLastBlock] = useState<number | null>(null);
   const cursor = useRef<number | null>(null);
+  const announced = useRef<Set<string>>(new Set());
+
   const recordsRef = useRef(records);
   const changed = useRef(onChanged);
   recordsRef.current = records;
@@ -78,12 +85,17 @@ export const useChainEvents = (
     setLastBlock(head);
 
     // First pass looks back a short window; later passes only read new blocks.
-    const from = cursor.current === null ? Math.max(0, head - 5_000) : cursor.current + 1;
+    const firstPass = cursor.current === null;
+    const from = firstPass ? Math.max(0, head - 5_000) : cursor.current! + 1;
     if (from > head) return;
 
     const fresh = await readRegistryEvents(address, network, from, head);
     cursor.current = head;
     if (!fresh.length) return;
+
+    // Backfilled history is recorded silently — only genuinely new events toast.
+    if (firstPass) fresh.forEach((event) => announced.current.add(`${event.txHash}-${event.logIndex}`));
+
 
     setEvents((prev) =>
       [...fresh, ...prev]
@@ -94,6 +106,32 @@ export const useChainEvents = (
         .sort((a, b) => b.blockNumber - a.blockNumber || b.logIndex - a.logIndex)
         .slice(0, 40),
     );
+
+    // Finalisation toasts — one per newly seen event, naming the record type + ID.
+    fresh
+      .filter((event) => event.name === "RecordRegistered" || event.name === "VerificationPerformed")
+      .forEach((event) => {
+        const key = `${event.txHash}-${event.logIndex}`;
+        if (announced.current.has(key)) return;
+        announced.current.add(key);
+        const id = event.verificationId ?? "";
+        const match = recordsRef.current.find(
+          (record) => record.verification_id.toLowerCase() === id.toLowerCase(),
+        );
+        const type = match
+          ? RECORD_TYPE_LABEL[match.record_type as VerifiableType] ?? match.record_type
+          : "Record";
+        const shortId = id ? displayVerificationId(id) : "unknown ID";
+        const description = `${type}${match?.title ? ` · ${match.title}` : ""} · ${shortId} · block ${event.blockNumber.toLocaleString()}`;
+        if (event.name === "VerificationPerformed" && event.valid === false) {
+          toast.error("Verification failed on-chain", { description });
+        } else if (event.name === "VerificationPerformed") {
+          toast.success("Verification confirmed on-chain", { description });
+        } else {
+          toast.success("Record finalised on-chain", { description });
+        }
+      });
+
 
     // Promote any local row that the chain now proves, using the event payload.
     const ids = new Set(
@@ -130,6 +168,8 @@ export const useChainEvents = (
   useEffect(() => {
     if (!address) return;
     cursor.current = null;
+    announced.current.clear();
+
     void poll();
     const timer = setInterval(() => void poll(), intervalMs);
     return () => clearInterval(timer);

@@ -24,6 +24,40 @@ export interface ReportInput {
 
 const INK = { heading: [10, 23, 51], body: [40, 48, 66], muted: [110, 120, 140] } as const;
 
+export interface ReportPayload {
+  v: number;
+  rows: [string, string][];
+  fingerprint: string;
+  verificationId: string;
+  shortId: string;
+  contentHash: string;
+}
+
+export const REPORT_PAYLOAD_PREFIX = "LVR1:";
+
+/** Canonical field list that the printed fingerprint is computed over. */
+export const fieldList = (rows: [string, string][]) =>
+  rows.map(([k, v]) => `${k}=${v}`).join("|");
+
+export const encodeReportPayload = (payload: ReportPayload) =>
+  REPORT_PAYLOAD_PREFIX + btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+
+export const decodeReportPayload = (encoded: string): ReportPayload =>
+  JSON.parse(decodeURIComponent(escape(atob(encoded.replace(REPORT_PAYLOAD_PREFIX, "")))));
+
+/**
+ * Pulls the embedded payload back out of an exported PDF. jsPDF writes the
+ * document info dictionary uncompressed, so the marker can be read from the
+ * raw bytes without a PDF parser.
+ */
+export const extractReportPayload = (bytes: ArrayBuffer): ReportPayload => {
+  const text = new TextDecoder("latin1").decode(bytes);
+  const match = text.match(/LVR1:([A-Za-z0-9+/=]+)/);
+  if (!match) throw new Error("This PDF has no embedded verification payload.");
+  return decodeReportPayload(match[1]);
+};
+
+
 /**
  * Tamper-evident verification report. Every field that determines the outcome is
  * printed in full, and the whole payload is fingerprinted with SHA-256 so the
@@ -52,9 +86,25 @@ export const generateVerificationReport = async (input: ReportInput) => {
     ["Report Generated", generatedAt],
   ];
 
-  const fingerprint = await sha256Text(rows.map(([k, v]) => `${k}=${v}`).join("|"));
+  const fingerprint = await sha256Text(fieldList(rows));
 
   const doc = new jsPDF({ unit: "pt", format: "a4" });
+  // Machine-readable copy of the exact field list, so any holder of the PDF can
+  // re-derive the fingerprint and check it against the live record.
+  doc.setProperties({
+    title: `Verification Report ${input.shortId}`,
+    subject: `Blockchain verification report for ${input.title}`,
+    author: input.owner,
+    keywords: encodeReportPayload({
+      v: 1,
+      rows,
+      fingerprint,
+      verificationId: input.verificationId,
+      shortId: input.shortId,
+      contentHash: (input.onChainHash ?? "").replace(/^0x/, ""),
+    }),
+  });
+
   const pageWidth = doc.internal.pageSize.getWidth();
   const margin = 48;
   const valueX = margin + 170;
