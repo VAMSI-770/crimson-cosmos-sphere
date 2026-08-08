@@ -97,6 +97,32 @@ export const useChainEvents = (
         .slice(0, 40),
     );
 
+    // Finalisation toasts — one per newly seen event, naming the record type + ID.
+    fresh
+      .filter((event) => event.name === "RecordRegistered" || event.name === "VerificationPerformed")
+      .forEach((event) => {
+        const key = `${event.txHash}-${event.logIndex}`;
+        if (announced.current.has(key)) return;
+        announced.current.add(key);
+        const id = event.verificationId ?? "";
+        const match = recordsRef.current.find(
+          (record) => record.verification_id.toLowerCase() === id.toLowerCase(),
+        );
+        const type = match
+          ? RECORD_TYPE_LABEL[match.record_type as VerifiableType] ?? match.record_type
+          : "Record";
+        const shortId = id ? displayVerificationId(id) : "unknown ID";
+        const description = `${type}${match?.title ? ` · ${match.title}` : ""} · ${shortId} · block ${event.blockNumber.toLocaleString()}`;
+        if (event.name === "VerificationPerformed" && event.valid === false) {
+          toast.error("Verification failed on-chain", { description });
+        } else if (event.name === "VerificationPerformed") {
+          toast.success("Verification confirmed on-chain", { description });
+        } else {
+          toast.success("Record finalised on-chain", { description });
+        }
+      });
+
+
     // Promote any local row that the chain now proves, using the event payload.
     const ids = new Set(
       fresh
