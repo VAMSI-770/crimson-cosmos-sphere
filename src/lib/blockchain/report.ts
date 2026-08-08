@@ -24,6 +24,40 @@ export interface ReportInput {
 
 const INK = { heading: [10, 23, 51], body: [40, 48, 66], muted: [110, 120, 140] } as const;
 
+export interface ReportPayload {
+  v: number;
+  rows: [string, string][];
+  fingerprint: string;
+  verificationId: string;
+  shortId: string;
+  contentHash: string;
+}
+
+export const REPORT_PAYLOAD_PREFIX = "LVR1:";
+
+/** Canonical field list that the printed fingerprint is computed over. */
+export const fieldList = (rows: [string, string][]) =>
+  rows.map(([k, v]) => `${k}=${v}`).join("|");
+
+export const encodeReportPayload = (payload: ReportPayload) =>
+  REPORT_PAYLOAD_PREFIX + btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+
+export const decodeReportPayload = (encoded: string): ReportPayload =>
+  JSON.parse(decodeURIComponent(escape(atob(encoded.replace(REPORT_PAYLOAD_PREFIX, "")))));
+
+/**
+ * Pulls the embedded payload back out of an exported PDF. jsPDF writes the
+ * document info dictionary uncompressed, so the marker can be read from the
+ * raw bytes without a PDF parser.
+ */
+export const extractReportPayload = (bytes: ArrayBuffer): ReportPayload => {
+  const text = new TextDecoder("latin1").decode(bytes);
+  const match = text.match(/LVR1:([A-Za-z0-9+/=]+)/);
+  if (!match) throw new Error("This PDF has no embedded verification payload.");
+  return decodeReportPayload(match[1]);
+};
+
+
 /**
  * Tamper-evident verification report. Every field that determines the outcome is
  * printed in full, and the whole payload is fingerprinted with SHA-256 so the
