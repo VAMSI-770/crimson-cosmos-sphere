@@ -52,9 +52,25 @@ export const generateVerificationReport = async (input: ReportInput) => {
     ["Report Generated", generatedAt],
   ];
 
-  const fingerprint = await sha256Text(rows.map(([k, v]) => `${k}=${v}`).join("|"));
+  const fingerprint = await sha256Text(fieldList(rows));
 
   const doc = new jsPDF({ unit: "pt", format: "a4" });
+  // Machine-readable copy of the exact field list, so any holder of the PDF can
+  // re-derive the fingerprint and check it against the live record.
+  doc.setProperties({
+    title: `Verification Report ${input.shortId}`,
+    subject: `Blockchain verification report for ${input.title}`,
+    author: input.owner,
+    keywords: encodeReportPayload({
+      v: 1,
+      rows,
+      fingerprint,
+      verificationId: input.verificationId,
+      shortId: input.shortId,
+      contentHash: (input.onChainHash ?? "").replace(/^0x/, ""),
+    }),
+  });
+
   const pageWidth = doc.internal.pageSize.getWidth();
   const margin = 48;
   const valueX = margin + 170;
