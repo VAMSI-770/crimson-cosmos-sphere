@@ -68,6 +68,8 @@ export const useChainEvents = (
   const [events, setEvents] = useState<RegistryEvent[]>([]);
   const [lastBlock, setLastBlock] = useState<number | null>(null);
   const cursor = useRef<number | null>(null);
+  const announced = useRef<Set<string>>(new Set());
+
   const recordsRef = useRef(records);
   const changed = useRef(onChanged);
   recordsRef.current = records;
