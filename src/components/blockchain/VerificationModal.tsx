@@ -10,7 +10,7 @@ import CopyButton from "./CopyButton";
 import { displayVerificationId } from "@/lib/blockchain/hash";
 import type { BlockchainConfig, BlockchainRecord } from "@/hooks/useBlockchain";
 
-type Result = "checking" | "verified" | "modified" | "unregistered" | "error";
+type Result = "checking" | "verified" | "modified" | "unregistered" | "pending" | "syncerror" | "error";
 
 interface Props {
   open: boolean;
