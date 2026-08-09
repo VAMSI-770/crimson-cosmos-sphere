@@ -21,7 +21,37 @@ interface Props {
  */
 const VerificationBadge = ({ type, entity, record, config, compact, className = "" }: Props) => {
   const [open, setOpen] = useState(false);
-  const isRegistered = Boolean(record?.tx_hash);
+
+  // "Verified" is only ever claimed for a confirmed transaction. Pending,
+  // failed and sync-error records fall back to a neutral/amber chip so the
+  // portfolio never shows a proof that the chain has not accepted.
+  const state: "verified" | "pending" | "attention" | "none" = !record
+    ? "none"
+    : record.status === "confirmed" && record.tx_hash
+      ? "verified"
+      : record.status === "pending"
+        ? "pending"
+        : record.status === "failed" || record.status === "sync_error"
+          ? "attention"
+          : "none";
+
+  const isVerified = state === "verified";
+  const label =
+    state === "verified"
+      ? "Verified on Blockchain"
+      : state === "pending"
+        ? "Confirming On-Chain"
+        : state === "attention"
+          ? "Verification Pending Review"
+          : "Unverified";
+  const chipTone =
+    state === "verified"
+      ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20"
+      : state === "pending" || state === "attention"
+        ? "border-amber-400/30 bg-amber-400/10 text-amber-300 hover:bg-amber-400/20"
+        : "border-border/60 bg-secondary/40 text-muted-foreground hover:text-foreground";
+  const dotTone =
+    state === "verified" ? "bg-emerald-400" : state === "none" ? "bg-muted-foreground" : "bg-amber-400";
 
   return (
     <>
@@ -32,21 +62,18 @@ const VerificationBadge = ({ type, entity, record, config, compact, className = 
           setOpen(true);
         }}
         whileTap={{ scale: 0.97 }}
-        className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] transition-colors ${
-          isRegistered
-            ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20"
-            : "border-border/60 bg-secondary/40 text-muted-foreground hover:text-foreground"
-        } ${className}`}
-        title={isRegistered ? "Verify this record on the blockchain" : "Not yet registered on-chain"}
+        className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] transition-colors ${chipTone} ${className}`}
+        title={isVerified ? "Verify this record on the blockchain" : "Open verification details"}
       >
-        <span className={`w-1.5 h-1.5 rounded-full ${isRegistered ? "bg-emerald-400" : "bg-muted-foreground"}`} />
-        {isRegistered ? "Verified on Blockchain" : "Unverified"}
-        {isRegistered && !compact && record && (
+        <span className={`w-1.5 h-1.5 rounded-full ${dotTone}`} />
+        {label}
+        {isVerified && !compact && record && (
           <span className="font-mono normal-case tracking-normal opacity-70">
             {displayVerificationId(record.verification_id)}
           </span>
         )}
       </motion.button>
+
 
       <VerificationModal
         open={open}
