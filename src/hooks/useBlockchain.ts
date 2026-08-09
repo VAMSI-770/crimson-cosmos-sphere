@@ -10,7 +10,10 @@ export interface BlockchainConfig {
   contract_address: string | null;
   deployment_tx: string | null;
   deployed_at: string | null;
+  deployment_block: number | null;
+  contract_verified_at: string | null;
   last_sync_at: string | null;
+
   is_active: boolean;
 }
 
