@@ -141,6 +141,12 @@ const BlockchainManager = () => {
   const [smokePending, setSmokePending] = useState(false);
   const [smokeRunning, setSmokeRunning] = useState(false);
   const [smokeItems, setSmokeItems] = useState<BatchItem[]>([]);
+  const [confirmDeploy, setConfirmDeploy] = useState(false);
+  const [bytecodeOk, setBytecodeOk] = useState<boolean | null>(null);
+  const [auditing, setAuditing] = useState(false);
+  const [auditItems, setAuditItems] = useState<BatchItem[]>([]);
+
+
 
 
   const network = getNetwork(config?.network ?? networkKey);
