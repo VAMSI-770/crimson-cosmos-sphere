@@ -30,9 +30,12 @@ import {
   verifyBatchOnChain,
   readLatestBlock,
   readTotalRecords,
+  readHasBytecode,
+  readTxInfo,
   registerOnChain,
   verifyHashOnChain,
 } from "@/lib/blockchain/registry";
+
 import {
   addressUrl,
   getNetwork,
