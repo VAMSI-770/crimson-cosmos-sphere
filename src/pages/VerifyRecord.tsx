@@ -212,6 +212,7 @@ const VerifyRecord = () => {
   const tone = useMemo(() => {
     if (status === "verified") return "text-emerald-400 border-emerald-400/30 bg-emerald-400/10";
     if (status === "loading") return "text-blue-bright border-blue-primary/30 bg-blue-primary/10";
+    if (status === "pending") return "text-amber-400 border-amber-400/30 bg-amber-400/10";
     if (status === "unregistered" || status === "notfound") return "text-muted-foreground border-border/50 bg-secondary/40";
     return "text-red-400 border-red-400/30 bg-red-400/10";
   }, [status]);
@@ -222,8 +223,11 @@ const VerifyRecord = () => {
     modified: "Modified or Invalid",
     unregistered: "Not Registered On-Chain",
     notfound: "Unknown Verification ID",
-    error: "Verification Error",
+    pending: "Pending Confirmation",
+    syncerror: "Sync Error — Verification Withheld",
+    error: "Verification Unavailable",
   }[status];
+
 
   const copy = async (value: string, what: string) => {
     try {
