@@ -1127,12 +1127,123 @@ const BlockchainManager = () => {
           >
             {exportingAudit === "pdf" ? "Exporting…" : "Download Audit PDF"}
           </motion.button>
+
+          <motion.button
+            onClick={() => void handleConsistencyAudit()}
+            disabled={auditing || !config?.contract_address}
+            whileTap={{ scale: 0.98 }}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors disabled:opacity-60"
+          >
+            {auditing ? "Auditing…" : "Run Consistency Audit"}
+          </motion.button>
         </div>
 
         <p className="mt-3 text-xs text-muted-foreground">
           The audit export covers sync repairs, batch registrations, deployments and verification sweeps with
           timestamps, actor and IP address.
         </p>
+
+        {/* Pre-deployment confirmation */}
+        <AnimatePresence>
+          {confirmDeploy && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-5 rounded-xl border border-blue-primary/30 bg-blue-primary/5 p-5">
+                <p className="font-display text-sm mb-3">Confirm registry deployment</p>
+                <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+                  <p>Network: <span className="text-foreground">{network.name}</span></p>
+                  <p>Chain ID: <span className="text-foreground">{network.chainId}</span></p>
+                  <p>Deployer wallet: <span className="text-foreground break-all">{wallet.address ?? "Not connected"}</span></p>
+                  <p>Portfolio ID: <span className="text-foreground">{config?.portfolio_id ?? "will be created"}</span></p>
+                </div>
+                <p className="mt-3 text-xs text-amber-300">
+                  This publishes a new contract on {network.name} and costs gas. The deployer wallet becomes the
+                  permanent registry owner and the network cannot be changed afterwards.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <button
+                    onClick={() => void handleDeploy()}
+                    disabled={busyKey === "deploy" || !wallet.address}
+                    className="px-5 py-2.5 rounded-xl text-sm font-medium border border-blue-primary/30 bg-blue-primary/10 text-blue-bright hover:bg-blue-primary/20 transition-colors disabled:opacity-60"
+                  >
+                    {busyKey === "deploy" ? "Deploying…" : "Confirm & Deploy"}
+                  </button>
+                  <button
+                    onClick={() => setConfirmDeploy(false)}
+                    className="px-5 py-2.5 rounded-xl text-sm font-medium bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Deployment details */}
+        {config?.contract_address && (
+          <div className="mt-5 rounded-xl border border-border/50 bg-secondary/20 p-5">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground mb-3">
+              Deployment Details
+            </p>
+            <div className="grid gap-2.5 text-xs sm:grid-cols-2">
+              <p className="flex items-center gap-2 min-w-0">
+                <span className="text-muted-foreground">Contract</span>
+                <span className="font-mono truncate">{shortHash(config.contract_address)}</span>
+                <CopyButton value={config.contract_address} label="Contract address" />
+              </p>
+              <p className="flex items-center gap-2 min-w-0">
+                <span className="text-muted-foreground">Deployer</span>
+                <span className="font-mono truncate">{config.owner_wallet ? shortHash(config.owner_wallet) : "—"}</span>
+                {config.owner_wallet && <CopyButton value={config.owner_wallet} label="Deployer wallet" />}
+              </p>
+              <p className="text-muted-foreground">
+                Network <span className="text-foreground">{network.name} · {config.chain_id}</span>
+              </p>
+              <p className="text-muted-foreground">
+                Deployment block <span className="text-foreground">{config.deployment_block?.toLocaleString() ?? "—"}</span>
+              </p>
+              <p className="text-muted-foreground">
+                Deployed at{" "}
+                <span className="text-foreground">
+                  {config.deployed_at ? new Date(config.deployed_at).toLocaleString() : "—"}
+                </span>
+              </p>
+              <p className="text-muted-foreground">
+                Bytecode{" "}
+                <span className={bytecodeOk === false ? "text-red-400" : bytecodeOk ? "text-emerald-400" : "text-foreground"}>
+                  {bytecodeOk === null ? "Checking…" : bytecodeOk ? "Confirmed on-chain" : "Not found"}
+                </span>
+              </p>
+              {config.deployment_tx && (
+                <p className="flex items-center gap-2 min-w-0 sm:col-span-2">
+                  <span className="text-muted-foreground">Deployment tx</span>
+                  <a
+                    href={txUrl(config.network, config.deployment_tx)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-mono truncate text-blue-bright hover:underline"
+                  >
+                    {shortHash(config.deployment_tx)}
+                  </a>
+                  <CopyButton value={config.deployment_tx} label="Deployment tx" />
+                </p>
+              )}
+            </div>
+            <a
+              href={addressUrl(config.network, config.contract_address)}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-block text-xs text-blue-bright hover:underline"
+            >
+              View contract on {network.explorerName}
+            </a>
+          </div>
+        )}
 
         {smokeItems.length > 0 && (
           <div className="mt-5">
@@ -1142,6 +1253,16 @@ const BlockchainManager = () => {
             <ProgressList items={smokeItems} />
           </div>
         )}
+
+        {auditItems.length > 0 && (
+          <div className="mt-5">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+              Consistency Audit
+            </p>
+            <ProgressList items={auditItems} />
+          </div>
+        )}
+
 
         {repairItems.length > 0 && (
           <div className="mt-5">
