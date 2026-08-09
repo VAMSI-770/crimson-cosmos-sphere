@@ -129,17 +129,22 @@ const VerificationModal = ({ open, onClose, type, entity, record, config }: Prop
       ? "text-emerald-400 border-emerald-400/30 bg-emerald-400/10"
       : result === "checking"
         ? "text-blue-bright border-blue-primary/30 bg-blue-primary/10"
-        : result === "unregistered"
-          ? "text-muted-foreground border-border/50 bg-secondary/40"
-          : "text-red-400 border-red-400/30 bg-red-400/10";
+        : result === "pending"
+          ? "text-amber-400 border-amber-400/30 bg-amber-400/10"
+          : result === "unregistered"
+            ? "text-muted-foreground border-border/50 bg-secondary/40"
+            : "text-red-400 border-red-400/30 bg-red-400/10";
 
   const statusLabel = {
     checking: "Verifying…",
     verified: "Verified",
     modified: "Modified or Invalid",
     unregistered: "Not Registered",
-    error: "Verification Error",
+    pending: "Pending Confirmation",
+    syncerror: "Sync Error — Verification Withheld",
+    error: "Verification Unavailable",
   }[result];
+
 
   return (
     <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
