@@ -1060,7 +1060,7 @@ const BlockchainManager = () => {
 
           {!config?.contract_address && (
             <motion.button
-              onClick={handleDeploy}
+              onClick={() => setConfirmDeploy(true)}
               disabled={busyKey === "deploy"}
               whileTap={{ scale: 0.98 }}
               className="px-5 py-2.5 rounded-xl text-sm font-medium border border-blue-primary/30 bg-blue-primary/10 text-blue-bright hover:bg-blue-primary/20 transition-colors disabled:opacity-60"
@@ -1068,6 +1068,7 @@ const BlockchainManager = () => {
               {busyKey === "deploy" ? "Deploying…" : "Deploy Contract"}
             </motion.button>
           )}
+
 
           <motion.button
             onClick={handleSync}
