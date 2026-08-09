@@ -256,6 +256,7 @@ const BlockchainManager = () => {
       toast.error("Connect your wallet first");
       return;
     }
+    setConfirmDeploy(false);
     setBusyKey("deploy");
     setStage("preparing");
     try {
@@ -268,12 +269,23 @@ const BlockchainManager = () => {
       const { address, txHash } = await deployRegistry(signer, activeConfig.portfolio_id);
       setStage("pending");
 
+      // Post-deployment confirmation: receipt block + runtime bytecode presence.
+      const [txInfo, hasCode] = await Promise.all([
+        txHash ? readTxInfo(txHash, target.key) : Promise.resolve(null),
+        readHasBytecode(address, target.key),
+      ]);
+      setBytecodeOk(hasCode);
+
       const { error } = await supabase
         .from("blockchain_config")
         .update({
           contract_address: address,
           deployment_tx: txHash,
-          deployed_at: new Date().toISOString(),
+          deployed_at: txInfo?.timestamp
+            ? new Date(txInfo.timestamp * 1000).toISOString()
+            : new Date().toISOString(),
+          deployment_block: txInfo?.blockNumber ?? null,
+          contract_verified_at: hasCode ? new Date().toISOString() : null,
           owner_wallet: wallet.address,
           network: target.key,
           chain_id: target.chainId,
@@ -282,10 +294,15 @@ const BlockchainManager = () => {
       if (error) throw error;
 
       setStage("confirmed");
-      logAudit({ action: "blockchain.contract.deploy", entity_id: address, details: { network: target.key, txHash } });
+      logAudit({
+        action: "blockchain.contract.deploy",
+        entity_id: address,
+        details: { network: target.key, txHash, block: txInfo?.blockNumber ?? null, bytecode: hasCode },
+      });
       invalidate();
       await refetchConfig();
-      toast.success("Registry contract deployed");
+      if (hasCode === false) toast.warning("Deployed, but no runtime bytecode was detected yet");
+      else toast.success("Registry contract deployed");
     } catch (error) {
       setStage("idle");
       logAudit({ action: "blockchain.contract.deploy", status: "failed" });
@@ -294,6 +311,7 @@ const BlockchainManager = () => {
       setBusyKey(null);
       setTimeout(() => setStage("idle"), 2500);
     }
+
   };
 
   // ------------------------------------------------------------------
