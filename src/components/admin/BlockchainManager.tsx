@@ -314,6 +314,97 @@ const BlockchainManager = () => {
 
   };
 
+  // Confirm the configured address really holds contract bytecode.
+  useEffect(() => {
+    if (!config?.contract_address) {
+      setBytecodeOk(null);
+      return;
+    }
+    let cancelled = false;
+    void readHasBytecode(config.contract_address, config.network).then((ok) => {
+      if (!cancelled) setBytecodeOk(ok);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [config?.contract_address, config?.network]);
+
+  /**
+   * Consistency audit — compares every stored record against the chain and
+   * flags drift (hash mismatch, version mismatch, missing proof) as
+   * `sync_error` so the public UI withholds any "verified" claim.
+   */
+  const handleConsistencyAudit = async () => {
+    if (!config?.contract_address) {
+      toast.error("Deploy the registry contract first");
+      return;
+    }
+    setAuditing(true);
+    const items: BatchItem[] = records.map((record) => ({
+      key: record.id,
+      title: `${RECORD_TYPE_LABEL[record.record_type as VerifiableType] ?? record.record_type} · ${record.title}`,
+      status: "queued",
+      message: "Queued",
+    }));
+    setAuditItems(items);
+
+    let drift = 0;
+    for (let i = 0; i < records.length; i += 1) {
+      const record = records[i];
+      const patch = (status: BatchItem["status"], message: string) =>
+        setAuditItems((prev) => prev.map((it) => (it.key === record.id ? { ...it, status, message } : it)));
+      patch("running", "Checking chain…");
+
+      const onChain = await readOnChainRecord(
+        config.contract_address!,
+        record.network,
+        record.verification_id,
+      );
+
+      let issue: string | null = null;
+      if (!onChain || !onChain.timestamp) {
+        issue = record.status === "pending" ? null : "No proof found on-chain";
+      } else {
+        const chainHash = (onChain.contentHash || "").replace(/^0x/, "").toLowerCase();
+        const dbHash = (record.content_hash || "").replace(/^0x/, "").toLowerCase();
+        if (chainHash && dbHash && chainHash !== dbHash) issue = "Stored hash differs from on-chain hash";
+        else if (onChain.version && record.version && onChain.version !== record.version)
+          issue = "Version differs from on-chain version";
+      }
+
+      if (issue) {
+        drift += 1;
+        await supabase.from("blockchain_records").update({ status: "sync_error" }).eq("id", record.id);
+        patch("failed", issue);
+      } else if (onChain?.timestamp && record.status !== "confirmed") {
+        await supabase
+          .from("blockchain_records")
+          .update({
+            status: "confirmed",
+            block_number: onChain.blockNumber || record.block_number,
+            registered_at: new Date(onChain.timestamp * 1000).toISOString(),
+          })
+          .eq("id", record.id);
+        patch("done", "Reconciled to confirmed");
+      } else if (!onChain?.timestamp) {
+        patch("skipped", "Awaiting confirmation");
+      } else {
+        patch("done", "Consistent with chain");
+      }
+    }
+
+    logAudit({
+      action: "blockchain.consistency_audit",
+      status: drift === 0 ? "success" : "warning",
+      details: { checked: records.length, drift },
+    });
+    invalidate();
+    setAuditing(false);
+    if (drift === 0) toast.success("All records are consistent with the blockchain");
+    else toast.warning(`${drift} record(s) flagged as sync errors`);
+  };
+
+
   // ------------------------------------------------------------------
   // Registration
   // ------------------------------------------------------------------
