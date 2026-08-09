@@ -108,8 +108,35 @@ const VerifyRecord = () => {
       const chainRecord = await readOnChainRecord(address, found.network, found.verification_id);
       setOnChain(chainRecord);
       if (!chainRecord || !chainRecord.timestamp) {
-        setStatus("unregistered");
-        setMessage("This verification ID was not found on the blockchain.");
+        if (found.status === "pending") {
+          setStatus("pending");
+          setMessage("The registration transaction has not been confirmed on-chain yet. Check back shortly.");
+        } else if (found.status === "failed") {
+          setStatus("unregistered");
+          setMessage("The registration transaction for this record did not succeed, so no proof exists on-chain.");
+        } else {
+          setStatus("unregistered");
+          setMessage("This verification ID was not found on the blockchain.");
+        }
+        return;
+      }
+
+      // Database ↔ blockchain consistency. The chain is always the source of
+      // truth; any drift is surfaced instead of being reported as verified.
+      const chainHash = (chainRecord.contentHash || "").replace(/^0x/, "").toLowerCase();
+      const dbHash = (found.content_hash || "").replace(/^0x/, "").toLowerCase();
+      if (chainHash && dbHash && chainHash !== dbHash) {
+        setStatus("syncerror");
+        setMessage(
+          "The stored proof for this record does not match the proof on the blockchain. Verification is withheld until this is resolved.",
+        );
+        return;
+      }
+      if (chainRecord.version && found.version && chainRecord.version !== found.version) {
+        setStatus("syncerror");
+        setMessage(
+          "The record version on the blockchain differs from the stored version. Verification is withheld until this is resolved.",
+        );
         return;
       }
 
@@ -131,10 +158,12 @@ const VerifyRecord = () => {
         setStatus("modified");
         setMessage("The live content hash does not match the proof stored on-chain — it has been modified.");
       }
-    } catch (error) {
+    } catch {
+      // Never surface raw database/RPC errors to the public page.
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "Verification failed.");
+      setMessage("We could not complete the verification right now. Please retry in a moment.");
     }
+
   }, [id, config?.contract_address]);
 
   useEffect(() => {
