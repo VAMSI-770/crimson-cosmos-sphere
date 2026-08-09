@@ -10,7 +10,7 @@ import CopyButton from "./CopyButton";
 import { displayVerificationId } from "@/lib/blockchain/hash";
 import type { BlockchainConfig, BlockchainRecord } from "@/hooks/useBlockchain";
 
-type Result = "checking" | "verified" | "modified" | "unregistered" | "error";
+type Result = "checking" | "verified" | "modified" | "unregistered" | "pending" | "syncerror" | "error";
 
 interface Props {
   open: boolean;
@@ -65,6 +65,27 @@ const VerificationModal = ({ open, onClose, type, entity, record, config }: Prop
         if (cancelled) return;
         if (onChain) setChainTimestamp(onChain.timestamp);
 
+        if (!onChain || !onChain.timestamp) {
+          if (record.status === "pending") {
+            setResult("pending");
+            setMessage("The registration transaction is still awaiting confirmation on the network.");
+          } else {
+            setResult("unregistered");
+            setMessage("No proof found on-chain for this verification ID.");
+          }
+          return;
+        }
+
+        // Withhold any verified claim when the stored proof and the on-chain
+        // proof disagree (database ↔ blockchain drift).
+        const chainHash = (onChain.contentHash || "").replace(/^0x/, "").toLowerCase();
+        const dbHash = (record.content_hash || "").replace(/^0x/, "").toLowerCase();
+        if (chainHash && dbHash && chainHash !== dbHash) {
+          setResult("syncerror");
+          setMessage("The stored proof does not match the blockchain proof, so verification is withheld.");
+          return;
+        }
+
         const ok = await verifyHashOnChain(
           contractAddress,
           networkKey,
@@ -76,18 +97,16 @@ const VerificationModal = ({ open, onClose, type, entity, record, config }: Prop
         if (ok) {
           setResult("verified");
           setMessage("The current content hash matches the proof stored on-chain.");
-        } else if (!onChain) {
-          setResult("unregistered");
-          setMessage("No proof found on-chain for this verification ID.");
         } else {
           setResult("modified");
           setMessage("The current content does not match the on-chain proof.");
         }
-      } catch (error) {
+      } catch {
         if (cancelled) return;
         setResult("error");
-        setMessage(error instanceof Error ? error.message : "Verification failed.");
+        setMessage("Verification could not be completed right now. Please try again shortly.");
       }
+
     };
 
     void run();
@@ -110,17 +129,22 @@ const VerificationModal = ({ open, onClose, type, entity, record, config }: Prop
       ? "text-emerald-400 border-emerald-400/30 bg-emerald-400/10"
       : result === "checking"
         ? "text-blue-bright border-blue-primary/30 bg-blue-primary/10"
-        : result === "unregistered"
-          ? "text-muted-foreground border-border/50 bg-secondary/40"
-          : "text-red-400 border-red-400/30 bg-red-400/10";
+        : result === "pending"
+          ? "text-amber-400 border-amber-400/30 bg-amber-400/10"
+          : result === "unregistered"
+            ? "text-muted-foreground border-border/50 bg-secondary/40"
+            : "text-red-400 border-red-400/30 bg-red-400/10";
 
   const statusLabel = {
     checking: "Verifying…",
     verified: "Verified",
     modified: "Modified or Invalid",
     unregistered: "Not Registered",
-    error: "Verification Error",
+    pending: "Pending Confirmation",
+    syncerror: "Sync Error — Verification Withheld",
+    error: "Verification Unavailable",
   }[result];
+
 
   return (
     <Dialog open={open} onOpenChange={(next) => !next && onClose()}>

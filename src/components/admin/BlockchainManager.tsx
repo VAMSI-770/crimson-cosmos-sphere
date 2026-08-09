@@ -30,9 +30,12 @@ import {
   verifyBatchOnChain,
   readLatestBlock,
   readTotalRecords,
+  readHasBytecode,
+  readTxInfo,
   registerOnChain,
   verifyHashOnChain,
 } from "@/lib/blockchain/registry";
+
 import {
   addressUrl,
   getNetwork,
@@ -138,6 +141,12 @@ const BlockchainManager = () => {
   const [smokePending, setSmokePending] = useState(false);
   const [smokeRunning, setSmokeRunning] = useState(false);
   const [smokeItems, setSmokeItems] = useState<BatchItem[]>([]);
+  const [confirmDeploy, setConfirmDeploy] = useState(false);
+  const [bytecodeOk, setBytecodeOk] = useState<boolean | null>(null);
+  const [auditing, setAuditing] = useState(false);
+  const [auditItems, setAuditItems] = useState<BatchItem[]>([]);
+
+
 
 
   const network = getNetwork(config?.network ?? networkKey);
@@ -247,6 +256,7 @@ const BlockchainManager = () => {
       toast.error("Connect your wallet first");
       return;
     }
+    setConfirmDeploy(false);
     setBusyKey("deploy");
     setStage("preparing");
     try {
@@ -259,12 +269,23 @@ const BlockchainManager = () => {
       const { address, txHash } = await deployRegistry(signer, activeConfig.portfolio_id);
       setStage("pending");
 
+      // Post-deployment confirmation: receipt block + runtime bytecode presence.
+      const [txInfo, hasCode] = await Promise.all([
+        txHash ? readTxInfo(txHash, target.key) : Promise.resolve(null),
+        readHasBytecode(address, target.key),
+      ]);
+      setBytecodeOk(hasCode);
+
       const { error } = await supabase
         .from("blockchain_config")
         .update({
           contract_address: address,
           deployment_tx: txHash,
-          deployed_at: new Date().toISOString(),
+          deployed_at: txInfo?.timestamp
+            ? new Date(txInfo.timestamp * 1000).toISOString()
+            : new Date().toISOString(),
+          deployment_block: txInfo?.blockNumber ?? null,
+          contract_verified_at: hasCode ? new Date().toISOString() : null,
           owner_wallet: wallet.address,
           network: target.key,
           chain_id: target.chainId,
@@ -273,10 +294,15 @@ const BlockchainManager = () => {
       if (error) throw error;
 
       setStage("confirmed");
-      logAudit({ action: "blockchain.contract.deploy", entity_id: address, details: { network: target.key, txHash } });
+      logAudit({
+        action: "blockchain.contract.deploy",
+        entity_id: address,
+        details: { network: target.key, txHash, block: txInfo?.blockNumber ?? null, bytecode: hasCode },
+      });
       invalidate();
       await refetchConfig();
-      toast.success("Registry contract deployed");
+      if (hasCode === false) toast.warning("Deployed, but no runtime bytecode was detected yet");
+      else toast.success("Registry contract deployed");
     } catch (error) {
       setStage("idle");
       logAudit({ action: "blockchain.contract.deploy", status: "failed" });
@@ -285,7 +311,99 @@ const BlockchainManager = () => {
       setBusyKey(null);
       setTimeout(() => setStage("idle"), 2500);
     }
+
   };
+
+  // Confirm the configured address really holds contract bytecode.
+  useEffect(() => {
+    if (!config?.contract_address) {
+      setBytecodeOk(null);
+      return;
+    }
+    let cancelled = false;
+    void readHasBytecode(config.contract_address, config.network).then((ok) => {
+      if (!cancelled) setBytecodeOk(ok);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [config?.contract_address, config?.network]);
+
+  /**
+   * Consistency audit — compares every stored record against the chain and
+   * flags drift (hash mismatch, version mismatch, missing proof) as
+   * `sync_error` so the public UI withholds any "verified" claim.
+   */
+  const handleConsistencyAudit = async () => {
+    if (!config?.contract_address) {
+      toast.error("Deploy the registry contract first");
+      return;
+    }
+    setAuditing(true);
+    const items: BatchItem[] = records.map((record) => ({
+      key: record.id,
+      title: `${RECORD_TYPE_LABEL[record.record_type as VerifiableType] ?? record.record_type} · ${record.title}`,
+      status: "queued",
+      message: "Queued",
+    }));
+    setAuditItems(items);
+
+    let drift = 0;
+    for (let i = 0; i < records.length; i += 1) {
+      const record = records[i];
+      const patch = (status: BatchItem["status"], message: string) =>
+        setAuditItems((prev) => prev.map((it) => (it.key === record.id ? { ...it, status, message } : it)));
+      patch("running", "Checking chain…");
+
+      const onChain = await readOnChainRecord(
+        config.contract_address!,
+        record.network,
+        record.verification_id,
+      );
+
+      let issue: string | null = null;
+      if (!onChain || !onChain.timestamp) {
+        issue = record.status === "pending" ? null : "No proof found on-chain";
+      } else {
+        const chainHash = (onChain.contentHash || "").replace(/^0x/, "").toLowerCase();
+        const dbHash = (record.content_hash || "").replace(/^0x/, "").toLowerCase();
+        if (chainHash && dbHash && chainHash !== dbHash) issue = "Stored hash differs from on-chain hash";
+        else if (onChain.version && record.version && onChain.version !== record.version)
+          issue = "Version differs from on-chain version";
+      }
+
+      if (issue) {
+        drift += 1;
+        await supabase.from("blockchain_records").update({ status: "sync_error" }).eq("id", record.id);
+        patch("failed", issue);
+      } else if (onChain?.timestamp && record.status !== "confirmed") {
+        await supabase
+          .from("blockchain_records")
+          .update({
+            status: "confirmed",
+            block_number: onChain.blockNumber || record.block_number,
+            registered_at: new Date(onChain.timestamp * 1000).toISOString(),
+          })
+          .eq("id", record.id);
+        patch("done", "Reconciled to confirmed");
+      } else if (!onChain?.timestamp) {
+        patch("skipped", "Awaiting confirmation");
+      } else {
+        patch("done", "Consistent with chain");
+      }
+    }
+
+    logAudit({
+      action: "blockchain.consistency_audit",
+      status: drift === 0 ? "success" : "warning",
+      details: { checked: records.length, drift },
+    });
+    invalidate();
+    setAuditing(false);
+    if (drift === 0) toast.success("All records are consistent with the blockchain");
+    else toast.warning(`${drift} record(s) flagged as sync errors`);
+  };
+
 
   // ------------------------------------------------------------------
   // Registration
@@ -942,7 +1060,7 @@ const BlockchainManager = () => {
 
           {!config?.contract_address && (
             <motion.button
-              onClick={handleDeploy}
+              onClick={() => setConfirmDeploy(true)}
               disabled={busyKey === "deploy"}
               whileTap={{ scale: 0.98 }}
               className="px-5 py-2.5 rounded-xl text-sm font-medium border border-blue-primary/30 bg-blue-primary/10 text-blue-bright hover:bg-blue-primary/20 transition-colors disabled:opacity-60"
@@ -950,6 +1068,7 @@ const BlockchainManager = () => {
               {busyKey === "deploy" ? "Deploying…" : "Deploy Contract"}
             </motion.button>
           )}
+
 
           <motion.button
             onClick={handleSync}
@@ -1008,12 +1127,123 @@ const BlockchainManager = () => {
           >
             {exportingAudit === "pdf" ? "Exporting…" : "Download Audit PDF"}
           </motion.button>
+
+          <motion.button
+            onClick={() => void handleConsistencyAudit()}
+            disabled={auditing || !config?.contract_address}
+            whileTap={{ scale: 0.98 }}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors disabled:opacity-60"
+          >
+            {auditing ? "Auditing…" : "Run Consistency Audit"}
+          </motion.button>
         </div>
 
         <p className="mt-3 text-xs text-muted-foreground">
           The audit export covers sync repairs, batch registrations, deployments and verification sweeps with
           timestamps, actor and IP address.
         </p>
+
+        {/* Pre-deployment confirmation */}
+        <AnimatePresence>
+          {confirmDeploy && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-5 rounded-xl border border-blue-primary/30 bg-blue-primary/5 p-5">
+                <p className="font-display text-sm mb-3">Confirm registry deployment</p>
+                <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+                  <p>Network: <span className="text-foreground">{network.name}</span></p>
+                  <p>Chain ID: <span className="text-foreground">{network.chainId}</span></p>
+                  <p>Deployer wallet: <span className="text-foreground break-all">{wallet.address ?? "Not connected"}</span></p>
+                  <p>Portfolio ID: <span className="text-foreground">{config?.portfolio_id ?? "will be created"}</span></p>
+                </div>
+                <p className="mt-3 text-xs text-amber-300">
+                  This publishes a new contract on {network.name} and costs gas. The deployer wallet becomes the
+                  permanent registry owner and the network cannot be changed afterwards.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <button
+                    onClick={() => void handleDeploy()}
+                    disabled={busyKey === "deploy" || !wallet.address}
+                    className="px-5 py-2.5 rounded-xl text-sm font-medium border border-blue-primary/30 bg-blue-primary/10 text-blue-bright hover:bg-blue-primary/20 transition-colors disabled:opacity-60"
+                  >
+                    {busyKey === "deploy" ? "Deploying…" : "Confirm & Deploy"}
+                  </button>
+                  <button
+                    onClick={() => setConfirmDeploy(false)}
+                    className="px-5 py-2.5 rounded-xl text-sm font-medium bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Deployment details */}
+        {config?.contract_address && (
+          <div className="mt-5 rounded-xl border border-border/50 bg-secondary/20 p-5">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground mb-3">
+              Deployment Details
+            </p>
+            <div className="grid gap-2.5 text-xs sm:grid-cols-2">
+              <p className="flex items-center gap-2 min-w-0">
+                <span className="text-muted-foreground">Contract</span>
+                <span className="font-mono truncate">{shortHash(config.contract_address)}</span>
+                <CopyButton value={config.contract_address} label="Contract address" />
+              </p>
+              <p className="flex items-center gap-2 min-w-0">
+                <span className="text-muted-foreground">Deployer</span>
+                <span className="font-mono truncate">{config.owner_wallet ? shortHash(config.owner_wallet) : "—"}</span>
+                {config.owner_wallet && <CopyButton value={config.owner_wallet} label="Deployer wallet" />}
+              </p>
+              <p className="text-muted-foreground">
+                Network <span className="text-foreground">{network.name} · {config.chain_id}</span>
+              </p>
+              <p className="text-muted-foreground">
+                Deployment block <span className="text-foreground">{config.deployment_block?.toLocaleString() ?? "—"}</span>
+              </p>
+              <p className="text-muted-foreground">
+                Deployed at{" "}
+                <span className="text-foreground">
+                  {config.deployed_at ? new Date(config.deployed_at).toLocaleString() : "—"}
+                </span>
+              </p>
+              <p className="text-muted-foreground">
+                Bytecode{" "}
+                <span className={bytecodeOk === false ? "text-red-400" : bytecodeOk ? "text-emerald-400" : "text-foreground"}>
+                  {bytecodeOk === null ? "Checking…" : bytecodeOk ? "Confirmed on-chain" : "Not found"}
+                </span>
+              </p>
+              {config.deployment_tx && (
+                <p className="flex items-center gap-2 min-w-0 sm:col-span-2">
+                  <span className="text-muted-foreground">Deployment tx</span>
+                  <a
+                    href={txUrl(config.network, config.deployment_tx)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-mono truncate text-blue-bright hover:underline"
+                  >
+                    {shortHash(config.deployment_tx)}
+                  </a>
+                  <CopyButton value={config.deployment_tx} label="Deployment tx" />
+                </p>
+              )}
+            </div>
+            <a
+              href={addressUrl(config.network, config.contract_address)}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-block text-xs text-blue-bright hover:underline"
+            >
+              View contract on {network.explorerName}
+            </a>
+          </div>
+        )}
 
         {smokeItems.length > 0 && (
           <div className="mt-5">
@@ -1023,6 +1253,16 @@ const BlockchainManager = () => {
             <ProgressList items={smokeItems} />
           </div>
         )}
+
+        {auditItems.length > 0 && (
+          <div className="mt-5">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+              Consistency Audit
+            </p>
+            <ProgressList items={auditItems} />
+          </div>
+        )}
+
 
         {repairItems.length > 0 && (
           <div className="mt-5">

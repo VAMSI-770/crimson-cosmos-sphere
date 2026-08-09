@@ -132,8 +132,10 @@ export type Database = {
         Row: {
           chain_id: number
           contract_address: string | null
+          contract_verified_at: string | null
           created_at: string
           deployed_at: string | null
+          deployment_block: number | null
           deployment_tx: string | null
           id: string
           is_active: boolean
@@ -146,8 +148,10 @@ export type Database = {
         Insert: {
           chain_id?: number
           contract_address?: string | null
+          contract_verified_at?: string | null
           created_at?: string
           deployed_at?: string | null
+          deployment_block?: number | null
           deployment_tx?: string | null
           id?: string
           is_active?: boolean
@@ -160,8 +164,10 @@ export type Database = {
         Update: {
           chain_id?: number
           contract_address?: string | null
+          contract_verified_at?: string | null
           created_at?: string
           deployed_at?: string | null
+          deployment_block?: number | null
           deployment_tx?: string | null
           id?: string
           is_active?: boolean

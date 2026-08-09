@@ -169,6 +169,45 @@ export const readLatestBlock = async (networkKey?: string | null) => {
   }
 };
 
+/** True when the address holds runtime bytecode (i.e. a real deployed contract). */
+export const readHasBytecode = async (address: string, networkKey?: string | null) => {
+  try {
+    const code = await getReadProvider(networkKey).getCode(address);
+    return Boolean(code && code !== "0x");
+  } catch {
+    return null;
+  }
+};
+
+export interface TxInfo {
+  status: "success" | "reverted";
+  blockNumber: number;
+  timestamp: number | null;
+  to: string | null;
+}
+
+/** Receipt + block timestamp for a transaction hash (deployment verification). */
+export const readTxInfo = async (
+  txHash: string,
+  networkKey?: string | null,
+): Promise<TxInfo | null> => {
+  try {
+    const provider = getReadProvider(networkKey);
+    const receipt = await provider.getTransactionReceipt(txHash);
+    if (!receipt) return null;
+    const block = await provider.getBlock(receipt.blockNumber).catch(() => null);
+    return {
+      status: receipt.status === 1 ? "success" : "reverted",
+      blockNumber: Number(receipt.blockNumber),
+      timestamp: block?.timestamp ? Number(block.timestamp) : null,
+      to: receipt.to ?? receipt.contractAddress ?? null,
+    };
+  } catch {
+    return null;
+  }
+};
+
+
 /** Gas price in gwei, used by the health panel. */
 export const readGasPriceGwei = async (networkKey?: string | null) => {
   try {
