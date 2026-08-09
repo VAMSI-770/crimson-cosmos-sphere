@@ -14,7 +14,16 @@ import { useVerificationRealtime } from "@/hooks/useChainEvents";
 import { generateVerificationReport } from "@/lib/blockchain/report";
 import ReportVerifier from "@/components/blockchain/ReportVerifier";
 
-type Status = "loading" | "verified" | "modified" | "unregistered" | "notfound" | "error";
+type Status =
+  | "loading"
+  | "verified"
+  | "modified"
+  | "unregistered"
+  | "notfound"
+  | "pending"
+  | "syncerror"
+  | "error";
+
 
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div className="flex flex-wrap items-start justify-between gap-4 py-3 border-b border-border/40 last:border-0">
